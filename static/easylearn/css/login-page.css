@@ -1,14 +1,16 @@
 /**
  * EasyLearn · login
- * Paleta alineada al dashboard: navy (#171f4d / #0e1538), acentos azules, tarjeta clara.
+ * Paleta alineada al sistema visual: azul institucional, verde tecnológico y neutros.
  */
 :root {
-  --login-navy: #171f4d;
-  --login-navy-deep: #0e1538;
-  --login-navy-mid: #1d2b72;
-  --login-blue: #3b82f6;
-  --login-blue-deep: #2563eb;
-  --login-blue-soft: rgb(59 130 246 / 0.15);
+  --login-navy: #1e3a8a;
+  --login-navy-deep: #0f1f4d;
+  --login-navy-mid: #274899;
+  --login-blue: #1e3a8a;
+  --login-blue-deep: #132864;
+  --login-blue-soft: rgb(30 58 138 / 0.15);
+  --login-green: #10b981;
+  --login-green-deep: #047857;
   --login-card-bg: #ffffff;
   --login-card-border: #e5e7eb;
   --login-text-dark: #111827;
@@ -51,9 +53,9 @@ body {
   pointer-events: none;
   opacity: 0.22;
   background-image:
-    radial-gradient(ellipse 80% 50% at 15% 20%, rgb(59 130 246 / 0.35), transparent 50%),
-    radial-gradient(ellipse 60% 40% at 85% 10%, rgb(59 130 246 / 0.22), transparent 45%),
-    radial-gradient(circle at 70% 80%, rgb(99 102 241 / 0.12), transparent 40%);
+    radial-gradient(ellipse 80% 50% at 15% 20%, rgb(16 185 129 / 0.25), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 85% 10%, rgb(30 58 138 / 0.32), transparent 45%),
+    radial-gradient(circle at 70% 80%, rgb(245 158 11 / 0.12), transparent 40%);
 }
 
 /* Luces ambientales animadas (sustituye la franja ondulada) */
@@ -75,7 +77,7 @@ body {
 .el-login__orb--a {
   width: min(52vmin, 420px);
   height: min(52vmin, 420px);
-  background: rgb(59 130 246 / 0.38);
+  background: rgb(16 185 129 / 0.32);
   bottom: -8%;
   left: -12%;
   animation: el-login-orb-drift 22s ease-in-out infinite;
@@ -84,7 +86,7 @@ body {
 .el-login__orb--b {
   width: min(42vmin, 360px);
   height: min(42vmin, 360px);
-  background: rgb(99 102 241 / 0.32);
+  background: rgb(30 58 138 / 0.36);
   top: 28%;
   right: -10%;
   animation: el-login-orb-drift 18s ease-in-out infinite;
@@ -94,7 +96,7 @@ body {
 .el-login__orb--c {
   width: min(28vmin, 240px);
   height: min(28vmin, 240px);
-  background: rgb(37 99 235 / 0.28);
+  background: rgb(245 158 11 / 0.22);
   top: -5%;
   left: 35%;
   animation: el-login-orb-drift 26s ease-in-out infinite;
@@ -248,7 +250,7 @@ body {
 }
 
 .el-login__input:focus {
-  border-color: rgb(59 130 246 / 0.65);
+  border-color: rgb(16 185 129 / 0.8);
   box-shadow: 0 0 0 3px var(--login-blue-soft);
 }
 
@@ -274,7 +276,7 @@ body {
 .el-login__remember input {
   width: 1rem;
   height: 1rem;
-  accent-color: var(--login-blue-deep);
+  accent-color: var(--login-green-deep);
 }
 
 .el-login__link {
@@ -297,9 +299,9 @@ body {
   font-weight: 700;
   cursor: pointer;
   color: #fff;
-  background: linear-gradient(135deg, var(--login-blue) 0%, var(--login-blue-deep) 100%);
+  background: linear-gradient(135deg, var(--login-green) 0%, var(--login-green-deep) 100%);
   background-size: 200% 200%;
-  box-shadow: 0 10px 28px rgb(37 99 235 / 0.35);
+  box-shadow: 0 10px 28px rgb(4 120 87 / 0.28);
   transition: transform 0.12s, filter 0.12s, box-shadow 0.12s;
 }
 
@@ -307,7 +309,7 @@ body {
   .el-login__submit:hover {
     filter: brightness(1.06);
     transform: translateY(-1px);
-    box-shadow: 0 14px 32px rgb(37 99 235 / 0.42);
+    box-shadow: 0 14px 32px rgb(4 120 87 / 0.36);
     animation: el-login-btn-shine 2.5s ease infinite;
   }
 }
@@ -316,7 +318,7 @@ body {
   .el-login__submit:hover {
     filter: brightness(1.06);
     transform: translateY(-1px);
-    box-shadow: 0 14px 32px rgb(37 99 235 / 0.42);
+    box-shadow: 0 14px 32px rgb(4 120 87 / 0.36);
   }
 }
 

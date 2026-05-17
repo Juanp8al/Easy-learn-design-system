@@ -84,12 +84,29 @@
     }
   }
 
+  function setVisibleView(selector, targetId) {
+    document.querySelectorAll(selector).forEach(function (v) {
+      var visible = v.id === targetId;
+      v.classList.toggle("is-visible", visible);
+      v.setAttribute("aria-hidden", visible ? "false" : "true");
+    });
+
+    var target = document.getElementById(targetId);
+    if (!target) return;
+    target.setAttribute("tabindex", "-1");
+    window.setTimeout(function () {
+      try {
+        target.focus({ preventScroll: true });
+      } catch (_) {
+        target.focus();
+      }
+    }, 0);
+  }
+
   function go(route) {
     if (!routes[route]) return;
     var targetId = routes[route];
-    document.querySelectorAll(".view").forEach(function (v) {
-      v.classList.toggle("is-visible", v.id === targetId);
-    });
+    setVisibleView(".view", targetId);
     document.querySelectorAll(".sidebar__link[data-route]").forEach(function (link) {
       var r = link.getAttribute("data-route");
       var active = r === route || (r === "cursos" && (route === "curso" || route === "semana"));
@@ -304,9 +321,7 @@
           if (!teacherRoutes[route]) route = "dashboard";
           var targetId = teacherRoutes[route];
           var canonical = teacherCanonicalRoute(route);
-          document.querySelectorAll(".canvas-body .view").forEach(function (v) {
-            v.classList.toggle("is-visible", v.id === targetId);
-          });
+          setVisibleView(".canvas-body .view", targetId);
           document.querySelectorAll(".sidebar__link[data-route]").forEach(function (link) {
             var r = link.getAttribute("data-route");
             var active = r === canonical;

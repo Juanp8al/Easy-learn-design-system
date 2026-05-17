@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" role="img" aria-label="EasyLearn">
-  <rect width="240" height="56" rx="12" fill="#0f6e4c"/>
-  <text x="120" y="38" text-anchor="middle" font-family="Inter, Segoe UI, sans-serif" font-size="22" font-weight="700" fill="#ffffff">EasyLearn</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 80" role="img" aria-label="EasyLearn">
+  <rect width="240" height="80" rx="20" fill="#1E3A8A"/>
+  <path d="M31 23h45l-7 10H45v9h25l-6 10H45v5h33l-7 10H31z" fill="#FFFFFF"/>
+  <path d="M78 23h14v32h35l-8 12H78z" fill="#10B981"/>
+  <path d="M95 23h41l-8 12H95z" fill="#F59E0B"/>
+  <text x="144" y="42" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing=".5" fill="#FFFFFF">EASYLEARN</text>
+  <text x="145" y="59" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" letter-spacing="1.7" fill="#D1FAE5">CAMPUS LMS</text>
 </svg>

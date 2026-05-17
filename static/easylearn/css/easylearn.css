@@ -1,13 +1,23 @@
 /**
- * DG University style · dashboard LMS (referencia visual)
+ * EasyLearn Design System · portal LMS universitario
+ * Tokens base alineados con los informes de marca y accesibilidad.
  */
 
 :root {
+  /* Marca */
+  --brand-primary: #1e3a8a;
+  --brand-primary-dark: #132864;
+  --brand-primary-deep: #0f1f4d;
+  --brand-primary-soft: #eff6ff;
+  --brand-secondary: #10b981;
+  --brand-secondary-dark: #047857;
+  --brand-accent: #f59e0b;
+
   /* Shell */
-  --sidebar-deep: #171f4d;
-  --sidebar-active-bg: #3b4cb8;
+  --sidebar-deep: var(--brand-primary);
+  --sidebar-active-bg: #2f52b5;
   --header-bg: var(--sidebar-deep);
-  --sidebar-elevated: #1d2b72;
+  --sidebar-elevated: #274899;
 
   /* 2 · Secundario tecnológico */
   --success-700: #059669;
@@ -29,20 +39,20 @@
   /* 5 · Estados */
   --error-500: #ef4444;
   --error-100: #fee2e2;
-  --info-500: #3b82f6;
+  --info-500: #2563eb;
   --info-100: #dbeafe;
 
   /* CTA principal / confirmación (guía EasyLearn) */
   --cta-primary: var(--success-700);
-  --cta-primary-hover: #047857;
+  --cta-primary-hover: var(--brand-secondary-dark);
 
   /* Tipografía de apoyo · contraste mínimo guía UX */
   --text-secondary-strong: #4b5563;
-  --ease-blue: var(--info-500);
+  --ease-blue: var(--brand-primary);
 
   /** Alias histórico del boceto — apuntan a la guía */
-  --accent: var(--info-500);
-  --accent-soft: rgb(59 130 246 / 0.14);
+  --accent: var(--brand-primary);
+  --accent-soft: rgb(30 58 138 / 0.14);
   --bg-page: var(--sidebar-deep);
   --bg-main: var(--neutral-bg);
   --surface: var(--neutral-surface);
@@ -72,8 +82,17 @@
   --sidebar-logo-inset: calc(var(--sidebar-link-pad-x) + (var(--sidebar-icon-col) - 20px) / 2);
   --widgets-w: 300px;
 
-  --nav-gradient-high: #26347f;
-  --nav-gradient-low: #0e1538;
+  --nav-gradient-high: #2b4ea2;
+  --nav-gradient-low: var(--brand-primary-deep);
+
+  /* Escala modular de 8px */
+  --space-unit: 8px;
+  --space-1: var(--space-unit);
+  --space-2: calc(var(--space-unit) * 2);
+  --space-3: calc(var(--space-unit) * 3);
+  --space-4: calc(var(--space-unit) * 4);
+  --space-5: calc(var(--space-unit) * 5);
+  --space-6: calc(var(--space-unit) * 6);
 
   /* Tablero centrado: header + contenido comparten la misma columna (misma asimetría = barra + tablero a la izq.) */
   --main-padding-x: 0.45rem;
@@ -81,8 +100,8 @@
   --tablero-max-w: 1540px;
 
   /* Ritmo visual dashboard (margen interno alineado) */
-  --dash-pad-inline: 1.2rem;
-  --dash-pad-head-y: 1.14rem;
+  --dash-pad-inline: var(--space-3);
+  --dash-pad-head-y: var(--space-2);
 
   font-size: 15px;
   font-family:
@@ -107,9 +126,35 @@ body {
   background: var(--sidebar-deep);
 }
 
+.skip-link {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: 1000;
+  transform: translateY(-140%);
+  padding: 0.7rem 1rem;
+  border-radius: 999px;
+  background: var(--brand-secondary);
+  color: #fff;
+  font-weight: 800;
+  text-decoration: none;
+  box-shadow: 0 10px 28px rgb(15 23 42 / 0.22);
+  transition: transform 0.16s ease;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
 button {
   font: inherit;
   cursor: pointer;
+}
+
+:where(a, button, input, select, textarea, [tabindex]):focus-visible {
+  outline: 3px solid rgb(16 185 129 / 0.9);
+  outline-offset: 3px;
+  border-radius: 8px;
 }
 
 .visually-hidden {
@@ -673,6 +718,7 @@ aside.sidebar .sidebar__brand-logo {
   background: var(--sidebar-active-bg);
   color: #fff;
   font-weight: 600;
+  box-shadow: inset 4px 0 0 var(--brand-secondary);
 }
 
 .sidebar__link:disabled {
@@ -702,7 +748,7 @@ aside.sidebar .sidebar__brand-logo {
 .main {
   flex: 1;
   min-width: 0;
-  padding: 1.35rem 0 1.65rem;
+  padding: var(--space-3) 0 var(--space-4);
   display: flex;
   flex-direction: column;
   background: var(--sidebar-deep);
@@ -729,12 +775,12 @@ aside.sidebar .sidebar__brand-logo {
 .canvas-body {
   flex: 1;
   overflow: auto;
-  padding: 1.25rem 1.5rem 1.75rem;
+  padding: var(--space-3) var(--space-3) var(--space-4);
   background: var(--surface);
 }
 
 .canvas-body:has(#view-dashboard.is-visible) {
-  padding: 1.45rem 1.7rem 2.15rem;
+  padding: var(--space-3) var(--space-4) var(--space-5);
 }
 
 /* Views */
@@ -744,6 +790,10 @@ aside.sidebar .sidebar__brand-logo {
 
 .view.is-visible {
   display: block;
+}
+
+.view:focus {
+  outline: none;
 }
 
 .hero {
@@ -767,8 +817,8 @@ aside.sidebar .sidebar__brand-logo {
 .summary-row {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
 }
 
 @media (max-width: 1100px) {
@@ -799,14 +849,14 @@ aside.sidebar .sidebar__brand-logo {
 
 .summary-card {
   border-radius: var(--radius-card);
-  padding: 1.25rem 1.35rem;
+  padding: var(--space-3);
   min-height: 124px;
   position: relative;
   overflow: hidden;
 }
 
 .summary-card--navy {
-  background: linear-gradient(145deg, #1f2236 0%, #2a2f4f 52%, #32385d 100%);
+  background: linear-gradient(145deg, var(--brand-primary-deep) 0%, var(--brand-primary) 58%, #2f52b5 100%);
   color: #fff;
 }
 
@@ -859,7 +909,7 @@ aside.sidebar .sidebar__brand-logo {
 .dashboard-grid {
   display: grid;
   grid-template-columns: 1fr var(--widgets-w);
-  gap: 1.25rem;
+  gap: var(--space-3);
   align-items: start;
 }
 
@@ -879,7 +929,7 @@ aside.sidebar .sidebar__brand-logo {
   border-radius: var(--radius-card);
   box-shadow: 0 2px 8px rgb(15 23 42 / 0.04);
   overflow: hidden;
-  margin-bottom: 1rem;
+  margin-bottom: var(--space-2);
 }
 
 .panel:last-child {
@@ -1516,7 +1566,7 @@ table.sheet tbody tr:hover {
   border: none;
   padding: 0;
   font: inherit;
-  color: rgb(29 78 216);
+  color: var(--brand-primary);
   cursor: pointer;
   font-weight: 600;
 }
@@ -1704,8 +1754,9 @@ table.sheet tbody tr:hover {
 }
 
 .btn-main {
-  padding: 0.6rem 1.15rem;
-  border-radius: 12px;
+  min-height: 40px;
+  padding: 0.6rem var(--space-3);
+  border-radius: var(--radius-pill);
   border: none;
   background: var(--cta-primary);
   color: #fff;
@@ -1724,19 +1775,20 @@ table.sheet tbody tr:hover {
 }
 
 .btn-secondary {
-  padding: 0.6rem 1.05rem;
-  border-radius: 12px;
-  border: 2px solid rgb(59 130 246 / 0.55);
+  min-height: 40px;
+  padding: 0.6rem var(--space-2);
+  border-radius: var(--radius-pill);
+  border: 2px solid rgb(30 58 138 / 0.45);
   background: var(--surface);
-  color: rgb(29 78 216);
+  color: var(--brand-primary);
   font-weight: 600;
   font-size: 0.86rem;
   cursor: pointer;
 }
 
 .btn-secondary:hover {
-  background: rgb(239 246 255 / 0.85);
-  border-color: rgb(59 130 246 / 0.85);
+  background: var(--brand-primary-soft);
+  border-color: rgb(30 58 138 / 0.7);
 }
 
 /* Terciario · texto enlazado (ghost azul), sin borde — no sustituye a enlaces párrafo */
@@ -1745,7 +1797,7 @@ table.sheet tbody tr:hover {
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: rgb(29 78 216);
+  color: var(--brand-primary);
   font: inherit;
   font-weight: 700;
   font-size: 0.84rem;
@@ -5859,7 +5911,7 @@ table.sheet.sheet--genesys tbody tr:hover td {
 }
 
 .panel__head--dash-soft {
-  background: linear-gradient(180deg, #eef2ff 0%, #ebf0ff 100%);
+  background: linear-gradient(180deg, var(--brand-primary-soft) 0%, #eef2ff 100%);
   border-bottom: 1px solid rgb(226 232 240);
   padding: 0.88rem var(--dash-pad-inline) 0.92rem;
   margin: -1px -1px 0;
@@ -5949,18 +6001,18 @@ table.sheet.sheet--genesys tbody tr:hover td {
 }
 
 .panel--dg-sheet .dash-act-title-btn:hover {
-  color: rgb(29 78 216);
+  color: var(--brand-primary);
   text-decoration: underline;
-  text-decoration-color: rgb(29 78 216 / 0.35);
+  text-decoration-color: rgb(30 58 138 / 0.35);
 }
 
 .panel--dg-sheet .dash-act-title-btn:focus-visible {
-  outline: 2px solid rgb(59 130 246 / 0.95);
+  outline: 2px solid rgb(16 185 129 / 0.95);
   outline-offset: 2px;
   border-radius: 4px;
-  color: rgb(29 78 216);
+  color: var(--brand-primary);
   text-decoration: underline;
-  text-decoration-color: rgb(29 78 216 / 0.45);
+  text-decoration-color: rgb(30 58 138 / 0.45);
 }
 
 .panel--dg-sheet .sheet tbody td:nth-child(4):not(.text-warn-strong) {
@@ -6004,15 +6056,15 @@ table.sheet.sheet--genesys tbody tr:hover td {
 .panel--dg-sheet .btn-sm.btn-outline {
   border-width: 2px;
   font-weight: 600;
-  color: #1d4ed8;
-  border-color: rgb(147 197 253 / 0.85);
-  background: rgb(219 234 254 / 0.55);
+  color: var(--brand-primary);
+  border-color: rgb(30 58 138 / 0.28);
+  background: rgb(239 246 255 / 0.78);
 }
 
 .panel--dg-sheet .btn-sm.btn-outline:hover {
   color: #fff;
-  border-color: #2563eb;
-  background: #2563eb;
+  border-color: var(--brand-primary);
+  background: var(--brand-primary);
 }
 
 .panel--dg-sheet .btn-sm.btn-accent {

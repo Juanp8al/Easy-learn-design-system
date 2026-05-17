@@ -1,79 +1,91 @@
-# Knowledge Management System (KMS) for Students
+# EasyLearn Campus LMS
 
-This is a Django-based web application designed to help students organize their notes, store important terms, and set revision goals. It is a knowledge management system aimed at improving the learning experience of students by streamlining the management of academic study materials through an easy to use interface.
+EasyLearn es una plataforma universitaria de gestion del aprendizaje construida con Django. El proyecto toma como base los informes del sistema de diseno EasyLearn y organiza la experiencia alrededor de estudiantes, docentes y administradores, con foco en claridad, accesibilidad, consistencia visual y seguimiento academico.
 
-Check out the Django application [here](https://www.pkms.live/)
+## Propuesta del producto
 
-## Features
+EasyLearn busca resolver problemas frecuentes de los LMS universitarios: navegacion compleja, interfaces inconsistentes, sobrecarga cognitiva y baja accesibilidad. La solucion se orienta a cursos por periodo academico, semanas de clase, materiales de estudio, actividades, entregas, calificaciones, avisos y notificaciones.
 
-- **Multi-user support**: Each user can create and customize their own profile, and all notes and associated data are unique to each user, ensuring that each user's data is kept private and secure.
-- **Robust authentication system**: Users can securely create and access their accounts, reset their passwords, and recover their accounts in case of any mishaps.
-- **Customizability**: Users can personalize their profiles with a variety of settings, such as changing their profile picture or choosing a preferred color scheme.
-- **Dashboard**: Users can view their courses, the latest note entries and both active and overdue revision objectives on a centralized dashboard.
-- **Note taking and organization**: Users can take and store notes hierarchically, starting with the course, followed by the topic, then subtopic, and finally, individual entries. This hierarchical structure allows for easy navigation and quick access to notes.
-- **Glossary**: Users can store important terms and definitions for different courses, making it easier to study and review key concepts.
-- **Revision planning**: Users can set revision goals and deadlines and track their progress, helping them stay on top of their studies and achieve their academic goals.
-- **Note sharing**: Users can share their notes with others via email, making it easy to share notes with friends and family.
-- **Responsive UI**: The application is designed to work on different devices and screen sizes, ensuring a consistent and user-friendly experience across all platforms.
+## Estado actual del repositorio
 
+El proyecto ya incluye:
 
-## Requirements
+- Autenticacion con redireccion por rol: estudiante, docente y administrador.
+- Portal EasyLearn con sidebar, barra superior, buscador, breadcrumbs, dashboard, cursos y calificaciones.
+- Panel docente con cursos asignados, entregas, foros/avisos e historial de calificaciones.
+- Panel administrador con usuarios, carreras/programas, cursos ofertados, matriculas y periodos academicos.
+- Modelos institucionales base: `Program`, `AcademicPeriod`, `Offering` y `Enrollment`.
+- Modulos heredados de apoyo academico: notas, glosario y revision personal.
+- Interfaz responsive con tokens de marca EasyLearn: azul institucional `#1E3A8A`, verde tecnologico `#10B981`, naranja de apoyo `#F59E0B`, tipografia Inter y foco visible.
 
-To run this application, you need:
+## Documentacion del proyecto
 
-- Python 3.10.8 or later
-- PostgreSQL database (version 11 or later)
-- Django 4.0 or later
-- A modern web browser
+- [`docs/easylearn-professionalization.md`](docs/easylearn-professionalization.md): analisis de los documentos entregados y plan tecnico para dejar el proyecto profesional.
+- [`docs/requirements-traceability.md`](docs/requirements-traceability.md): trazabilidad entre requerimientos, casos de uso, MER y estado actual de implementacion.
 
-## Installation
+## Stack tecnico
 
-1. Clone this repository to your local machine:
+- Python 3.10+
+- Django
+- PostgreSQL en produccion o SQLite para desarrollo local
+- WhiteNoise para archivos estaticos
+- HTML, CSS y JavaScript vanilla para el shell EasyLearn
+
+## Instalacion local
+
+1. Crear y activar un entorno virtual.
 
 ```bash
-git clone https://github.com/nafdev01/django_pkms.git
+python -m venv .venv
+source .venv/bin/activate
 ```
 
-2. Install the required dependencies:
+2. Instalar dependencias.
+
 ```bash
 pip install -r requirements.txt
 ```
-3. Create the database and apply the migrations:
+
+3. Crear el archivo `.env` a partir del ejemplo.
+
 ```bash
-python manage.py makemigrations
-python manage.py migrate
+cp .env.example .env
 ```
-4. Start the development server:
+
+4. Para desarrollo rapido con SQLite, definir:
+
 ```bash
+DEVELOPMENT_MODE=True
+DEBUG=True
+```
+
+5. Aplicar migraciones y ejecutar el servidor.
+
+```bash
+python manage.py migrate
 python manage.py runserver
 ```
 
-5. Open your web browser and go to http://localhost:8000/ to access the application.
+6. Abrir `http://localhost:8000/`.
 
-#### _Note_
-_It helps to create aliases for common shell commands to ease update and troubleshooting processes and reduce repetition of commands e.g_
-```bash
-alias serve="python manage.py runserver"
-alias migrate="python manage.py makemigrations && python manage.py migrate"
-alias pkms="sudo service postgresql start && cd ~/Code/django_pkms/ && source ~/Code/django_pkms/.venv/bin/activate && serve"
-alias dshell="python manage.py shell"
-```
+## Variables de entorno principales
 
-## Usage
+Ver `.env.example` para una plantilla completa. En produccion se debe definir `DJANGO_SECRET_KEY`, `DATABASE_URL`, `DJANGO_ALLOWED_HOSTS` y `CSRF_TRUSTED_ORIGINS`.
 
-1. Register a new account or login to an existing one.
-2. Customize your profile (e.g., upload a profile picture, add your full name and email, and update course details).
-3. Add new notes and organize them by course, topic, and subtopic.
-4. Store important terms and definitions in the glossary section.
-5. Set revision objectives and deadlines for each of them.
-6. Share your notes with others via email.
-7. Log out when you are done.
+## Roles principales
 
-## Contributions
+- **Estudiante:** consulta cursos inscritos, semanas academicas, materiales, actividades, entregas, calendario y calificaciones.
+- **Docente:** gestiona cursos asignados, publica contenido, revisa entregas, califica, retroalimenta y comunica avisos.
+- **Administrador:** gestiona usuarios, roles, carreras, cursos ofertados, matriculas y periodos academicos.
 
-Contributions to this project are welcome! If you find a bug, want to request a new feature, or have an idea for improvement, please create an issue on this project's GitHub page. If you want to contribute code, please fork the repository and submit a pull request.
+## Prioridades tecnicas pendientes
 
-## License
-_Pending_
-<!-- 
-This application is licensed under the MIT License. See the LICENSE file for more details. -->
+1. Completar el MER con modelos de semana academica, material, actividad, entrega, calificacion, foro, participacion, aviso y notificacion.
+2. Conectar las pantallas demo del portal con datos reales de esos modelos.
+3. Homologar las pantallas heredadas de notas, glosario y revision con el sistema visual EasyLearn.
+4. Agregar pruebas de permisos por rol, restricciones de inscripcion y flujos de entrega/calificacion.
+5. Documentar componentes reutilizables conforme al Informe 3.
+
+## Licencia
+
+Pendiente de definicion.
