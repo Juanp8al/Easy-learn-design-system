@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% load notes_tags %}
+
+{% block title %}Resultados de búsqueda{% endblock %}
+
+{% block header %}
+<h1 class="h3 mb-0">Resultados de búsqueda</h1>
+{% if request.GET.q %}
+<p class="text-muted mb-0 mt-2 small">Consulta: <strong>{{ request.GET.q }}</strong></p>
+{% endif %}
+{% endblock header %}
+
+{% block content %}
+<div class="container py-3">
+    <div class="row">
+        <div class="col-12">
+
+            {% if objectives %}
+            <div class="my-3">
+                <h2 class="h5">Objetivos de repaso</h2>
+                <ul class="list-group">
+                    {% for objective in objectives %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-1 d-inline-block" href="{{ objective.get_absolute_url }}">{{ objective.name }}</a>
+                        <p class="mb-0 small text-muted">{{ objective.description | truncatechars:50 | markdown }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if terms %}
+            <div class="my-3">
+                <h2 class="h5">Términos (glosario)</h2>
+                <ul class="list-group">
+                    {% for term in terms %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-1 d-inline-block" href="{{ term.get_absolute_url }}">{{ term.name }}</a>
+                        <p class="mb-0 small">{{ term.definition }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if entries %}
+            <div class="my-3">
+                <h2 class="h5">Apuntes</h2>
+                <ul class="list-group">
+                    {% for entry in entries %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-1 d-inline-block" href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>
+                        <p class="mb-0 small text-muted">{{ entry.content | truncatechars:50 | markdown }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if subtopics %}
+            <div class="my-3">
+                <h2 class="h5">Subtópicos</h2>
+                <ul class="list-group">
+                    {% for subtopic in subtopics %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-0" href="{{ subtopic.get_absolute_url }}">{{ subtopic.name }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if topics %}
+            <div class="my-3">
+                <h2 class="h5">Tópicos</h2>
+                <ul class="list-group">
+                    {% for topic in topics %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-1 d-inline-block" href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+                        <p class="mb-0 small text-muted">{{ topic.overview | truncatechars:50 | markdown }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if courses %}
+            <div class="my-3">
+                <h2 class="h5">Cursos</h2>
+                <ul class="list-group">
+                    {% for course in courses %}
+                    <li class="list-group-item">
+                        <a class="h6 mb-1 d-inline-block" href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+                        <p class="mb-0 small text-muted">{{ course.about | truncatechars:50 | markdown }}</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            {% if not terms and not entries and not subtopics and not topics and not courses and not objectives %}
+            <p class="text-muted mb-0">No se encontraron resultados.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

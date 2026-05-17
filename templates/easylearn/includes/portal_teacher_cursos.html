@@ -1,0 +1,48 @@
+              <section id="view-teacher-cursos" class="view view-dash-dg view-dash-mer" aria-labelledby="teacher-cursos-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
+                  <h1 id="teacher-cursos-title">Mis cursos</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Asignaturas que la institución le asignó como <strong>docente responsable</strong>. Los estudiantes aparecen según la matrícula registrada por administración.
+                  </p>
+                </header>
+
+                <article class="panel panel--dg-sheet dg-mer-main margin-b">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Cursos que imparte</h2>
+                    <a class="btn-sm btn-outline" href="{% url 'admin:academia_offering_changelist' %}?teacher__id__exact={{ student.id }}">Abrir en admin ›</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet">
+                      <thead>
+                        <tr>
+                          <th>Código</th>
+                          <th>Curso</th>
+                          <th>Programa</th>
+                          <th>Período</th>
+                          <th>Grupo</th>
+                          <th>Estudiantes</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for o in teaching_offerings %}
+                        <tr data-search="{{ o.code|lower }} {{ o.name|lower }} {{ o.program.name|lower }}">
+                          <td><span class="tb-course">{{ o.code }}</span></td>
+                          <td>{{ o.name|truncatechars:36 }}</td>
+                          <td>{{ o.program.name|truncatechars:20 }}</td>
+                          <td>{{ o.period.name }}</td>
+                          <td>{{ o.group }}</td>
+                          <td>{{ o.active_student_count }}</td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_offering_change' o.id %}">Editar</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                          <td colspan="7" class="muted">No tiene cursos ofertados con usted como docente responsable. El administrador debe asignarlo en <em>Cursos ofertados › Docente responsable</em>.</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>

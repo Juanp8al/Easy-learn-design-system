@@ -1,0 +1,124 @@
+{% extends "easylearn/portal_layout.html" %}
+{% load notes_tags %}
+
+{% block title %}Resultados de búsqueda — EasyLearn{% endblock %}
+
+{% block body_attrs %} data-easylearn-page="search"{% endblock %}
+
+{% block portal_canvas %}
+                <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta dentro de EasyLearn">
+                  <a href="{% url 'notes:dashboard' %}#dashboard">Inicio</a>
+                  <span class="sep">›</span>
+                  <span>Buscar</span>
+                </nav>
+
+                <section class="search-portal" aria-labelledby="search-portal-title">
+                  <header class="search-portal__head">
+                    <h1 id="search-portal-title" class="search-portal__title">Resultados de búsqueda</h1>
+                    {% if request.GET.q %}
+                    <p class="search-portal__query">Consulta: <strong>{{ request.GET.q }}</strong></p>
+                    {% endif %}
+                  </header>
+
+                  <div class="search-portal__body">
+                    {% if objectives %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Objetivos de repaso</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for objective in objectives %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ objective.get_absolute_url }}">{{ objective.name }}</a>
+                          <p class="search-portal__excerpt">{{ objective.description | truncatechars:50 | markdown }}</p>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if terms %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Términos (glosario)</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for term in terms %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ term.get_absolute_url }}">{{ term.name }}</a>
+                          <p class="search-portal__excerpt">{{ term.definition }}</p>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if entries %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Apuntes</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for entry in entries %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>
+                          <p class="search-portal__excerpt">{{ entry.content | truncatechars:50 | markdown }}</p>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if subtopics %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Subtópicos</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for subtopic in subtopics %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ subtopic.get_absolute_url }}">{{ subtopic.name }}</a>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if topics %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Tópicos</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for topic in topics %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ topic.get_absolute_url }}">{{ topic.name }}</a>
+                          <p class="search-portal__excerpt">{{ topic.overview | truncatechars:50 | markdown }}</p>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if courses %}
+                    <article class="search-portal__block panel panel--dg-sheet">
+                      <div class="panel__head panel__head--dg panel__head--dash-soft">
+                        <h2>Cursos</h2>
+                      </div>
+                      <ul class="search-portal__list">
+                        {% for course in courses %}
+                        <li class="search-portal__item">
+                          <a class="search-portal__link" href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+                          <p class="search-portal__excerpt">{{ course.about | truncatechars:50 | markdown }}</p>
+                        </li>
+                        {% endfor %}
+                      </ul>
+                    </article>
+                    {% endif %}
+
+                    {% if not terms and not entries and not subtopics and not topics and not courses and not objectives %}
+                    <p class="search-portal__empty">No se encontraron resultados.</p>
+                    {% endif %}
+                  </div>
+                </section>
+{% endblock %}

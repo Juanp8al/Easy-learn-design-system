@@ -1,0 +1,78 @@
+<!-- revision/objective_detail.html -->
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% load notes_tags %}
+
+{% block title %}{{ objective.name }}{% endblock %}
+
+{% block header %}
+<nav style="--mdb-breadcrumb-divider: '>';" aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item active" aria-current="page">
+            <a class="btn btn-sm btn-dark"   data-mdb-toggle="collapse" href="#otherCourses" role="button"
+                aria-expanded="false" aria-controls="otherCourses">
+                {{ course.course_code }}
+            </a>
+        </li>
+    </ol>
+</nav>
+
+<div class="collapse" id="otherCourses">
+    <div class="row g-2">
+        {% for course in other_courses %}
+        <div class="col">
+            <a class="btn btn-sm btn-outline-dark" href="{% url 'revision:objective_list' course.id course.slug %}">
+                {{ course.course_code }}
+            </a>
+        </div>
+        {% endfor%}
+    </div>
+</div>
+
+<p class="text-center h2">
+    {{ course.name }} Objectives
+</p>
+<div class="d-flex justify-content-end">
+    <a href="{% url 'revision:create_objective' %}" class="btn btn-sm btn-outline-success">
+        New Objective
+    </a>
+</div>
+<hr>
+{% endblock header %}
+
+{% block content %}
+{% if objectives %}
+<div class="list-group m-3">
+    {% for objective in objectives %}
+    <div class="list-group-item">
+        <a class="h4" href="{% url 'revision:objective_detail' objective.id objective.slug %}">
+            {{ objective.name }}
+        </a>
+
+        <div class="modal fade" id="delete_objective_modal" tabindex="-1"
+            aria-labelledby="delete_{{ objective.slug }}_label" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        {% include "revision/objective_confirm_delete.html" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <p>{{ objective.description | markdown | truncatewords:25 }}</p>
+        <div class="btn-group m-3">
+            <a class="btn btn-sm btn-outline-warning" href="{% url 'revision:update_objective' objective.id %}">
+                Update
+            </a>
+            <button type="button" class="btn btn-sm btn-outline-danger"   data-mdb-toggle="modal"
+                data-mdb-target="#delete_objective_modal">
+                Delete
+            </button>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No objectives found for this course.</p>
+{% endif %}
+{% endblock %}

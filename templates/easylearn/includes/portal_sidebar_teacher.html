@@ -1,0 +1,81 @@
+{% load static %}
+<aside class="sidebar" aria-label="Navegación docente">
+  <div class="sidebar__head">
+    <div class="sidebar__brand">
+      <div class="sidebar__brand-frame">
+        <a href="{% url 'dashboard_teacher' %}" class="sidebar__brand-link" title="EasyLearn — Inicio docente">
+          <img class="sidebar__brand-logo" src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}" alt="EasyLearn" width="238" height="80" decoding="async" loading="eager" />
+        </a>
+      </div>
+    </div>
+  </div>
+  <div class="sidebar__middle">
+    <nav class="sidebar__nav" id="sidebar-nav">
+      <button type="button" class="sidebar__link is-active" data-route="dashboard" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+          <polyline points="9 22 9 12 15 12 15 22" />
+        </svg>
+        <span class="sidebar__label">Inicio</span>
+      </button>
+      <button type="button" class="sidebar__link" data-route="cursos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+        </svg>
+        <span class="sidebar__label">Mis cursos</span>
+      </button>
+      <button type="button" class="sidebar__link" data-route="entregas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M9 11H5a2 2 0 0 0-2 2v3c0 1.1.9 2 2 2h4" />
+          <path d="M9 7V5a2 2 0 0 1 2-2h6l4 4v10a2 2 0 0 1-2 2h-2" />
+          <path d="m9 15 2 2 4-4" />
+        </svg>
+        <span class="sidebar__label">Entregas</span>
+      </button>
+      <button type="button" class="sidebar__link" data-route="foros">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M21 15a4 4 0 0 1-4 4H8l-4 3V7a4 4 0 0 1 4-4h9a4 4 0 0 1 4 4z" />
+        </svg>
+        <span class="sidebar__label">Foros y avisos</span>
+      </button>
+      <button type="button" class="sidebar__link" data-route="historial-calificaciones" title="Promedios y seguimiento por las asignaturas que imparte">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+        <span class="sidebar__label">Historial de calificaciones</span>
+      </button>
+    </nav>
+    <div class="sidebar__collapse-row" role="group" aria-label="Ancho del menú lateral">
+      <hr class="sidebar__rule" aria-hidden="true" />
+      <button type="button" class="sidebar__collapse" aria-label="Contraer menú lateral" aria-expanded="true" title="Contraer">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="m15 18-6-6 6-6" />
+        </svg>
+      </button>
+    </div>
+    <div class="sidebar__anchors" aria-label="Accesibilidad y ayuda">
+      <a class="sidebar__link sidebar__link--quiet" href="https://www.w3.org/WAI/fundamentals/accessibility-intro/es" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="4" y1="21" x2="4" y2="14" />
+          <line x1="4" y1="10" x2="4" y2="3" />
+          <line x1="12" y1="21" x2="12" y2="12" />
+          <line x1="12" y1="8" x2="12" y2="3" />
+          <line x1="20" y1="21" x2="20" y2="16" />
+          <line x1="20" y1="12" x2="20" y2="3" />
+          <line x1="1" y1="14" x2="7" y2="14" />
+          <line x1="9" y1="8" x2="15" y2="8" />
+          <line x1="17" y1="16" x2="23" y2="16" />
+        </svg>
+        <span class="sidebar__label">Accesibilidad</span>
+      </a>
+      <a class="sidebar__link sidebar__link--quiet" href="https://www.w3.org/WAI/WCAG21/quickref/" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9 9h.01M15 9h.01" />
+          <path d="M9.7 14.3c.45.73 1.15 1.2 2.03 1.2h.54c.88 0 1.58-.47 2.03-1.2" />
+        </svg>
+        <span class="sidebar__label">Centro de ayuda</span>
+      </a>
+    </div>
+    <div class="sidebar__middle-fill" aria-hidden="true"></div>
+  </div>
+</aside>

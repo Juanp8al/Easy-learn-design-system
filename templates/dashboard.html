@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load django_bootstrap5 %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block header %}
+<p class="text-center display-1">
+    Dashboard
+</p>
+{% endblock header %}
+
+{% block content %}
+<div class="dropdown d-flex justify-content-center">
+    <a class="btn btn-dark dropdown-toggle" href="#" role="button" id="createdropdownMenu" data-mdb-toggle="dropdown"
+        aria-expanded="false">
+        Create
+    </a>
+
+    <ul class="dropdown-menu" aria-labelledby="createdropdownMenu">
+        <li>
+            <a class="dropdown-item" href="{% url 'notes:create_course' %}">
+                New Course
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'glossary:create_term' %}">
+                New Term
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="{% url 'revision:create_objective' %}">
+                New Objective
+            </a>
+        </li>
+    </ul>
+</div>
+<br>
+<div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-2 g-4">
+    <div class="col">
+        <div class="card p-4 border-dark">
+            <p class="text-center mb-3 display-5">Courses</p>
+            <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-3 g-2">
+                {% for course in courses %}
+                <div class="col d-flex justify-content-center">
+                    <a class="btn btn-outline-dark position-relative" href="{{ course.get_absolute_url }}">
+                        <p class="h5">
+                            {{ course.name }}
+                        </p>
+                        <small class="fw-bold">
+                            {{ course.course_code }}
+                        </small>
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card p-2 border-dark p-4">
+            <p class="text-center mb-3 display-5">
+                Latest Notes
+            </p>
+
+            {% if latest_entries %}
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Date Updated</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="table-group-divider">
+                    {% for entry in latest_entries %}
+                    <tr>
+                        <td>
+                            <div class="d-flex justify-content-center py-2">
+                                <a class="btn btn-outline-secondary text-center flex-fill position-relative"
+                                    href="{{ entry.subtopic.topic.get_absolute_url }}">
+                                    {{ entry.name }}
+                                    <span
+                                        class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-secondary px-2">
+                                        {{ entry.subtopic.topic.course.course_code }}
+                                    </span>
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            {{ entry.updated }}
+                        </td>
+                        <td>
+                            <a class="btn btn-sm btn-outline-warning m-1"
+                                href="{% url 'notes:update_entry' entry.id %}">
+                                Update
+                            </a>
+                            <button type="button" class="btn btn-sm btn-outline-danger m-1" data-mdb-toggle="modal"
+                                data-mdb-target="#delete_entry_modal">
+                                Delete
+                            </button>
+                            <div class="modal fade" id="delete_entry_modal" tabindex="-1"
+                                aria-labelledby="delete_{{ entry.slug }}_label" aria-hidden="true">
+                                <div class="modal-dialog modal-sm modal-frame modal-top">
+                                    <div class="modal-content rounded-5 text-center">
+                                        {% include "notes/delete/entry_confirm_delete.html" %}
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <p class="h5 text-center">You have not created any note entries yet</p>
+            {% endif %}
+
+
+        </div>
+    </div>
+</div>
+
+<p class="text-center display-3 m-3">
+    Objectives
+</p>
+
+<div class="card p-2 border-dark p-4">
+    <div class="row row-cols-sm-1 row-cols-md-2 row-cols-lg-2 g-4">
+        <div class="col">
+            <div class="container-fluid p-4">
+                <p class="text-center h1">
+                    Active
+                </p>
+                <div class="row row-cols-lg-1 row-cols-md-1 row-cols-sm-1 g-3">
+                    {% for objective in active_objectives %}
+                    <div class="col d-flex justify-content-center">
+                        <a class="text-center btn btn-outline-success position-relative"
+                            href="{{ objective.get_absolute_url }}">
+                            <p class="h5">
+                                {{ objective.name }}
+                            </p>
+                            <span
+                                class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-success px-2">
+                                {{ objective.end_date| date:"m/d/y" }}
+                            </span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            <div class="container-fluid p-4">
+                <p class="text-center h1">
+                    Overdue
+                </p>
+                <div class="row row-cols-lg-1 row-cols-md-1 row-cols-sm-1 g-3">
+                    {% for objective in overdue_objectives %}
+                    <div class="col d-flex justify-content-center">
+                        <a class="text-center btn btn-outline-danger position-relative"
+                            href="{{ objective.get_absolute_url }}">
+                            <p class="h5">
+                                {{ objective.name }}
+                            </p>
+                            <span
+                                class="position-absolute top-0 start-50 translate-middle badge rounded-pill bg-danger px-2">
+                                {{ objective.end_date |date:"m/d/y" }}
+                            </span>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

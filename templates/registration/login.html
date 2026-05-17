@@ -1,0 +1,82 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Iniciar sesión · EasyLearn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/login-page.css' %}" />
+</head>
+<body>
+  <div class="el-login">
+    <div class="el-login__bg-pattern" aria-hidden="true"></div>
+    <div class="el-login__orbs" aria-hidden="true">
+      <span class="el-login__orb el-login__orb--a"></span>
+      <span class="el-login__orb el-login__orb--b"></span>
+      <span class="el-login__orb el-login__orb--c"></span>
+    </div>
+
+    <header class="el-login__topbar">
+      <a href="{% url 'login' %}" class="el-login__brand-link" aria-label="EasyLearn — inicio">
+        <img
+          class="el-login__brand-logo"
+          src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
+          alt="EasyLearn"
+          width="200"
+          height="52"
+          decoding="async"
+        />
+      </a>
+      <span class="el-login__lang">ES</span>
+    </header>
+
+    <main class="el-login__main">
+      <div class="el-login__card">
+        <h1 class="el-login__title">Iniciar sesión</h1>
+        <p class="el-login__lead">Entra con tu cuenta institucional. Según tu rol verás el panel de estudiante, docente o administrador.</p>
+
+        <form method="post" action="{% url 'login' %}" novalidate>
+          {% csrf_token %}
+
+          {% if form.non_field_errors %}
+          <ul class="el-login__errors">
+            {% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+
+          <div class="el-login__field">
+            <label class="el-login__label" for="id_username">{{ form.username.label }}</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <ul class="el-login__field-errors">{% for err in form.username.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+            {% endif %}
+          </div>
+
+          <div class="el-login__field">
+            <label class="el-login__label" for="id_password">{{ form.password.label }}</label>
+            {{ form.password }}
+            {% if form.password.errors %}
+            <ul class="el-login__field-errors">{% for err in form.password.errors %}<li>{{ err }}</li>{% endfor %}</ul>
+            {% endif %}
+          </div>
+
+          <div class="el-login__row">
+            <label class="el-login__remember">
+              <input type="checkbox" name="remember_me" value="1" />
+              Recordarme en este equipo
+            </label>
+            <a class="el-login__link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+          </div>
+
+          <button class="el-login__submit" type="submit" id="login-button">Iniciar sesión</button>
+        </form>
+      </div>
+    </main>
+
+    <footer class="el-login__footer">EasyLearn · Sistema académico</footer>
+  </div>
+</body>
+</html>

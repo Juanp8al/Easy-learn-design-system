@@ -1,0 +1,57 @@
+{% load static %}
+<header class="app-header">
+  <div class="app-header__track">
+    <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get">
+      <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, tareas o recursos" }}</label>
+      <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, tareas, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" />
+    </form>
+    <div class="header-actions">
+      <span class="header-bell-slot" aria-hidden="true">
+        <svg class="header-bell-ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+        </svg>
+      </span>
+      <span class="header-actions__rule" aria-hidden="true"></span>
+      <div class="header-profile">
+        <button
+          type="button"
+          class="header-profile__trigger"
+          id="header-profile-trigger"
+          aria-expanded="false"
+          aria-haspopup="true"
+          aria-controls="header-profile-menu"
+          aria-label="Menú de cuenta: {{ student.get_full_name|default:student.username }}"
+        >
+          {% if student.profile.photo %}
+            <img class="header-profile__img" src="{{ student.profile.photo.url }}" alt="" width="40" height="40" decoding="async" />
+          {% else %}
+            <span class="header-profile__photo" aria-hidden="true">
+              {% if student.first_name or student.last_name %}
+                {{ student.first_name|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+              {% else %}
+                {{ student.username|slice:":2"|upper }}
+              {% endif %}
+            </span>
+          {% endif %}
+          <div class="header-profile__meta">
+            <div class="header-profile__name">{{ student.get_full_name|default:student.username }}</div>
+            <div class="header-profile__subtitle">{% if portal_role_label %}{{ portal_role_label }}{% else %}{{ student.profile.degree|default:"Estudiante" }}{% endif %}</div>
+          </div>
+          <span class="header-profile__chevron" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m6 9 6 6 6-6" />
+            </svg>
+          </span>
+        </button>
+        <div id="header-profile-menu" class="header-profile__dropdown" role="menu" hidden>
+          <a role="menuitem" class="header-profile__menu-link" href="{% url 'profile' %}">Ir a mi perfil</a>
+          <form class="header-profile__logout-form" method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" role="menuitem" class="header-profile__menu-link header-profile__menu-link--logout">Cerrar sesión</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>

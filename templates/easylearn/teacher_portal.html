@@ -1,0 +1,18 @@
+{% extends "easylearn/portal_layout.html" %}
+{% load static %}
+
+{% block title %}Panel docente · EasyLearn{% endblock %}
+{% block meta_description %}Portal docente EasyLearn — cursos asignados, entregas, comunicación e historial de calificaciones por asignatura.{% endblock %}
+
+{% block body_attrs %} data-easylearn-page="teacher"{% endblock %}
+
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_teacher.html" %}{% endblock %}
+
+{% block portal_canvas %}
+                <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta"></nav>
+                {% include "easylearn/includes/portal_teacher_dashboard.html" %}
+                {% include "easylearn/includes/portal_teacher_cursos.html" %}
+                {% include "easylearn/includes/portal_teacher_entregas.html" %}
+                {% include "easylearn/includes/portal_teacher_foros.html" %}
+                {% include "easylearn/includes/portal_teacher_rendimiento.html" %}
+{% endblock %}

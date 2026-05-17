@@ -1,0 +1,10 @@
+{% extends "easylearn/portal_layout.html" %}
+
+{% block portal_canvas %}
+                <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta dentro de EasyLearn"></nav>
+
+                {% include "easylearn/includes/portal_dashboard.html" %}
+                {% include "easylearn/includes/portal_cursos.html" %}
+                {% include "easylearn/includes/portal_calificaciones.html" %}
+                {% include "easylearn/includes/_portal_views_extra.html" %}
+{% endblock %}

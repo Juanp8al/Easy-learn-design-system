@@ -1,0 +1,16 @@
+{% extends "easylearn/portal_layout.html" %}
+{% load static %}
+
+{% block title %}Panel administrador · EasyLearn{% endblock %}
+{% block meta_description %}Portal administrador EasyLearn — usuarios, carreras, cursos ofertados, matrículas y períodos académicos.{% endblock %}
+
+{% block body_attrs %} data-easylearn-page="admin"{% endblock %}
+
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_admin.html" %}{% endblock %}
+
+{% block portal_canvas %}
+                <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta">
+                  <span>Inicio</span>
+                </nav>
+                {% include "easylearn/includes/portal_admin_dashboard.html" %}
+{% endblock %}

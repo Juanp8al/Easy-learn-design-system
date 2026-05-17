@@ -1,0 +1,72 @@
+<!-- accounts/profile.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+{% block content %}
+
+<button type="button" class="btn btn-sm btn-outline-danger m-1"   data-mdb-toggle="modal"
+    data-mdb-target="#delete_account_modal">
+    Delete Account
+</button>
+<div class="modal fade" id="delete_account_modal" tabindex="-1" aria-labelledby="delete_{{ request.user }}_label"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p class="h2 text-center">Delete Account</p>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Are you sure you want to delete your account {{ request.user.username }}?
+                </p>
+                <small class="text-danger">
+                    This action cannot be reversed and all your data will be lost
+                </small>
+                <a href="{% url 'delete_account' %}" class="btn btn-danger">Delete Account</a>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="container mt-4 mb-4 p-3 d-flex justify-content-center">
+    <div class="card p-4">
+        {% if request.user is user %}
+        <a class="btn btn-sm btn-outline-dark float-end m-2" href="{% url 'edit_profile' %}" title="">Edit Profile</a>
+        {% endif %}
+        <div class=" image d-flex flex-column justify-content-center align-items-center">
+            {% if profile.photo %}
+            <img src="{{ profile.photo.url }}" alt="..." height="100" width="100" />
+            {% else %}
+            <img src="{% static 'no-photo-icon.jpg' %}" alt=".." height="100" width="100">
+            {% endif %}
+            <span class="name mt-3">{{ student.get_full_name }}</span>
+            <span class="idd">@{{ student.get_username }}</span>
+            <div class="d-flex flex-row justify-content-center align-items-center gap-2">
+                <span class="text-muted">
+                    <small>{{ student.email }}</small>
+                </span>
+                <span>
+                    <i class="fa fa-copy"></i>
+                </span>
+            </div>
+            <div class="d-flex flex-row justify-content-center align-items-center mt-1">
+                <small class="fw-bold">{{ profile.degree }}</small>
+            </div>
+            <div class="px-2 rounded mt-2 date ">
+                <span class="join">Joined {{ user.date_joined.date }}</span>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="container my-4 p-3 justify-content-center">
+    <div class="card p-2 align-items-center mt-3">
+        <p class="h4">Courses</p>
+        {% for course in courses %}
+        <div class=" d-flex flex-column justify-content-center align-items-center p-2">
+            <a class="h5" href="{{ course.get_absolute_url }}">{{ course.name }}</a>
+            <small class="text-muted">{{ course.about }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock content %}

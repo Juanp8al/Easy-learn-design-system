@@ -1,0 +1,82 @@
+              <section id="view-teacher-dashboard" class="view is-visible view-dash-dg view-dash-mer" aria-labelledby="teacher-dash-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
+                  <h1 id="teacher-dash-title">Hola, {{ student.get_full_name|default:student.username }}</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Consulte los <strong>cursos que la institución le asignó</strong>, entregas por revisar y un resumen del período. Carreras, períodos y matrículas las gestiona administración.
+                  </p>
+                </header>
+
+                <div class="summary-row summary-row-dash summary-row--quad margin-b">
+                  <article class="summary-card summary-card--dg-gradient">
+                    <div class="summary-card__eyebrow">Próxima clase</div>
+                    <div class="summary-card__value">—</div>
+                    <div class="summary-card__sub summary-card__sub--academic">
+                      <span>El calendario institucional mostrará aquí su siguiente sesión.</span>
+                    </div>
+                    <span class="card-glass-link" style="opacity:0.72;cursor:default;">Calendario ›</span>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Cursos asignados</div>
+                    <div class="summary-card__value">{{ assigned_offering_count }}</div>
+                    <div class="summary-card__sub">{{ period_label }} · asignaturas donde es docente responsable</div>
+                    <button type="button" class="link-arrow-soft" data-goto="cursos" style="background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;text-align:left;">Ver mis cursos ›</button>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Entregas pendientes</div>
+                    <div class="summary-card__value">{{ pending_delivery_count }}</div>
+                    <div class="summary-card__sub">Por revisar o calificar</div>
+                    <button type="button" class="link-arrow-soft" data-goto="entregas" style="background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;text-align:left;">Ir a entregas ›</button>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Estudiantes activos</div>
+                    <div class="summary-card__value">{{ distinct_student_count }}</div>
+                    <div class="summary-card__sub">Matrícula vigente en sus cursos (estudiantes únicos)</div>
+                    <a class="link-arrow-soft" href="{% url 'admin:academia_enrollment_changelist' %}">Ver matrículas en administración ›</a>
+                  </article>
+                </div>
+
+                <p class="muted" style="margin:0 0 1rem;font-size:0.82rem;">
+                  Use el menú para <strong>Mis cursos</strong>, <strong>Entregas</strong>, <strong>Foros y avisos</strong> o <strong>Historial de calificaciones</strong>.
+                  <button type="button" class="link-arrow-soft" data-goto="cursos" style="background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;text-decoration:underline;">Abrir Mis cursos ›</button>
+                </p>
+
+                <div class="dashboard-grid dashboard-grid--dash-pair dashboard-grid--dash-mer">
+                    <div class="dg-mer-rail" role="region" aria-label="Resumen del día" style="grid-column:1/-1;max-width:100%;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;">
+                      <article class="widget widget-dg dg-mer-rail-card">
+                        <div class="mini-cal-head mini-cal-head-dg mini-cal-head--dash-soft">
+                          <h3>Tus cursos ofertados</h3>
+                        </div>
+                        <ul class="dg-mer-rail-list">
+                          {% for o in teaching_offerings|slice:":5" %}
+                          <li><strong>{{ o.code }}</strong> · {{ o.name|truncatechars:28 }}</li>
+                          {% empty %}
+                          <li class="muted">Sin cursos ofertados asignados aún.</li>
+                          {% endfor %}
+                        </ul>
+                        <p class="mini-cal-hint" role="note">Listado de sus asignaturas asignadas por la institución.</p>
+                      </article>
+                      <article class="widget widget-dg dg-mer-rail-card">
+                        <div class="mini-cal-head mini-cal-head-dg mini-cal-head--dash-soft">
+                          <h3>Resumen del curso</h3>
+                        </div>
+                        <ul class="dg-mer-rail-list dg-mer-rail-list--dense">
+                          <li>Estudiantes activos: <strong>{{ distinct_student_count }}</strong></li>
+                          <li>Cursos asignados: <strong>{{ assigned_offering_count }}</strong></li>
+                          <li>Entregas pendientes: <strong>{{ pending_delivery_count }}</strong></li>
+                          <li>Próxima clase: <strong>—</strong></li>
+                        </ul>
+                      </article>
+                      <article class="widget widget-dg dg-mer-rail-card">
+                        <div class="mini-cal-head mini-cal-head-dg mini-cal-head--dash-soft">
+                          <h3>Próximas fechas</h3>
+                        </div>
+                        <ul class="dg-mer-rail-list">
+                          <li>Cierre ensayo UX</li>
+                          <li>Apertura quiz heurístico</li>
+                          <li>Foro ergonomía · viernes</li>
+                        </ul>
+                      </article>
+                    </div>
+                </div>
+              </section>

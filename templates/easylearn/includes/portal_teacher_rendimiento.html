@@ -1,0 +1,95 @@
+              <section id="view-teacher-rendimiento" class="view view-dash-dg view-dash-mer" aria-labelledby="teacher-historial-calificaciones-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
+                  <h1 id="teacher-historial-calificaciones-title">Historial de calificaciones</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    El sistema aún <strong>no registra notas por actividad</strong> en base de datos; cuando el aula evaluativa esté enlazada, aquí verá promedios y alertas. Mientras tanto, esta vista muestra <strong>datos reales de matrícula</strong>: inscripciones a sus cursos ofertados y volumen de estudiantes por asignatura. El detalle de entregas sigue en <strong>Entregas</strong>.
+                  </p>
+                </header>
+
+                <div class="summary-row summary-row-dash summary-row--quad margin-b">
+                  <article class="summary-card summary-card--dg-gradient">
+                    <div class="summary-card__eyebrow">Matrículas activas</div>
+                    <div class="summary-card__value">{{ teacher_active_matricula_count }}</div>
+                    <div class="summary-card__sub">Inscripciones vigentes en todos sus cursos ofertados</div>
+                    <button type="button" class="link-arrow-soft" data-goto="cursos" style="background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;text-align:left;">Ver mis cursos ›</button>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Inscripciones (30 días)</div>
+                    <div class="summary-card__value">{{ teacher_recent_enrollment_30d }}</div>
+                    <div class="summary-card__sub">Altas o reinscripciones registradas en la última semana lectiva</div>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Estudiantes únicos</div>
+                    <div class="summary-card__value">{{ distinct_student_count }}</div>
+                    <div class="summary-card__sub">Personas distintas matriculadas en sus asignaturas</div>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Entregas por revisar</div>
+                    <div class="summary-card__value">{{ pending_delivery_count }}</div>
+                    <div class="summary-card__sub">Contador listo para conectar al módulo de actividades</div>
+                    <button type="button" class="link-arrow-soft" data-goto="entregas" style="background:none;border:none;padding:0;font:inherit;cursor:pointer;color:inherit;text-align:left;">Ir a entregas ›</button>
+                  </article>
+                </div>
+
+                <article class="panel panel--dg-chart dg-mer-aside margin-b" style="max-width:42rem;">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Estudiantes matriculados por asignatura</h2>
+                  </div>
+                  {% if teaching_offerings %}
+                  <div class="perf-chart perf-chart-dg" role="img" aria-label="Comparación del número de estudiantes activos por curso ofertado">
+                    {% for o in teaching_offerings %}
+                    {% widthratio o.active_student_count max_bar_students 100 as bar_pct %}
+                    <div class="perf-item">
+                      <div class="perf-bar-wrap">
+                        <div class="perf-bar perf-bar-dg" style="--h:{% if bar_pct %}{{ bar_pct }}{% else %}0{% endif %}">
+                          <span class="perf-score">{{ o.active_student_count }}</span>
+                        </div>
+                      </div>
+                      <span class="perf-label" title="{{ o.name }}">{{ o.code }}</span>
+                    </div>
+                    {% endfor %}
+                  </div>
+                  <p class="mini-cal-hint" style="padding:0 1.2rem 1rem;margin:0;">Altura proporcional al curso con más estudiantes matriculados en esta lista (máx. {{ max_bar_students }}).</p>
+                  {% else %}
+                  <p class="muted" style="padding:1rem 1.2rem;margin:0;">No tiene cursos ofertados como docente responsable. Cuando administración le asigne una asignatura, verá aquí la distribución de matrículas.</p>
+                  {% endif %}
+                </article>
+
+                <article class="panel panel--dg-sheet dg-mer-main margin-b">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Historial de inscripciones</h2>
+                    <a class="btn-sm btn-outline" href="{% url 'admin:academia_enrollment_changelist' %}?offering__teacher__id__exact={{ student.id }}&status__exact=active">Abrir en administración ›</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft">
+                      <thead>
+                        <tr>
+                          <th>Fecha</th>
+                          <th>Estudiante</th>
+                          <th>Curso</th>
+                          <th>Código</th>
+                          <th>Programa</th>
+                          <th>Período</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for enr in recent_teaching_enrollments %}
+                        <tr data-search="{{ enr.student.get_full_name|default:enr.student.username|lower }} {{ enr.offering.name|lower }} {{ enr.offering.code|lower }}">
+                          <td>{{ enr.enrolled_at|date:"j M Y, H:i" }}</td>
+                          <td><strong>{{ enr.student.get_full_name|default:enr.student.username }}</strong></td>
+                          <td>{{ enr.offering.name|truncatechars:32 }}</td>
+                          <td><span class="tb-course">{{ enr.offering.code }}</span></td>
+                          <td>{{ enr.offering.program.name|truncatechars:24 }}</td>
+                          <td>{{ enr.offering.period.name }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                          <td colspan="6" class="muted">No hay inscripciones activas en sus cursos. El historial se llenará cuando los estudiantes queden matriculados en la administración del sitio.</td>
+                        </tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>
