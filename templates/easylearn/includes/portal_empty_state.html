@@ -4,9 +4,9 @@
   <p class="portal-empty-state__text">{{ empty_text }}</p>
   {% if empty_cta_label %}
     {% if empty_cta_goto %}
-    <button type="button" class="btn-main" data-goto="{{ empty_cta_goto }}">{{ empty_cta_label }}</button>
+    <button type="button" class="btn-cta-outline" data-goto="{{ empty_cta_goto }}">{{ empty_cta_label }}</button>
     {% else %}
-    <a class="btn-main" href="{{ empty_cta_href|default:'#' }}">{{ empty_cta_label }}</a>
+    <a class="btn-cta-outline" href="{{ empty_cta_href|default:'#' }}">{{ empty_cta_label }}</a>
     {% endif %}
   {% endif %}
 </div>

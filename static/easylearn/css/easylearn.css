@@ -4,7 +4,8 @@
 
 :root {
   /* —— EasyLearn Design System (Informe 2) —— */
-  --ds-blue-900: #1e3a8a;
+  /* Navy universitario (shell sidebar/header) */
+  --ds-blue-900: #171f4d;
   --ds-green-500: #10b981;
   --ds-orange-500: #f59e0b;
   --ds-neutral-50: #f8fafc;
@@ -17,9 +18,9 @@
 
   /* Shell · navegación y estructura */
   --sidebar-deep: var(--ds-blue-900);
-  --sidebar-active-bg: #2d4cad;
+  --sidebar-active-bg: #2a3f7a;
   --header-bg: var(--ds-blue-900);
-  --sidebar-elevated: #243d96;
+  --sidebar-elevated: #1d2b72;
 
   /* Primario · éxito · CTA */
   --success-700: #059669;
@@ -84,8 +85,8 @@
   --sidebar-logo-inset: calc(var(--sidebar-link-pad-x) + (var(--sidebar-icon-col) - 20px) / 2);
   --widgets-w: 300px;
 
-  --nav-gradient-high: #2746a3;
-  --nav-gradient-low: #152a66;
+  --nav-gradient-high: #1d2b72;
+  --nav-gradient-low: #0e1538;
 
   /* Tablero centrado: header + contenido comparten la misma columna (misma asimetría = barra + tablero a la izq.) */
   --main-padding-x: 0.45rem;
@@ -1908,6 +1909,42 @@ table.sheet tbody tr:hover {
   animation: el-btn-spin 0.65s linear infinite;
 }
 
+/* CTA verde outline (p. ej. Ir al aula) — igual que Entregar en tabla */
+.btn-cta-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  min-height: var(--btn-height);
+  padding: 0 1.15rem;
+  border-radius: var(--radius-btn);
+  border: 2px solid rgb(16 185 129 / 0.55);
+  background: #fff;
+  color: #047857;
+  font-weight: 700;
+  font-size: 0.88rem;
+  line-height: 1.2;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.btn-cta-outline:hover {
+  background: var(--cta-primary);
+  color: #fff;
+  border-color: var(--cta-primary);
+  box-shadow: 0 4px 14px rgb(16 185 129 / 0.28);
+}
+
+.btn-cta-outline:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
 @keyframes el-btn-spin {
   to {
     transform: rotate(360deg);
@@ -3402,14 +3439,14 @@ table.sheet tbody tr:hover {
       rgb(255 255 255 / 0.04) 0 1px,
       transparent 1px 7px
     ),
-    linear-gradient(125deg, var(--sidebar-deep) 8%, var(--nav-gradient-high) 55%, #2e4abf 100%);
+    linear-gradient(125deg, var(--sidebar-deep) 8%, var(--nav-gradient-high) 55%, #243d7a 100%);
 }
 
 .course-catalog-card__pattern--b {
   background-image:
     linear-gradient(-25deg, transparent 55%, rgb(255 255 255 / 0.06) 55%, rgb(255 255 255 / 0.06) 56%, transparent 56%),
     repeating-linear-gradient(82deg, rgb(255 255 255 / 0.03) 0 2px, transparent 2px 9px),
-    linear-gradient(140deg, #1a2749 0%, #2a4580 50%, var(--sidebar-deep) 100%);
+    linear-gradient(140deg, #0e1538 0%, #1d2b72 50%, var(--sidebar-deep) 100%);
 }
 
 .course-catalog-card__pattern--c {
@@ -5649,13 +5686,15 @@ table.sheet.sheet--genesys tbody tr:hover td {
     grid-column: 1;
     grid-row: 1;
     min-width: 0;
+    max-width: 100%;
   }
 
   .view-dash-dg .dashboard-grid--dash-pair > .dg-dash-calendario {
     grid-column: 2;
     grid-row: 1;
-    align-self: stretch;
-    height: auto;
+    align-self: start;
+    width: 100%;
+    max-width: var(--widgets-w);
     min-height: 0;
     display: flex;
     flex-direction: column;
@@ -6819,6 +6858,7 @@ form.header-search {
   color: var(--text-secondary);
 }
 
+.portal-empty-state .btn-cta-outline,
 .portal-empty-state .btn-main,
 .portal-empty-state .btn-outline {
   margin-top: 0.35rem;
@@ -6828,6 +6868,10 @@ form.header-search {
   padding: 0;
   border: none;
   vertical-align: top;
+}
+
+.view-dash-dg .dg-dash-actividades .portal-empty-state {
+  padding: 1.35rem 1.15rem 1.5rem;
 }
 
 /* Barra KPI institucional (admin) · alias histórico mer-* */

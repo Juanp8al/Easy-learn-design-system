@@ -1,4 +1,4 @@
-{% load static %}
+﻿{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -12,31 +12,26 @@
 </head>
 <body>
   <div class="el-login">
-    <div class="el-login__bg-pattern" aria-hidden="true"></div>
-    <div class="el-login__orbs" aria-hidden="true">
-      <span class="el-login__orb el-login__orb--a"></span>
-      <span class="el-login__orb el-login__orb--b"></span>
-      <span class="el-login__orb el-login__orb--c"></span>
-    </div>
+    <div class="el-login__scene">
+      <div class="el-login__orbs" aria-hidden="true">
+        <span class="el-login__orb el-login__orb--a"></span>
+        <span class="el-login__orb el-login__orb--b"></span>
+        <span class="el-login__orb el-login__orb--c"></span>
+        <span class="el-login__orb el-login__orb--d"></span>
+      </div>
 
-    <header class="el-login__topbar">
-      <a href="{% url 'login' %}" class="el-login__brand-link" aria-label="EasyLearn — inicio">
-        <img
-          class="el-login__brand-logo"
-          src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
-          alt="EasyLearn"
-          width="200"
-          height="52"
-          decoding="async"
-        />
-      </a>
-      <span class="el-login__lang">ES</span>
-    </header>
-
-    <main class="el-login__main">
       <div class="el-login__card">
-        <h1 class="el-login__title">Iniciar sesión</h1>
-        <p class="el-login__lead">Entra con tu cuenta institucional. Según tu rol verás el panel de estudiante, docente o administrador.</p>
+        <header class="el-login__head">
+          <img
+            class="el-login__logo"
+            src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
+            alt=""
+            width="340"
+            height="120"
+            decoding="async"
+          />
+          <h1 class="el-login__sr-only">Iniciar sesión</h1>
+        </header>
 
         <form method="post" action="{% url 'login' %}" novalidate>
           {% csrf_token %}
@@ -48,16 +43,28 @@
           {% endif %}
 
           <div class="el-login__field">
-            <label class="el-login__label" for="id_username">{{ form.username.label }}</label>
+            <label class="el-login__label" for="id_username">Usuario o correo</label>
             {{ form.username }}
             {% if form.username.errors %}
             <ul class="el-login__field-errors">{% for err in form.username.errors %}<li>{{ err }}</li>{% endfor %}</ul>
             {% endif %}
           </div>
 
-          <div class="el-login__field">
-            <label class="el-login__label" for="id_password">{{ form.password.label }}</label>
-            {{ form.password }}
+          <div class="el-login__field el-login__field--password">
+            <label class="el-login__label" for="id_password">Contraseña</label>
+            <div class="el-login__password-wrap">
+              {{ form.password }}
+              <button
+                type="button"
+                class="el-login__toggle-pw"
+                id="toggle-password"
+                aria-label="Mostrar contraseña"
+                aria-pressed="false"
+              >
+                <span class="el-login__pw-icon el-login__pw-icon--show" aria-hidden="true">{% include "easylearn/includes/icons/icon_eye.html" %}</span>
+                <span class="el-login__pw-icon el-login__pw-icon--hide" aria-hidden="true">{% include "easylearn/includes/icons/icon_eye_off.html" %}</span>
+              </button>
+            </div>
             {% if form.password.errors %}
             <ul class="el-login__field-errors">{% for err in form.password.errors %}<li>{{ err }}</li>{% endfor %}</ul>
             {% endif %}
@@ -66,7 +73,7 @@
           <div class="el-login__row">
             <label class="el-login__remember">
               <input type="checkbox" name="remember_me" value="1" />
-              Recordarme en este equipo
+              Recordarme
             </label>
             <a class="el-login__link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
           </div>
@@ -74,9 +81,21 @@
           <button class="el-login__submit" type="submit" id="login-button">Iniciar sesión</button>
         </form>
       </div>
-    </main>
-
-    <footer class="el-login__footer">EasyLearn · Sistema académico</footer>
+    </div>
   </div>
+
+  <script>
+    (function () {
+      var btn = document.getElementById("toggle-password");
+      var input = document.getElementById("id_password");
+      if (!btn || !input) return;
+      btn.addEventListener("click", function () {
+        var show = input.type === "password";
+        input.type = show ? "text" : "password";
+        btn.setAttribute("aria-pressed", show ? "true" : "false");
+        btn.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
+      });
+    })();
+  </script>
 </body>
 </html>
