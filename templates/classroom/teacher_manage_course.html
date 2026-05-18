@@ -1,0 +1,83 @@
+{% extends "classroom/layout.html" %}
+
+{% block classroom_title %}Gestionar · {{ offering.name }}{% endblock %}
+
+{% block classroom_content %}
+<header class="hero hero--dense">
+  <h1>{{ offering.name }}</h1>
+  <p>{{ offering.code }} · {{ offering.period.name }} · Grupo {{ offering.group }}</p>
+</header>
+
+<article class="panel margin-b">
+  <div class="panel__head panel__head--dash-soft">
+    <h2>Semanas del curso</h2>
+  </div>
+  <div class="data-table-wrap">
+    <table class="sheet">
+      <thead>
+        <tr><th>Semana</th><th>Tema</th><th>Estado</th><th>Materiales</th><th>Actividades</th></tr>
+      </thead>
+      <tbody>
+        {% for w in weeks %}
+        <tr>
+          <td>{{ w.week_number }}</td>
+          <td>{{ w.title }}</td>
+          <td>{{ w.get_status_display }}</td>
+          <td>{{ w.material_count }}</td>
+          <td>{{ w.activity_count }}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="muted">Sin semanas publicadas. Solicite apoyo a secretaría académica si el curso debería tener contenido.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<div class="bottom-pair bottom-pair-dash margin-b">
+  <article class="panel">
+    <div class="panel__head panel__head--dash-soft"><h2>Publicar aviso</h2></div>
+    <form method="post" style="padding:0 1rem 1rem;">
+      {% csrf_token %}
+      <input type="hidden" name="form_type" value="announcement" />
+      {{ announcement_form.as_p }}
+      <button type="submit" class="btn-main margin-t">Publicar aviso</button>
+    </form>
+  </article>
+  <article class="panel">
+    <div class="panel__head panel__head--dash-soft"><h2>Avisos recientes</h2></div>
+    <ul style="list-style:none;margin:0;padding:0 1rem 1rem;">
+      {% for ann in announcements %}
+      <li style="margin-bottom:0.5rem;"><strong>{{ ann.title }}</strong> · {{ ann.published_at|date:"j M Y" }}<br><span class="muted">{{ ann.content|truncatechars:80 }}</span></li>
+      {% empty %}
+      <li class="muted">Sin avisos.</li>
+      {% endfor %}
+    </ul>
+  </article>
+</div>
+
+<article class="panel margin-b">
+  <div class="panel__head panel__head--dash-soft"><h2>Foros por semana</h2></div>
+  <div class="data-table-wrap">
+    <table class="sheet">
+      <thead><tr><th>Foro</th><th>Semana</th><th>Estado</th><th>Acción</th></tr></thead>
+      <tbody>
+        {% for forum in forums %}
+        <tr>
+          <td>{{ forum.title }}</td>
+          <td>Semana {{ forum.week.week_number }}</td>
+          <td><span class="badge-txt badge-txt--{% if forum.status == 'open' %}ok{% else %}muted{% endif %}">{{ forum.get_status_display }}</span></td>
+          <td>
+            <form method="post" action="{% url 'classroom:teacher_toggle_forum' forum.id %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn-sm btn-outline">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button></form>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="4" class="muted">No hay foros en este curso.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<p><a class="btn-secondary" href="{% url 'dashboard_teacher' %}#cursos">← Volver a Mis cursos</a></p>
+{% endblock %}

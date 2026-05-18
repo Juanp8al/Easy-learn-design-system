@@ -1,0 +1,84 @@
+{% extends "classroom/layout.html" %}
+
+{% block classroom_title %}{{ current_offering.name }} · EasyLearn{% endblock %}
+
+{% block classroom_content %}
+<header class="course-hero course-hero--compact">
+  <div class="course-hero__lead">
+    <h1 class="course-hero__title">{{ current_offering.name }}</h1>
+    <dl class="course-hero__meta">
+      <div class="course-hero__meta-item"><dt>Docente</dt><dd>{% if current_offering.teacher %}{{ current_offering.teacher.get_full_name|default:current_offering.teacher.username }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</dd></div>
+      <div class="course-hero__meta-item"><dt>Código</dt><dd>{{ current_offering.code }}</dd></div>
+      <div class="course-hero__meta-item"><dt>Período</dt><dd>{{ current_offering.period.name }}</dd></div>
+    </dl>
+  </div>
+</header>
+
+{% if course_schedule_hint %}
+<p class="muted margin-b" style="font-size:0.9rem;">{{ course_schedule_hint }}</p>
+{% endif %}
+
+<div class="course-kpi-row margin-b">
+  <article class="course-kpi course-kpi--dg-gradient">
+    <span class="course-kpi__label">Semana actual</span>
+    <strong class="course-kpi__value">{% if current_week_highlight %}S. {{ current_week_highlight.week_number }}{% else %}—{% endif %}</strong>
+    <span class="course-kpi__hint">{% if current_week_highlight %}{{ current_week_highlight.title|truncatechars:32 }}{% else %}Sin módulo en curso{% endif %}</span>
+  </article>
+  <article class="course-kpi">
+    <span class="course-kpi__label">Entregas</span>
+    <strong class="course-kpi__value">{% if course_stats %}{{ course_stats.submissions_count }}<span class="course-kpi__slash">/</span>{{ course_stats.activities_total }}{% else %}—{% endif %}</strong>
+    <span class="course-kpi__hint">Registradas en el aula</span>
+  </article>
+  <article class="course-kpi">
+    <span class="course-kpi__label">Promedio</span>
+    <strong class="course-kpi__value course-kpi__value--ok">{% if course_stats.average_score %}{{ course_stats.average_score|floatformat:1 }}{% else %}—{% endif %}</strong>
+    <span class="course-kpi__hint">Actividades calificadas</span>
+  </article>
+</div>
+
+<div class="course-layout course-layout--el margin-t">
+  <div class="course-layout__main">
+    <div class="course-module-grid course-module-grid--rect" role="list">
+      {% for week in classroom_weeks %}
+      <div class="course-module-cell course-module-cell--{% if week.status == 'completed' %}done{% elif week.status == 'in_progress' %}current{% elif week.status == 'locked' %}pend{% else %}neutral{% endif %}" role="listitem">
+        {% if week.status != 'locked' %}
+        <a class="course-module-cell__tile course-module-cell__tile--action" href="{% url 'classroom:week_detail' current_offering.id week.week_number %}" title="{{ week.title }}">
+          <span class="course-module-cell__surface" aria-hidden="true"><span class="course-catalog-card__pattern course-catalog-card__pattern--{% cycle 'a' 'b' 'c' %}"></span></span>
+          {% if week.status == 'completed' %}<span class="course-module-cell__badge course-module-cell__badge--done" aria-hidden="true">✓</span>
+          {% elif week.status == 'in_progress' %}<span class="course-module-cell__badge course-module-cell__badge--play" aria-hidden="true">▶</span>{% endif %}
+        </a>
+        {% else %}
+        <span class="course-module-cell__tile"><span class="course-module-cell__badge course-module-cell__badge--lock" aria-hidden="true">🔒</span></span>
+        {% endif %}
+        <span class="course-module-cell__caption">Semana {{ week.week_number }}</span>
+        <span class="course-module-cell__status">{{ week.get_status_display }} · {{ week.title|truncatechars:28 }}</span>
+      </div>
+      {% empty %}
+      <p class="muted" style="grid-column:1/-1;padding:1rem;">Este curso aún no tiene semanas publicadas.</p>
+      {% endfor %}
+    </div>
+  </div>
+  <aside class="course-layout__aside">
+    {% if course_due_today %}
+    <article class="panel panel--dg-events margin-b">
+      <div class="panel__head panel__head--dash-soft"><h2>Entregas hoy</h2></div>
+      <ul class="course-reminder-list" style="list-style:none;margin:0;padding:0 1rem 1rem;">
+        {% for item in course_due_today %}
+        <li style="margin-bottom:0.5rem;"><a href="{% url 'classroom:activity_submit' item.activity.id %}">{{ item.activity.title }}</a> · <span class="badge-txt badge-txt--{{ item.badge }}">{{ item.status_label }}</span></li>
+        {% endfor %}
+      </ul>
+    </article>
+    {% endif %}
+    <article class="panel panel--dg-events">
+      <div class="panel__head panel__head--dash-soft"><h2>Avisos del docente</h2></div>
+      <ul class="course-reminder-list" style="list-style:none;margin:0;padding:0 1rem 1rem;">
+        {% for ann in course_announcements %}
+        <li style="margin-bottom:0.65rem;"><strong>{{ ann.title }}</strong><br><span class="muted">{{ ann.published_at|date:"j M Y" }}</span></li>
+        {% empty %}
+        <li class="muted">Sin avisos recientes.</li>
+        {% endfor %}
+      </ul>
+    </article>
+  </aside>
+</div>
+{% endblock %}

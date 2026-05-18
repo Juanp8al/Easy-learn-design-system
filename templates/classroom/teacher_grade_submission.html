@@ -1,0 +1,26 @@
+{% extends "easylearn/portal_layout.html" %}
+
+{% block title %}Calificar entrega · EasyLearn{% endblock %}
+{% block body_attrs %} data-easylearn-page="teacher"{% endblock %}
+
+{% block portal_canvas %}
+<article class="panel margin-b" style="max-width:40rem;margin:1rem auto;">
+  <div class="panel__head panel__head--dash-soft">
+    <h1>Calificar entrega</h1>
+  </div>
+  <div style="padding:0 1rem 1rem;">
+    <p><strong>{{ submission.student.get_full_name|default:submission.student.username }}</strong></p>
+    <p class="muted">{{ submission.activity.title }} · {{ offering.code }} · Semana {{ submission.activity.week.week_number }}</p>
+    {% if submission.file %}<p><a href="{{ submission.file.url }}">Descargar archivo entregado</a></p>{% endif %}
+    {% if submission.comment %}<p>{{ submission.comment }}</p>{% endif %}
+    <form method="post" class="margin-t">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <div class="task-actions">
+        <button type="submit" class="btn-main">Guardar calificación</button>
+        <a class="btn-secondary" href="{% url 'dashboard_teacher' %}#entregas">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</article>
+{% endblock %}

@@ -1,0 +1,10 @@
+<nav class="breadcrumbs" aria-label="Ruta dentro del aula">
+  {% for crumb in breadcrumbs %}
+    {% if not forloop.first %}<span class="sep" aria-hidden="true">›</span>{% endif %}
+    {% if crumb.url %}
+      <a href="{{ crumb.url }}">{{ crumb.label }}</a>
+    {% else %}
+      <span>{{ crumb.label }}</span>
+    {% endif %}
+  {% endfor %}
+</nav>
