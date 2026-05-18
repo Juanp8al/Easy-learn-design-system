@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 from django.conf import settings
 from django.core.mail import EmailMessage
 from django.template.loader import get_template
@@ -10,6 +11,8 @@ from django.db.models import Q
 from accounts.decorators import role_required
 from accounts.models import Student
 from academia.models import AcademicPeriod, Enrollment
+from classroom.context import build_grades_context
+from classroom.portal import build_student_portal_context
 from notes.models import *
 from notes.forms import *
 from glossary.models import *
@@ -51,25 +54,31 @@ def dashboard(request):
     )
     academic_enrollment_count = academic_enrollments.count()
     current_period = AcademicPeriod.objects.filter(is_current=True).first()
-    pending_activity_count = active_objectives.count() + overdue_objectives.count()
+    grades_ctx = build_grades_context(student)
+    portal_ctx = build_student_portal_context(student)
 
     template_path = "easylearn/student_portal.html"
     context = {
         "student": student,
+        "header_search_action": reverse("notes:dashboard"),
+        "header_search_placeholder": "Buscar en el tablero: cursos, actividades…",
+        "header_search_label": "Filtrar contenido del portal",
         "latest_entries": latest_entries,
         "courses": courses,
         "active_objectives": active_objectives,
         "overdue_objectives": overdue_objectives,
         "academic_enrollments": academic_enrollments,
         "academic_enrollment_count": academic_enrollment_count,
-        "pending_activity_count": pending_activity_count,
         "current_period": current_period,
+        **grades_ctx,
+        **portal_ctx,
     }
     return render(request, template_path, context)
 
 
 # course detail
 @login_required
+@role_required(Student.Role.STUDENT)
 def course_detail(request, id, slug):
     student = request.user
     course = get_object_or_404(Course, id=id, slug=slug, student_id=student.id)
@@ -85,6 +94,7 @@ def course_detail(request, id, slug):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def topic_detail(request, id, slug):
     student = request.user
     topic = get_object_or_404(Topic, id=id, slug=slug, course__student_id=student.id)
@@ -102,6 +112,7 @@ def topic_detail(request, id, slug):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def subtopic_detail(request, id, slug):
     student = request.user
     subtopic = get_object_or_404(
@@ -119,6 +130,7 @@ def subtopic_detail(request, id, slug):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def entry_detail(request, id, slug):
     student = request.user
     entry = get_object_or_404(
@@ -143,6 +155,7 @@ create views
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def create_course(request):
     student = request.user
     if request.method != "POST":
@@ -161,6 +174,7 @@ def create_course(request):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def create_topic(request, course_id):
     student = request.user
     course = get_object_or_404(Course, id=course_id, student_id=student.id)
@@ -189,6 +203,7 @@ def create_topic(request, course_id):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def create_subtopic(request, topic_id):
     student = request.user
     topic = get_object_or_404(Topic, id=topic_id, course__student_id=student.id)
@@ -217,6 +232,7 @@ def create_subtopic(request, topic_id):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def create_entry(request, subtopic_id):
     student = request.user
     subtopic = get_object_or_404(
@@ -252,6 +268,7 @@ update views
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def update_course(request, course_id):
     course = Course.objects.get(id=course_id)
     if request.method != "POST":
@@ -269,6 +286,7 @@ def update_course(request, course_id):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def update_topic(request, topic_id):
     topic = Topic.objects.get(id=topic_id)
     if request.method != "POST":
@@ -285,6 +303,7 @@ def update_topic(request, topic_id):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def update_subtopic(request, subtopic_id):
     subtopic = SubTopic.objects.get(id=subtopic_id)
     if request.method != "POST":
@@ -301,6 +320,7 @@ def update_subtopic(request, subtopic_id):
 
 
 @login_required
+@role_required(Student.Role.STUDENT)
 def update_entry(request, entry_id):
     entry = Entry.objects.get(id=entry_id)
     if request.method != "POST":
@@ -323,6 +343,7 @@ delete views
 
 # delete course view
 @login_required
+@role_required(Student.Role.STUDENT)
 def delete_course(request, course_id):
     student = request.user
     course = Course.objects.get(id=course_id, student_id=student.id)
@@ -338,6 +359,7 @@ def delete_course(request, course_id):
 
 # delete topic view
 @login_required
+@role_required(Student.Role.STUDENT)
 def delete_topic(request, topic_id):
     student = request.user
     topic = Topic.objects.get(id=topic_id, course__student_id=student.id)
@@ -352,6 +374,7 @@ def delete_topic(request, topic_id):
 
 # delete subtopic view
 @login_required
+@role_required(Student.Role.STUDENT)
 def delete_subtopic(request, subtopic_id):
     student = request.user
     subtopic = SubTopic.objects.get(
@@ -370,6 +393,7 @@ def delete_subtopic(request, subtopic_id):
 
 # delete entry view
 @login_required
+@role_required(Student.Role.STUDENT)
 def delete_entry(request, entry_id):
     student = request.user
     entry = Entry.objects.get(

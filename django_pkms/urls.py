@@ -5,10 +5,14 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import RedirectView
 
+from accounts.views import design_system
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("accounts/", include("accounts.urls")),
+    path("design-system/", design_system, name="design_system"),
+    path("aula/", include("classroom.urls")),
     path("", include("notes.urls")),
     path(
         "",
