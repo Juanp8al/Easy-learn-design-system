@@ -20,7 +20,7 @@ def student_2fa_photo_path(instance, filename):
 # student model
 class Student(AbstractUser):
     """
-    Usuario del sistema EasyLearn (MER: Rol / Usuario).
+    Usuario del sistema EasyLearn. El rol determina el panel tras iniciar sesión.
     El rol determina el panel tras iniciar sesión.
     """
 
@@ -57,7 +57,7 @@ class Student(AbstractUser):
         return "notes:dashboard"
 
     def save(self, *args, **kwargs):
-        # Django admin exige is_staff; el rol "admin" del MER no lo activaba solo.
+        # Django admin exige is_staff para el rol administrador institucional.
         if self.is_superuser or self.role == self.Role.ADMIN:
             self.is_staff = True
         elif not self.is_superuser:
@@ -116,3 +116,41 @@ class Profile(models.Model):
 
     class Meta:
         ordering = ["student"]
+
+
+class UserNotification(models.Model):
+    """Aviso en campana del portal (calificación, fecha, aviso de curso)."""
+
+    class Kind(models.TextChoices):
+        GRADE = "grade", "Nueva calificación"
+        DUE_DATE = "due_date", "Cambio de fecha"
+        ANNOUNCEMENT = "announcement", "Aviso"
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="portal_notifications",
+        verbose_name="Usuario",
+    )
+    kind = models.CharField(
+        max_length=16,
+        choices=Kind.choices,
+        db_index=True,
+    )
+    title = models.CharField(max_length=255)
+    message = models.TextField(blank=True)
+    link = models.CharField("Enlace", max_length=500, blank=True)
+    read_at = models.DateTimeField("Leída", null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Notificación del portal"
+        verbose_name_plural = "Notificaciones del portal"
+
+    def __str__(self):
+        return f"{self.get_kind_display()}: {self.title}"
+
+    @property
+    def is_unread(self):
+        return self.read_at is None

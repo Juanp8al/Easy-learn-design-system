@@ -8,6 +8,8 @@ from django.contrib.auth.forms import (
     AuthenticationForm,
 )
 from django.conf import settings
+from academia.models import Program
+
 from .models import *
 
 
@@ -45,9 +47,29 @@ class StudentRegistrationForm(UserCreationForm):
 
 # form for editing a user object
 class StudentUpdateForm(forms.ModelForm):
+    academic_program = forms.ModelChoiceField(
+        queryset=Program.objects.order_by("name"),
+        required=False,
+        label="Carrera / programa",
+        empty_label="Sin carrera asignada",
+    )
+    academic_semester = forms.IntegerField(
+        required=False,
+        min_value=1,
+        max_value=20,
+        label="Semestre académico",
+    )
+
     class Meta:
         model = Student
-        fields = ["username", "first_name", "last_name", "email"]
+        fields = [
+            "username",
+            "first_name",
+            "last_name",
+            "email",
+            "academic_program",
+            "academic_semester",
+        ]
 
     def clean_email(self):
         data = self.cleaned_data["email"]

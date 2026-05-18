@@ -16,6 +16,7 @@ urlpatterns = [
     ),
     # profile urls
     path("profile/edit/", edit_profile, name="edit_profile"),
+    path("notifications/read/", notifications_mark_read, name="notifications_mark_read"),
     path("profile/", profile, name="profile"),
     path("profile/<int:user_id>/<username>/", profile, name="profile"),
     path("delete/", delete_account, name="delete_account"),
