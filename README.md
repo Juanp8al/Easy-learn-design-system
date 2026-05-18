@@ -1,79 +1,85 @@
-# Knowledge Management System (KMS) for Students
+# EasyLearn — LMS universitario
 
-This is a Django-based web application designed to help students organize their notes, store important terms, and set revision goals. It is a knowledge management system aimed at improving the learning experience of students by streamlining the management of academic study materials through an easy to use interface.
+Plataforma Django que conecta **configuración institucional → aula docente → cursado estudiante**, con apuntes personales separados en **Repaso**.
 
-Check out the Django application [here](https://www.pkms.live/)
+> **Resumen:** Conectar el flujo semana → actividad → entrega → nota en el aula, dejar los apuntes en Repaso (`notes`), y usar el mismo shell visual en los tres roles — eso eleva el proyecto de demo a LMS profesional.
 
-## Features
+Repositorio: [Easy-learn-design-system](https://github.com/Juanp8al/Easy-learn-design-system).
 
-- **Multi-user support**: Each user can create and customize their own profile, and all notes and associated data are unique to each user, ensuring that each user's data is kept private and secure.
-- **Robust authentication system**: Users can securely create and access their accounts, reset their passwords, and recover their accounts in case of any mishaps.
-- **Customizability**: Users can personalize their profiles with a variety of settings, such as changing their profile picture or choosing a preferred color scheme.
-- **Dashboard**: Users can view their courses, the latest note entries and both active and overdue revision objectives on a centralized dashboard.
-- **Note taking and organization**: Users can take and store notes hierarchically, starting with the course, followed by the topic, then subtopic, and finally, individual entries. This hierarchical structure allows for easy navigation and quick access to notes.
-- **Glossary**: Users can store important terms and definitions for different courses, making it easier to study and review key concepts.
-- **Revision planning**: Users can set revision goals and deadlines and track their progress, helping them stay on top of their studies and achieve their academic goals.
-- **Note sharing**: Users can share their notes with others via email, making it easy to share notes with friends and family.
-- **Responsive UI**: The application is designed to work on different devices and screen sizes, ensuring a consistent and user-friendly experience across all platforms.
+## Requisitos
 
+- Python 3.10+
+- pip
 
-## Requirements
-
-To run this application, you need:
-
-- Python 3.10.8 or later
-- PostgreSQL database (version 11 or later)
-- Django 4.0 or later
-- A modern web browser
-
-## Installation
-
-1. Clone this repository to your local machine:
+## Cómo correr el proyecto
 
 ```bash
-git clone https://github.com/nafdev01/django_pkms.git
-```
-
-2. Install the required dependencies:
-```bash
+cd "Easy learn design system"
+python -m venv .venv
+.venv\Scripts\activate          # Windows
 pip install -r requirements.txt
-```
-3. Create the database and apply the migrations:
-```bash
-python manage.py makemigrations
 python manage.py migrate
-```
-4. Start the development server:
-```bash
+python manage.py seed_demo      # datos de prueba (opcional)
 python manage.py runserver
 ```
 
-5. Open your web browser and go to http://localhost:8000/ to access the application.
+Abrir: http://127.0.0.1:8000/
 
-#### _Note_
-_It helps to create aliases for common shell commands to ease update and troubleshooting processes and reduce repetition of commands e.g_
+En desarrollo, los archivos subidos se sirven desde `media/` (entregas y materiales).
+
+## Roles de prueba (`seed_demo`)
+
+Contraseña para todos: **`demo1234`**
+
+| Usuario | Rol | Panel |
+|---------|-----|--------|
+| `estudiante1` | Estudiante | `/dashboard` |
+| `estudiante2` | Estudiante | `/dashboard` |
+| `prof.demo` | Docente | `/accounts/panel/docente/` |
+| `admin.demo` | Administrador | `/accounts/panel/administrador/` |
+
+Comandos útiles:
+
 ```bash
-alias serve="python manage.py runserver"
-alias migrate="python manage.py makemigrations && python manage.py migrate"
-alias pkms="sudo service postgresql start && cd ~/Code/django_pkms/ && source ~/Code/django_pkms/.venv/bin/activate && serve"
-alias dshell="python manage.py shell"
+python manage.py seed_demo              # período, 2 cursos, matrículas, 1 semana con actividad
+python manage.py seed_classroom --weeks 1 --force
+python manage.py check
+python manage.py test classroom accounts
 ```
 
-## Usage
+## Estructura de apps
 
-1. Register a new account or login to an existing one.
-2. Customize your profile (e.g., upload a profile picture, add your full name and email, and update course details).
-3. Add new notes and organize them by course, topic, and subtopic.
-4. Store important terms and definitions in the glossary section.
-5. Set revision objectives and deadlines for each of them.
-6. Share your notes with others via email.
-7. Log out when you are done.
+| App | Responsabilidad |
+|-----|-----------------|
+| **academia** | Carreras, períodos, cursos ofertados, matrículas |
+| **classroom** | Aula: semanas, materiales, actividades, entregas, notas, avisos |
+| **accounts** | Login, roles, perfil, notificaciones del portal |
+| **notes** | Apuntes personales (solo **Repaso**, no menú principal de cursos) |
+| **revision** | Objetivos y calendario de repaso personal |
+| **glossary** | Glosario ligado a apuntes |
 
-## Contributions
+## URLs principales
 
-Contributions to this project are welcome! If you find a bug, want to request a new feature, or have an idea for improvement, please create an issue on this project's GitHub page. If you want to contribute code, please fork the repository and submit a pull request.
+| Rol | Rutas |
+|-----|--------|
+| Estudiante | `/dashboard` (inicio, calificaciones, calendario, mensajes) · `/aula/` (cursos matriculados) · **Repaso** → `/revision/` |
+| Docente | `/accounts/panel/docente/` |
+| Administrador | `/accounts/panel/administrador/` |
+| Design system (solo `DEBUG`) | `/design-system/` |
 
-## License
-_Pending_
-<!-- 
-This application is licensed under the MIT License. See the LICENSE file for more details. -->
+El menú **Aula virtual** lleva a `/aula/` (cursos institucionales). Los apuntes de `notes.Course` no aparecen como “curso universitario” en el menú principal.
+
+## Git y archivos locales
+
+- Inicialice el repositorio **solo** en la carpeta del proyecto (`Easy learn design system`), no en `C:\Users\Familia`.
+- No versionar: `.env`, `db.sqlite3`, `staticfiles/`, `media/`, `.venv/` (ya listados en `.gitignore`).
+
+## Design system
+
+Tokens (Informe 2): azul `#1E3A8A`, verde `#10B981`, naranja `#F59E0B`, neutros `#F8FAFC` / `#E2E8F0` / `#64748B` / `#0F172A`.
+
+Con `DEBUG=True`, vista de referencia: http://127.0.0.1:8000/design-system/
+
+## Contribuciones
+
+Issues y pull requests en GitHub.

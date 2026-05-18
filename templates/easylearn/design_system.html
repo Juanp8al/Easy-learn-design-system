@@ -1,0 +1,56 @@
+{% extends "easylearn/portal_layout.html" %}
+{% load static %}
+
+{% block title %}Design system · EasyLearn{% endblock %}
+{% block body_attrs %} data-easylearn-page="design-system"{% endblock %}
+
+{% block sidebar %}
+<aside class="sidebar" aria-label="Design system">
+  <div class="sidebar__head">
+    <div class="sidebar__brand"><span class="sidebar__label" style="padding:1rem;color:#fff;">EasyLearn DS</span></div>
+  </div>
+</aside>
+{% endblock %}
+
+{% block portal_canvas %}
+<section class="view is-visible view-dash-dg" style="max-width:52rem;">
+  <header class="hero hero-dash-dg">
+    <p class="hero-kicker hero-dash-dg__line1">Informe 3</p>
+    <h1>Design system</h1>
+    <p style="margin:0.4rem 0 0;color:var(--text-muted);">Componentes del portal universitario (tokens Informe 2).</p>
+  </header>
+
+  <article class="panel panel--dg-sheet margin-b">
+    <div class="panel__head panel__head--dash-soft"><h2>Botones</h2></div>
+    <div class="cta-row" style="padding:1rem 1.2rem;">
+      <button type="button" class="btn-main">Primario</button>
+      <button type="button" class="btn-outline">Secundario</button>
+      <button type="button" class="btn-tertiary">Terciario ›</button>
+      <button type="button" class="btn-main is-loading" disabled>Cargando</button>
+    </div>
+  </article>
+
+  <article class="panel panel--dg-sheet margin-b">
+    <div class="panel__head panel__head--dash-soft"><h2>Badges</h2></div>
+    <p style="padding:1rem 1.2rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
+      <span class="badge-txt badge-txt--ok">Calificado</span>
+      <span class="badge-txt badge-txt--warn">Pendiente</span>
+      <span class="badge-txt badge-txt--draft">Disponible</span>
+      <span class="badge-txt badge-txt--muted">Inactivo</span>
+    </p>
+  </article>
+
+  <article class="panel panel--dg-sheet">
+    <div class="panel__head panel__head--dash-soft"><h2>Tabla</h2></div>
+    <div class="data-table-wrap">
+      <table class="sheet sheet--dash-soft">
+        <thead><tr><th>Curso</th><th>Estado</th><th>Nota</th></tr></thead>
+        <tbody>
+          <tr><td>IHC</td><td><span class="badge-txt badge-txt--ok">Completado</span></td><td>4.5</td></tr>
+          <tr><td>BD1</td><td><span class="badge-txt badge-txt--warn">Por vencer</span></td><td>—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </article>
+</section>
+{% endblock %}
