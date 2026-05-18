@@ -1,14 +1,15 @@
               <section id="view-calificaciones" class="view view-grades-table" aria-label="Calificaciones">
-                <header class="grades-header-mock">
-                  <h1 class="grades-header-mock__title">Calificaciones</h1>
-                  <p class="grades-header-mock__period">Resumen de tu rendimiento académico por curso. Las notas provienen de las actividades evaluadas por tus docentes.</p>
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área académica</p>
+                  <h1>Calificaciones</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;">Resumen de su rendimiento por curso. Las notas provienen de actividades evaluadas por sus docentes.</p>
                 </header>
 
                 <div class="summary-row summary-row--quad margin-b">
                   <article class="summary-card summary-card--dg-gradient">
                     <div class="summary-card__eyebrow">Promedio general</div>
-                    <div class="summary-card__value">—</div>
-                    <div class="summary-card__sub">Se calculará con las calificaciones publicadas</div>
+                    <div class="summary-card__value">{% if overall_avg_display %}{{ overall_avg_display }}{% else %}—{% endif %}</div>
+                    <div class="summary-card__sub">Solo actividades ya calificadas</div>
                   </article>
                   <article class="summary-card summary-card--light">
                     <div class="summary-card__eyebrow">Cursos inscritos</div>
@@ -17,13 +18,13 @@
                   </article>
                   <article class="summary-card summary-card--light">
                     <div class="summary-card__eyebrow">Pendientes de nota</div>
-                    <div class="summary-card__value">—</div>
-                    <div class="summary-card__sub">Actividades sin calificación aún</div>
+                    <div class="summary-card__value">{{ pending_grade_count|default:0 }}</div>
+                    <div class="summary-card__sub">Entregas sin calificación del docente</div>
                   </article>
                   <article class="summary-card summary-card--light">
-                    <div class="summary-card__eyebrow">Repaso activo</div>
-                    <div class="summary-card__value">{{ pending_activity_count }}</div>
-                    <div class="summary-card__sub">Objetivos de repaso en curso o atrasados</div>
+                    <div class="summary-card__eyebrow">Completadas</div>
+                    <div class="summary-card__value">{{ graded_activity_count|default:0 }}</div>
+                    <div class="summary-card__sub">Registros oficiales en el aula</div>
                   </article>
                 </div>
 
@@ -42,15 +43,47 @@
                         </tr>
                       </thead>
                       <tbody>
-                        {% for enr in academic_enrollments %}
-                        <tr data-search="{{ enr.offering.code|lower }} {{ enr.offering.name|lower }}">
-                          <td class="td-grupo">{{ enr.offering.code }}</td>
-                          <td class="td-materia">{{ enr.offering.name|truncatechars:36 }}</td>
-                          <td class="td-num">{% if enr.offering.teacher %}{{ enr.offering.teacher.get_full_name|default:enr.offering.teacher.username }}{% else %}<span class="muted">Por asignar</span>{% endif %}</td>
-                          <td class="td-num"><span class="muted">—</span></td>
+                        {% for row in enrollment_grade_rows %}
+                        <tr data-search="{{ row.offering.code|lower }} {{ row.offering.name|lower }}">
+                          <td class="td-grupo">{{ row.offering.code }}</td>
+                          <td class="td-materia">{{ row.offering.name|truncatechars:36 }}</td>
+                          <td class="td-num">{% if row.offering.teacher %}{{ row.offering.teacher.get_full_name|default:row.offering.teacher.username }}{% else %}<span class="muted">Por asignar</span>{% endif %}</td>
+                          <td class="td-num">{% if row.average %}<strong>{{ row.average }}</strong>{% else %}<span class="muted">—</span>{% endif %}</td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="4" class="muted">Sin cursos matriculados aún. Cuando estés inscrito, verás aquí el seguimiento de notas por asignatura.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+
+                <article class="panel panel--grades-activity-table margin-b" aria-labelledby="grades-inst-heading">
+                  <div class="panel__head panel__head--grades-activity-mock">
+                    <h2 id="grades-inst-heading" class="grades-activity-bar__title">Detalle por actividad</h2>
+                  </div>
+                  <div class="data-table-wrap">
+                    <table class="sheet sheet--grades-detail">
+                      <thead>
+                        <tr>
+                          <th scope="col">Actividad</th>
+                          <th scope="col">Curso</th>
+                          <th scope="col">Nota</th>
+                          <th scope="col">Retroalimentación</th>
+                          <th scope="col">Fecha</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for row in grade_rows %}
+                        <tr data-search="{{ row.activity.title|lower }} {{ row.offering.code|lower }}">
+                          <td>{{ row.activity.title }}</td>
+                          <td><span class="tb-course">{{ row.offering.code }}</span></td>
+                          <td class="sheet--grades-detail__num"><strong>{{ row.grade.score }}</strong></td>
+                          <td>{{ row.grade.feedback|default:"—"|truncatechars:48 }}</td>
+                          <td>{{ row.grade.graded_at|date:"j M Y" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" class="muted">Aún no tienes calificaciones publicadas por tus docentes.</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>
@@ -83,7 +116,7 @@
                           <td><a class="btn-sm btn-sm--link week-action-link" href="{{ entry.get_absolute_url }}">Abrir ›</a></td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="5" class="muted">No hay apuntes recientes. Puedes crearlos desde <strong>Mis cursos</strong> en tus espacios de notas.</td></tr>
+                        <tr><td colspan="5" class="muted">No hay apuntes recientes. Créalos desde <a href="{% url 'revision:calendar' %}">Repaso</a> o tus espacios de notas.</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>

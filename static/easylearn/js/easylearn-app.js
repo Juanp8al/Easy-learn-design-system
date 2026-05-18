@@ -6,9 +6,6 @@
   var routes = {
     dashboard: "view-dashboard",
     cursos: "view-cursos",
-    curso: "view-curso",
-    semana: "view-semana",
-    tareas: "view-tareas",
     calificaciones: "view-calificaciones",
     calendario: "view-calendario",
     mensajes: "view-mensajes",
@@ -17,9 +14,6 @@
   var titles = {
     dashboard: "EasyLearn · Inicio",
     cursos: "EasyLearn · Mis cursos",
-    curso: "EasyLearn · Curso",
-    semana: "EasyLearn · Semana",
-    tareas: "EasyLearn · Entrega",
     calificaciones: "EasyLearn · Calificaciones",
     calendario: "EasyLearn · Calendario",
     mensajes: "EasyLearn · Mensajes",
@@ -38,38 +32,8 @@
         el.innerHTML = crumb("Inicio", null);
         break;
       case "cursos":
-        el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Mis cursos", null);
-        break;
-      case "curso":
-        el.innerHTML =
-          crumb("Inicio", "dashboard") +
-          ' <span class="sep">›</span> ' +
-          crumb("Mis cursos", "cursos") +
-          ' <span class="sep">›</span> ' +
-          crumb("Curso", null);
-        break;
-      case "semana":
-        el.innerHTML =
-          crumb("Inicio", "dashboard") +
-          ' <span class="sep">›</span> ' +
-          crumb("Mis cursos", "cursos") +
-          ' <span class="sep">›</span> ' +
-          crumb("Curso", "curso") +
-          ' <span class="sep">›</span> ' +
-          crumb("Semana", null);
-        break;
-      case "tareas":
-        el.innerHTML =
-          crumb("Inicio", "dashboard") +
-          ' <span class="sep">›</span> ' +
-          crumb("Mis cursos", "cursos") +
-          ' <span class="sep">›</span> ' +
-          crumb("Curso", "curso") +
-          ' <span class="sep">›</span> ' +
-          crumb("Semana", "semana") +
-          ' <span class="sep">›</span> ' +
-          "<span>Entrega</span>";
-        break;
+        window.location.replace("/aula/");
+        return;
       case "calificaciones":
         el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Calificaciones", null);
         break;
@@ -92,7 +56,7 @@
     });
     document.querySelectorAll(".sidebar__link[data-route]").forEach(function (link) {
       var r = link.getAttribute("data-route");
-      var active = r === route || (r === "cursos" && (route === "curso" || route === "semana"));
+      var active = r === route;
       link.classList.toggle("is-active", active);
       if (active) link.setAttribute("aria-current", "page");
       else link.removeAttribute("aria-current");
@@ -104,28 +68,27 @@
       history.replaceState(null, "", "#" + route);
     } catch (_) {}
 
-    if (route === "tareas") {
-      window.setTimeout(function () {
-        var node = document.getElementById("task-countdown-label");
-        if (node) node.textContent = "Calculado al conectar calendario del servidor";
-      }, 120);
-    }
   }
 
   function renderDashboardMiniCal() {
-    var root = document.getElementById("cal-mayo-2026");
+    var root = document.getElementById("dash-mini-cal");
     if (!root || root.childNodes.length) return;
-    var weeks = [
-      [null, null, null, null, 1, 2, 3],
-      [4, 5, 6, 7, 8, 9, 10],
-      [11, 12, 13, 14, 15, 16, 17],
-      [18, 19, 20, 21, 22, 23, 24],
-      [25, 26, 27, 28, 29, 30, 31],
-    ];
-    var now = new Date();
-    var todayInGrid =
-      now.getFullYear() === 2026 && now.getMonth() === 4 ? now.getDate() : null;
-    weeks.flat().forEach(function (d) {
+    var year = parseInt(root.getAttribute("data-year"), 10) || new Date().getFullYear();
+    var month = parseInt(root.getAttribute("data-month"), 10) || new Date().getMonth() + 1;
+    var today = parseInt(root.getAttribute("data-today"), 10) || new Date().getDate();
+    var dueDays = [];
+    try {
+      dueDays = JSON.parse(root.getAttribute("data-due-days") || "[]");
+    } catch (_) {}
+    var first = new Date(year, month - 1, 1);
+    var daysInMonth = new Date(year, month, 0).getDate();
+    var startPad = (first.getDay() + 6) % 7;
+    var cells = [];
+    var i;
+    for (i = 0; i < startPad; i++) cells.push(null);
+    for (i = 1; i <= daysInMonth; i++) cells.push(i);
+    while (cells.length % 7 !== 0) cells.push(null);
+    cells.forEach(function (d) {
       var el = document.createElement("div");
       el.className = "mc-day";
       if (d === null) {
@@ -133,7 +96,8 @@
         el.innerHTML = "&nbsp;";
       } else {
         el.textContent = String(d);
-        if (todayInGrid !== null && d === todayInGrid) el.classList.add("is-today");
+        if (d === today) el.classList.add("is-today");
+        if (dueDays.indexOf(d) !== -1) el.classList.add("has-event");
       }
       root.appendChild(el);
     });
@@ -158,7 +122,10 @@
 
   function runSearch(q) {
     var needle = (q || "").trim().toLowerCase();
-    var dashTb = document.querySelector("#dash-activity-table tbody");
+    var visibleView = document.querySelector(".canvas-body .view.is-visible");
+    var dashTb = visibleView
+      ? visibleView.querySelector("#dash-activity-table tbody")
+      : document.querySelector("#dash-activity-table tbody");
     if (dashTb) {
       dashTb.querySelectorAll("tr").forEach(function (tr) {
         var d = tr.getAttribute("data-search") || tr.textContent;
@@ -186,9 +153,53 @@
     });
   }
 
+  function initPortalHeaderChrome() {
+    var filterForm = document.querySelector("[data-header-filter-form]");
+    if (filterForm) {
+      filterForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+      });
+    }
+
+    var bellRoot = document.getElementById("header-bell");
+    var bellTrigger = document.getElementById("header-bell-trigger");
+    var bellMenu = document.getElementById("header-bell-menu");
+    if (bellRoot && bellTrigger && bellMenu) {
+      function setBellOpen(open) {
+        bellRoot.classList.toggle("header-bell--open", open);
+        bellTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+        bellMenu.hidden = !open;
+      }
+      bellTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        setBellOpen(!bellRoot.classList.contains("header-bell--open"));
+      });
+      document.addEventListener("click", function (e) {
+        if (!bellRoot.contains(e.target)) setBellOpen(false);
+      });
+      bellMenu.querySelectorAll("[data-notification-id]").forEach(function (link) {
+        link.addEventListener("click", function () {
+          var id = link.getAttribute("data-notification-id");
+          var fd = new FormData();
+          fd.append("id", id);
+          var csrf = document.querySelector("[name=csrfmiddlewaretoken]");
+          if (csrf) fd.append("csrfmiddlewaretoken", csrf.value);
+          fetch("/accounts/notifications/read/", {
+            method: "POST",
+            body: fd,
+            headers: { "X-Requested-With": "XMLHttpRequest" },
+            credentials: "same-origin",
+          });
+        });
+      });
+    }
+  }
+
   function initApp() {
     var isSearchPage = document.body.getAttribute("data-easylearn-page") === "search";
     var rolePage = document.body.getAttribute("data-easylearn-page");
+
+    initPortalHeaderChrome();
 
     if (rolePage === "admin" || rolePage === "teacher") {
       var shell = document.querySelector(".app-shell");
@@ -227,7 +238,9 @@
 
       function filterRoleDashboardRows(needleRaw) {
         var n = needleRaw === undefined || needleRaw === null ? "" : String(needleRaw).trim().toLowerCase();
-        document.querySelectorAll(".canvas-body table tbody tr").forEach(function (tr) {
+        var root = document.querySelector(".canvas-body .view.is-visible") || document.querySelector(".canvas-body");
+        if (!root) return;
+        root.querySelectorAll("table tbody tr").forEach(function (tr) {
           if (tr.hasAttribute("data-search-skip")) {
             tr.style.display = "";
             return;
@@ -240,6 +253,10 @@
           var ds = tr.getAttribute("data-search");
           var t = ds != null && ds !== "" ? ds : tr.textContent;
           tr.style.display = n === "" || t.toLowerCase().indexOf(n) !== -1 ? "" : "none";
+        });
+        root.querySelectorAll(".course-catalog-card").forEach(function (card) {
+          var t = (card.getAttribute("data-catalog-scope") || "") + " " + card.textContent;
+          card.style.display = n === "" || t.toLowerCase().indexOf(n) !== -1 ? "" : "none";
         });
       }
 
@@ -319,6 +336,7 @@
           try {
             history.replaceState(null, "", "#" + canonical);
           } catch (_) {}
+          if (qInputRole) filterRoleDashboardRows(qInputRole.value);
         }
 
         var canvasTeacher = document.querySelector(".canvas-body");
@@ -347,10 +365,214 @@
           if (teacherRoutes[h]) goTeacher(h);
         });
 
+        function filterTeacherDeliveries() {
+          var courseSel = document.getElementById("ent-filter-course");
+          var statusSel = document.getElementById("ent-filter-status");
+          if (!courseSel && !statusSel) return;
+          function apply() {
+            var course = courseSel ? courseSel.value : "";
+            var status = statusSel ? statusSel.value : "";
+            document
+              .querySelectorAll(
+                "#teacher-delivery-activity-table tbody tr[data-offering-id], #teacher-submissions-table tbody tr[data-offering-id]"
+              )
+              .forEach(function (tr) {
+                var okCourse = !course || tr.getAttribute("data-offering-id") === course;
+                var st = tr.getAttribute("data-status") || "";
+                var okStatus = !status || st.indexOf(status) !== -1;
+                tr.style.display = okCourse && okStatus ? "" : "none";
+              });
+          }
+          if (courseSel) courseSel.addEventListener("change", apply);
+          if (statusSel) statusSel.addEventListener("change", apply);
+        }
+        filterTeacherDeliveries();
+
         var hInit = (location.hash || "").replace(/^#/, "");
         if (hInit === "rendimiento") hInit = "historial-calificaciones";
         if (teacherRoutes[hInit]) goTeacher(hInit);
         else goTeacher("dashboard");
+      }
+
+      if (rolePage === "admin") {
+        var adminRoutes = {
+          dashboard: "view-admin-dashboard",
+          usuarios: "view-admin-usuarios",
+          carreras: "view-admin-carreras",
+          ofertas: "view-admin-ofertas",
+          matriculas: "view-admin-matriculas",
+          periodos: "view-admin-periodos",
+        };
+        var adminTitles = {
+          dashboard: "EasyLearn · Panel administrador",
+          usuarios: "EasyLearn · Usuarios",
+          carreras: "EasyLearn · Carreras",
+          ofertas: "EasyLearn · Cursos ofertados",
+          matriculas: "EasyLearn · Matrículas",
+          periodos: "EasyLearn · Períodos",
+        };
+        var adminPendingFilter = null;
+
+        function adminCrumbLabel(route) {
+          if (route === "usuarios") return "Usuarios";
+          if (route === "carreras") return "Carreras";
+          if (route === "ofertas") return "Cursos ofertados";
+          if (route === "matriculas") return "Matrículas";
+          if (route === "periodos") return "Períodos";
+          return route;
+        }
+
+        function renderAdminBreadcrumbs(route) {
+          var el = document.getElementById("bread-nav");
+          if (!el) return;
+          function crumb(label, r) {
+            if (r) return '<button type="button" data-goto="' + r + '">' + label + "</button>";
+            return "<span>" + label + "</span>";
+          }
+          if (route === "dashboard") {
+            el.innerHTML = crumb("Inicio", null);
+            return;
+          }
+          el.innerHTML =
+            crumb("Inicio", "dashboard") +
+            ' <span class="sep">›</span> ' +
+            crumb(adminCrumbLabel(route), null);
+        }
+
+        function applyAdminTableFilters() {
+          var roleSel = document.getElementById("admin-filter-user-role");
+          var activeSel = document.getElementById("admin-filter-user-active");
+          if (roleSel || activeSel) {
+            var role = roleSel ? roleSel.value : "";
+            var active = activeSel ? activeSel.value : "";
+            document.querySelectorAll('tr[data-admin-row="usuarios"]').forEach(function (tr) {
+              var okRole = !role || tr.getAttribute("data-role") === role;
+              var okActive = active === "" || tr.getAttribute("data-active") === active;
+              tr.style.display = okRole && okActive ? "" : "none";
+            });
+          }
+
+          var offPeriod = document.getElementById("admin-filter-offering-period");
+          var offProgram = document.getElementById("admin-filter-offering-program");
+          var offTeacher = document.getElementById("admin-filter-offering-teacher");
+          if (offPeriod || offProgram || offTeacher) {
+            var pId = offPeriod ? offPeriod.value : "";
+            var progId = offProgram ? offProgram.value : "";
+            var teacherF = offTeacher ? offTeacher.value : "";
+            document.querySelectorAll('tr[data-admin-row="ofertas"]').forEach(function (tr) {
+              var okP = !pId || tr.getAttribute("data-period-id") === pId;
+              var okProg = !progId || tr.getAttribute("data-program-id") === progId;
+              var missing = tr.getAttribute("data-teacher-missing") === "1";
+              var okT =
+                !teacherF ||
+                (teacherF === "missing" && missing) ||
+                (teacherF === "assigned" && !missing);
+              tr.style.display = okP && okProg && okT ? "" : "none";
+            });
+          }
+
+          var enrPeriod = document.getElementById("admin-filter-enrollment-period");
+          var enrProgram = document.getElementById("admin-filter-enrollment-program");
+          var enrStatus = document.getElementById("admin-filter-enrollment-status");
+          if (enrPeriod || enrProgram || enrStatus) {
+            var ep = enrPeriod ? enrPeriod.value : "";
+            var eprog = enrProgram ? enrProgram.value : "";
+            var est = enrStatus ? enrStatus.value : "";
+            document.querySelectorAll('tr[data-admin-row="matriculas"]').forEach(function (tr) {
+              var okEp = !ep || tr.getAttribute("data-period-id") === ep;
+              var okEprog = !eprog || tr.getAttribute("data-program-id") === eprog;
+              var okEst = !est || tr.getAttribute("data-status") === est;
+              tr.style.display = okEp && okEprog && okEst ? "" : "none";
+            });
+          }
+
+          var perCurrent = document.getElementById("admin-filter-period-current");
+          if (perCurrent) {
+            var cur = perCurrent.value;
+            document.querySelectorAll('tr[data-admin-row="periodos"]').forEach(function (tr) {
+              var isCur = tr.getAttribute("data-is-current");
+              var ok =
+                cur === "" || (cur === "1" && isCur === "1") || (cur === "0" && isCur === "0");
+              tr.style.display = ok ? "" : "none";
+            });
+          }
+        }
+
+        function applyAdminPendingFilter() {
+          if (!adminPendingFilter) return;
+          if (adminPendingFilter.program && document.getElementById("admin-filter-offering-program")) {
+            document.getElementById("admin-filter-offering-program").value = adminPendingFilter.program;
+          }
+          if (adminPendingFilter.teacher && document.getElementById("admin-filter-offering-teacher")) {
+            document.getElementById("admin-filter-offering-teacher").value = adminPendingFilter.teacher;
+          }
+          adminPendingFilter = null;
+          applyAdminTableFilters();
+        }
+
+        function goAdmin(route) {
+          if (!adminRoutes[route]) route = "dashboard";
+          var targetId = adminRoutes[route];
+          document.querySelectorAll(".canvas-body .view").forEach(function (v) {
+            v.classList.toggle("is-visible", v.id === targetId);
+          });
+          document.querySelectorAll(".sidebar__link[data-route]").forEach(function (link) {
+            var r = link.getAttribute("data-route");
+            var active = r === route;
+            link.classList.toggle("is-active", active);
+            if (active) link.setAttribute("aria-current", "page");
+            else link.removeAttribute("aria-current");
+          });
+          renderAdminBreadcrumbs(route);
+          document.title = adminTitles[route] || adminTitles.dashboard;
+          try {
+            history.replaceState(null, "", "#" + route);
+          } catch (_) {}
+          applyAdminPendingFilter();
+          if (qInputRole) filterRoleDashboardRows(qInputRole.value);
+        }
+
+        var canvasAdmin = document.querySelector(".canvas-body");
+        if (canvasAdmin) {
+          canvasAdmin.addEventListener("click", function (e) {
+            var tgt = e.target.closest("[data-goto]");
+            if (!tgt) return;
+            var r = tgt.getAttribute("data-goto");
+            if (!adminRoutes[r]) return;
+            e.preventDefault();
+            var progFilter = tgt.getAttribute("data-admin-goto-filter-program");
+            var teacherPreset = tgt.getAttribute("data-admin-preset-teacher");
+            if (progFilter || teacherPreset) {
+              adminPendingFilter = {
+                program: progFilter || "",
+                teacher: teacherPreset || "",
+              };
+            }
+            goAdmin(r);
+          });
+        }
+
+        document.querySelectorAll(".sidebar__link[data-route]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            goAdmin(btn.getAttribute("data-route"));
+          });
+        });
+
+        window.addEventListener("hashchange", function () {
+          if (document.body.getAttribute("data-easylearn-page") !== "admin") return;
+          var h = (location.hash || "").replace(/^#/, "");
+          if (adminRoutes[h]) goAdmin(h);
+        });
+
+        document
+          .querySelectorAll("[data-admin-filter], #admin-filter-user-role, #admin-filter-user-active, #admin-filter-offering-period, #admin-filter-offering-program, #admin-filter-offering-teacher, #admin-filter-enrollment-period, #admin-filter-enrollment-program, #admin-filter-enrollment-status, #admin-filter-period-current")
+          .forEach(function (sel) {
+            sel.addEventListener("change", applyAdminTableFilters);
+          });
+
+        var hAdmin = (location.hash || "").replace(/^#/, "");
+        if (adminRoutes[hAdmin]) goAdmin(hAdmin);
+        else goAdmin("dashboard");
       }
 
       return;
@@ -372,7 +594,15 @@
     }
 
     document.querySelectorAll(".sidebar__link[data-route]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
+      btn.addEventListener("click", function (e) {
+        var href = btn.getAttribute("href");
+        if (btn.tagName === "A" && href && href.indexOf("#") !== 0 && href.indexOf("/aula") === 0) {
+          return;
+        }
+        if (btn.tagName === "A" && href && href.indexOf("revision") !== -1) {
+          return;
+        }
+        e.preventDefault();
         go(btn.getAttribute("data-route"));
       });
     });
@@ -568,7 +798,68 @@
       applyCourseCatalogView();
     }
 
+    var instView = document.getElementById("inst-view-mode");
+    var instRoot = document.getElementById("inst-course-root");
+    var instCards = document.getElementById("inst-course-cards");
+    var instTable = document.getElementById("inst-course-table");
+  function applyInstCourseView() {
+      if (!instRoot || !instView) return;
+      var lista = instView.value === "lista";
+      instRoot.className = "course-catalog-root course-catalog-root--" + (lista ? "lista" : "tarjeta");
+      if (instCards) instCards.toggleAttribute("hidden", lista);
+      if (instTable) instTable.toggleAttribute("hidden", !lista);
+    }
+    if (instView) {
+      instView.addEventListener("change", applyInstCourseView);
+      applyInstCourseView();
+    }
+    var instSearch = document.getElementById("inst-search-course");
+    if (instSearch && instRoot) {
+      instSearch.addEventListener("input", function () {
+        var needle = instSearch.value.trim().toLowerCase();
+        instRoot.querySelectorAll("[data-catalog-scope]").forEach(function (el) {
+          var t = (el.getAttribute("data-catalog-scope") || "") + " " + el.textContent;
+          el.style.display = needle === "" || t.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
+        });
+      });
+    }
+
+    document.querySelectorAll(".cal-tab").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var tab = btn.getAttribute("data-cal-tab");
+        document.querySelectorAll(".cal-tab").forEach(function (b) {
+          b.classList.toggle("btn-accent", b === btn);
+          b.classList.toggle("btn-outline", b !== btn);
+          b.classList.toggle("is-on", b === btn);
+        });
+        var ac = document.getElementById("cal-panel-academico");
+        var rep = document.getElementById("cal-panel-repaso");
+        if (ac) ac.hidden = tab !== "academico";
+        if (rep) rep.hidden = tab !== "repaso";
+      });
+    });
+
+    document.querySelectorAll(".msg-filter").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var f = btn.getAttribute("data-msg-filter");
+        document.querySelectorAll(".msg-filter").forEach(function (b) {
+          b.classList.toggle("btn-accent", b === btn);
+          b.classList.toggle("btn-outline", b !== btn);
+          b.classList.toggle("is-on", b === btn);
+        });
+        document.querySelectorAll("#msg-list .msg-item").forEach(function (li) {
+          var src = li.getAttribute("data-msg-source") || "";
+          var show = f === "all" || src === f;
+          li.style.display = show ? "" : "none";
+        });
+      });
+    });
+
     var hash = (location.hash || "").replace(/^#/, "");
+    if (hash === "curso" || hash === "semana" || hash === "tareas" || hash === "cursos") {
+      window.location.replace("/aula/");
+      return;
+    }
     if (isSearchPage) {
       document.querySelectorAll(".sidebar__link").forEach(function (link) {
         link.classList.remove("is-active");

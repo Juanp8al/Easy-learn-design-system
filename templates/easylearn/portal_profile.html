@@ -1,0 +1,73 @@
+{% extends "easylearn/portal_layout.html" %}
+{% load static %}
+
+{% block title %}Mi perfil · EasyLearn{% endblock %}
+{% block body_attrs %} data-easylearn-page="profile"{% endblock %}
+
+{% block sidebar %}
+  {% if student.role == 'admin' %}
+    {% include "easylearn/includes/portal_sidebar_admin.html" %}
+  {% elif student.role == 'teacher' %}
+    {% include "easylearn/includes/portal_sidebar_teacher.html" %}
+  {% else %}
+    {% include "easylearn/includes/portal_sidebar.html" %}
+  {% endif %}
+{% endblock %}
+
+{% block portal_canvas %}
+  <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta"><span>Mi perfil</span></nav>
+  <section class="view is-visible view-dash-dg" aria-labelledby="profile-title">
+    <header class="hero hero-dash-dg">
+      <p class="hero-kicker hero-dash-dg__line1">Cuenta</p>
+      <h1 id="profile-title">Mi perfil</h1>
+      <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);">Datos personales y académicos visibles en el portal.</p>
+    </header>
+
+    <article class="panel panel--dg-sheet" style="max-width:40rem;">
+      <div class="panel__head panel__head--dg panel__head--dash-soft">
+        <h2>Información</h2>
+        <a class="btn-sm btn-accent" href="{% url 'edit_profile' %}">Editar perfil</a>
+      </div>
+      <div style="padding:1rem 1.2rem 1.25rem;display:flex;gap:1.25rem;flex-wrap:wrap;align-items:flex-start;">
+        {% if profile.photo %}
+        <img src="{{ profile.photo.url }}" alt="" width="96" height="96" style="border-radius:12px;object-fit:cover;" />
+        {% else %}
+        <span class="header-profile__photo" style="width:96px;height:96px;font-size:1.5rem;" aria-hidden="true">
+          {% if student.first_name or student.last_name %}
+            {{ student.first_name|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+          {% else %}
+            {{ student.username|slice:":2"|upper }}
+          {% endif %}
+        </span>
+        {% endif %}
+        <dl style="margin:0;flex:1;min-width:14rem;font-size:0.9rem;line-height:1.6;">
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Nombre</dt>
+          <dd style="margin:0 0 0.75rem;font-weight:600;">{{ student.get_full_name|default:student.username }}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Usuario</dt>
+          <dd style="margin:0 0 0.75rem;">@{{ student.username }}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Correo</dt>
+          <dd style="margin:0 0 0.75rem;">{{ student.email|default:"—" }}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Rol</dt>
+          <dd style="margin:0 0 0.75rem;">{{ portal_role_label }}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Carrera / programa</dt>
+          <dd style="margin:0 0 0.75rem;">{% if student.academic_program %}{{ student.academic_program.name }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Semestre</dt>
+          <dd style="margin:0 0 0.75rem;">{% if student.academic_semester %}{{ student.academic_semester }}º{% else %}<span class="muted">—</span>{% endif %}</dd>
+          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Miembro desde</dt>
+          <dd style="margin:0;">{{ student.date_joined|date:"j M Y" }}</dd>
+        </dl>
+      </div>
+    </article>
+
+    {% if student.role == 'student' and courses %}
+    <article class="panel panel--dg-sheet margin-b" style="max-width:40rem;">
+      <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Apuntes personales</h2></div>
+      <ul class="dg-mer-rail-list" style="padding:0 1rem 1rem;">
+        {% for course in courses %}
+        <li><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
+        {% endfor %}
+      </ul>
+    </article>
+    {% endif %}
+  </section>
+{% endblock %}

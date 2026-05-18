@@ -1,3 +1,4 @@
+              {% url 'classroom:course_list' as aula_url %}
               <section id="view-dashboard" class="view is-visible view-dash-dg" aria-labelledby="dash-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">¡Buenos días!</p>
@@ -9,78 +10,43 @@
                     {% if current_period %} · Período {{ current_period.name }}{% endif %}
                   </p>
                   {% endif %}
-                  <p style="margin:0.5rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:48rem;line-height:1.45;">
-                    Consulta tus <strong>cursos matriculados</strong>, actividades y calendario del período. Tus apuntes personales siguen disponibles en la pestaña <strong>Repaso</strong>.
-                  </p>
                 </header>
 
                 <div class="summary-row summary-row-dash summary-row--quad margin-b">
                   <article class="summary-card summary-card--dg-gradient">
                     <div class="summary-card__eyebrow">Próxima clase</div>
+                    {% if next_class_hint %}
+                    <div class="summary-card__value" style="font-size:1.05rem;line-height:1.25;">{{ next_class_hint.label|truncatechars:28 }}</div>
+                    <div class="summary-card__sub">{{ next_class_hint.sub }}</div>
+                    <a class="card-glass-link" href="{{ next_class_hint.url }}">Ver detalle ›</a>
+                    {% else %}
                     <div class="summary-card__value">—</div>
-                    <div class="summary-card__sub summary-card__sub--academic">
-                      <span>Cuando el calendario institucional esté disponible, verás aquí tu siguiente sesión.</span>
-                    </div>
+                    <div class="summary-card__sub">Sin fechas próximas en tus cursos matriculados</div>
                     <button type="button" class="card-glass-link" data-goto="calendario">Ver calendario ›</button>
+                    {% endif %}
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Cursos inscritos</div>
                     <div class="summary-card__value">{{ academic_enrollment_count }}</div>
-                    <div class="summary-card__sub">Asignaturas en las que estás matriculado este período</div>
-                    <button type="button" class="link-arrow-soft" data-goto="cursos">Ir a Mis cursos ›</button>
+                    <div class="summary-card__sub">Asignaturas activas este período</div>
+                    <a class="link-arrow-soft" href="{% url 'classroom:course_list' %}">Ir al aula ›</a>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Actividades pendientes</div>
-                    <div class="summary-card__value">{{ pending_activity_count }}</div>
-                    <div class="summary-card__sub">Objetivos de repaso activos o atrasados</div>
-                    <a class="link-arrow-soft" href="{% url 'revision:calendar' %}">Ver repaso ›</a>
+                    <div class="summary-card__value">{{ pending_activity_count|default:0 }}</div>
+                    <div class="summary-card__sub">Por entregar o vencidas sin calificar</div>
+                    <a class="link-arrow-soft" href="{% url 'classroom:course_list' %}">Ver cursos ›</a>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Promedio actual</div>
-                    <div class="summary-card__value">—</div>
-                    <div class="summary-card__sub">Se mostrará cuando tus docentes publiquen calificaciones</div>
+                    <div class="summary-card__value">{% if overall_avg_display %}{{ overall_avg_display }}{% else %}—{% endif %}</div>
+                    <div class="summary-card__sub">{% if overall_avg_display %}Sobre actividades calificadas{% else %}Sin notas publicadas aún{% endif %}</div>
                     <button type="button" class="link-arrow-soft" data-goto="calificaciones">Ver calificaciones ›</button>
                   </article>
                 </div>
 
                 <div class="dashboard-grid dashboard-grid--dash-pair">
-                    <article class="panel panel--dg-sheet" id="dash-mer-enrollments" style="grid-column:1/-1;">
-                      <div class="panel__head panel__head--dg panel__head--dash-soft">
-                        <h2>Mis cursos matriculados</h2>
-                      </div>
-                      <div class="data-table-wrap dg-dash-actividades-scroll">
-                        <table class="sheet" id="dash-mer-table">
-                          <thead>
-                            <tr>
-                              <th>Código</th>
-                              <th>Curso</th>
-                              <th>Programa</th>
-                              <th>Período</th>
-                              <th>Docente</th>
-                              <th>Grupo</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for enr in academic_enrollments %}
-                            <tr data-search="{{ enr.offering.code|lower }} {{ enr.offering.name|lower }}">
-                              <td><span class="tb-course">{{ enr.offering.code }}</span></td>
-                              <td>{{ enr.offering.name|truncatechars:40 }}</td>
-                              <td>{{ enr.offering.program.name|truncatechars:24 }}</td>
-                              <td>{{ enr.offering.period.name }}</td>
-                              <td>{% if enr.offering.teacher %}{{ enr.offering.teacher.get_full_name|default:enr.offering.teacher.username }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</td>
-                              <td>{{ enr.offering.group }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr>
-                              <td colspan="6" class="muted">Aún no tienes matrículas activas. Cuando la institución te inscriba en una asignatura, aparecerá aquí. Si crees que falta alguna, contacta a secretaría o administración.</td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
-                    </article>
-
-                    <article class="panel panel--dg-sheet dg-dash-actividades" id="dash-actividades-prioritarias">
+                    <article class="panel panel--dg-sheet dg-dash-actividades" id="dash-actividades-prioritarias" style="grid-column:1/-1;">
                       <div class="panel__head panel__head--dg panel__head--dash-soft">
                         <h2>Actividades prioritarias</h2>
                       </div>
@@ -96,44 +62,19 @@
                             </tr>
                           </thead>
                           <tbody>
-                            {% for entry in latest_entries %}
-                            <tr data-search="{{ entry.name|lower }} {{ entry.subtopic.topic.course.name|lower }}">
-                              <td>
-                                <a class="dash-act-title-btn" href="{{ entry.get_absolute_url }}">{{ entry.name }}</a>
-                              </td>
-                              <td><span class="tb-course">{{ entry.subtopic.topic.course.name|truncatechars:14 }}</span></td>
-                              <td><span class="badge-txt badge-txt--draft">Apunte</span></td>
-                              <td>{{ entry.updated|date:"j M" }}</td>
-                              <td><a class="btn-sm btn-outline" href="{{ entry.get_absolute_url }}">Abrir ›</a></td>
+                            {% for row in dashboard_activities %}
+                            <tr data-search="{{ row.activity.title|lower }} {{ row.activity.week.offering.code|lower }}">
+                              <td>{{ row.activity.title }}</td>
+                              <td><span class="tb-course">{{ row.activity.week.offering.code }}</span></td>
+                              <td><span class="badge-txt badge-txt--{{ row.badge }}">{{ row.status_label }}</span></td>
+                              <td class="{% if row.is_overdue %}text-warn-strong{% endif %}">{% if row.activity.due_at %}{{ row.activity.due_at|date:"j M, H:i" }}{% else %}—{% endif %}</td>
+                              <td><a class="btn-sm btn-accent" href="{% url 'classroom:activity_submit' row.activity.id %}">{% if row.state == 'overdue' %}Entregar{% else %}Abrir{% endif %} ›</a></td>
                             </tr>
-                            {% endfor %}
-                            {% for obj in active_objectives %}
-                            <tr data-search="{{ obj.name|lower }} {{ obj.course.name|lower }} objetivo repaso">
-                              <td>
-                                <a class="dash-act-title-btn" href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
-                              </td>
-                              <td><span class="tb-course">{{ obj.course.name|truncatechars:14 }}</span></td>
-                              <td><span class="badge-txt badge-txt--warn">Repaso activo</span></td>
-                              <td class="text-warn-strong">hasta {{ obj.end_date|date:"j M" }}</td>
-                              <td><a class="btn-sm btn-accent" href="{{ obj.get_absolute_url }}">Ver ›</a></td>
-                            </tr>
-                            {% endfor %}
-                            {% for obj in overdue_objectives %}
-                            <tr data-search="{{ obj.name|lower }} atrasado">
-                              <td>
-                                <a class="dash-act-title-btn" href="{{ obj.get_absolute_url }}">{{ obj.name }}</a>
-                              </td>
-                              <td><span class="tb-course">{{ obj.course.name|truncatechars:14 }}</span></td>
-                              <td><span class="badge-txt badge-txt--warn">Atrasado</span></td>
-                              <td>{{ obj.end_date|date:"j M" }}</td>
-                              <td><a class="btn-sm btn-accent" href="{{ obj.get_absolute_url }}">Completar ›</a></td>
-                            </tr>
-                            {% endfor %}
-                            {% if not latest_entries and not active_objectives and not overdue_objectives %}
+                            {% empty %}
                             <tr>
-                              <td colspan="5" class="muted">No hay apuntes ni objetivos recientes. <a href="{% url 'notes:create_course' %}">Crea un curso</a> o <a href="{% url 'revision:create_objective' %}">un objetivo de repaso</a>.</td>
+                              <td colspan="5" class="portal-empty-state__cell">{% include "easylearn/includes/portal_empty_state.html" with empty_title="Sin actividades pendientes" empty_text="Cuando su docente publique nuevas tareas, aparecerán aquí y en el aula virtual." empty_cta_label="Ir al aula ›" empty_cta_href=aula_url %}</td>
                             </tr>
-                            {% endif %}
+                            {% endfor %}
                           </tbody>
                         </table>
                       </div>
@@ -141,79 +82,51 @@
 
                     <div class="widget widget-dg dg-dash-calendario">
                       <div class="mini-cal-head mini-cal-head-dg mini-cal-head--dash-soft">
-                        <h3>Mayo 2026</h3>
-                        <span class="mini-cal-arrow" aria-hidden="true">›</span>
+                        <h3>{{ calendar_month_label }}</h3>
                       </div>
                       <div class="mini-cal-days"><span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
-                      <div class="mini-cal-grid" id="cal-mayo-2026"></div>
-                      <p class="mini-cal-hint" role="note">Cuando conectemos tu agenda, aquí verás <strong>eventos y pendientes</strong>.</p>
+                      <div class="mini-cal-grid" id="dash-mini-cal" data-due-days="{{ calendar_due_days_json }}" data-today="{{ calendar_today }}" data-year="{{ calendar_year }}" data-month="{{ calendar_month }}"></div>
+                      <p class="mini-cal-hint" role="note">Días resaltados: fecha límite de una actividad.</p>
+                      <button type="button" class="link-arrow-soft" data-goto="calendario" style="margin:0 0 0.75rem 1rem;">Calendario completo ›</button>
                     </div>
 
                     <div class="dg-dash-bottom-strip">
                     <div class="bottom-pair bottom-pair-dash">
+                      {% if show_performance_chart %}
                       <article class="panel panel--dg-chart">
-                        <div class="panel__head panel__head--dg panel__head--dg-multi panel__head--dash-soft">
-                          <div class="panel__head-titles">
-                            <h2>Rendimiento reciente por curso</h2>
-                          </div>
+                        <div class="panel__head panel__head--dg panel__head--dash-soft">
+                          <h2>Rendimiento por curso</h2>
                         </div>
-                        <div class="perf-chart perf-chart-dg" aria-hidden="true">
-                          {% for course in courses|slice:":4" %}
+                        <div class="perf-chart perf-chart-dg">
+                          {% for bar in performance_bars %}
                           <div class="perf-item">
-                            <div class="perf-bar-wrap"><div class="perf-bar perf-bar-dg" style="--h:{% cycle '72' '84' '76' '90' %}"><span class="perf-score">—</span></div></div>
-                            <span class="perf-label">{{ course.name|truncatechars:8 }}</span>
+                            <div class="perf-bar-wrap"><div class="perf-bar perf-bar-dg" style="--h:{{ bar.bar_pct }}"><span class="perf-score">{{ bar.average }}</span></div></div>
+                            <span class="perf-label">{{ bar.offering.code }}</span>
                           </div>
-                          {% empty %}
-                          <p class="muted padding-2">Añade cursos para ver este resumen.</p>
                           {% endfor %}
                         </div>
                       </article>
-                      <article class="panel panel--dg-events">
-                        <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Eventos de hoy</h2></div>
-                        <div class="data-table-wrap dg-events-table-wrap">
-                          <table class="sheet sheet--dash-soft" id="dash-events-table">
-                            <thead>
-                              <tr>
-                                <th>Evento</th>
-                                <th>Hora</th>
-                                <th>Modalidad</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {% for obj in active_objectives|slice:":5" %}
-                              <tr>
-                                <td>Repaso · {{ obj.name|truncatechars:40 }}</td>
-                                <td>{{ obj.end_date|date:"j M" }}</td>
-                                <td>Repaso</td>
-                              </tr>
-                              {% empty %}
-                              <tr><td colspan="3" class="muted">Sin eventos de repaso para hoy.</td></tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      </article>
-                    </div>
-                    </div>
+                      {% endif %}
 
-                    <section class="widget widget--flush widget-dg-upcoming dg-dash-upcoming">
-                      <div class="upcoming-inner-dg">
-                        <div class="up-head-dg">
-                          <h3 class="widget__title widget__title--on-dark">Próximas evaluaciones</h3>
-                          <a class="btn-add-more-dg" href="{% url 'revision:create_objective' %}">+ Agregar</a>
-                        </div>
-                        {% for obj in active_objectives|slice:":3" %}
-                        <article class="up-item-dg">
-                          <div class="up-date-box-dg"><small>{{ obj.end_date|date:"M" }}</small><strong>{{ obj.end_date|date:"j" }}</strong></div>
-                          <div class="up-item-txt">
-                            <strong>{{ obj.name|truncatechars:48 }}</strong>
-                            <span>{{ obj.course.name }}</span>
+                      <section class="widget widget--flush widget-dg-upcoming dg-dash-upcoming"{% if not show_performance_chart %} style="grid-column:1/-1;"{% endif %}>
+                        <div class="upcoming-inner-dg">
+                          <div class="up-head-dg">
+                            <h3 class="widget__title widget__title--on-dark">Próximas evaluaciones</h3>
                           </div>
-                        </article>
-                        {% empty %}
-                        <p class="muted" style="padding:1rem;">No hay fechas de evaluación o repaso próximas. <a href="{% url 'revision:create_objective' %}">Agregar objetivo</a></p>
-                        {% endfor %}
-                      </div>
-                    </section>
+                          {% for item in upcoming_evaluations %}
+                          <a class="up-item-dg" href="{{ item.url }}" style="text-decoration:none;color:inherit;">
+                            <div class="up-date-box-dg"><small>{{ item.due_at|date:"M" }}</small><strong>{{ item.due_at|date:"j" }}</strong></div>
+                            <div class="up-item-txt">
+                              <strong>{{ item.activity.title|truncatechars:48 }}</strong>
+                              <span>{{ item.activity.week.offering.code }} · {{ item.due_at|date:"H:i" }}</span>
+                            </div>
+                          </a>
+                          {% empty %}
+                          <p class="muted" style="padding:1rem;">No hay entregas programadas próximamente.</p>
+                          {% endfor %}
+                        </div>
+                      </section>
+                    </div>
+                    </div>
                 </div>
               </section>

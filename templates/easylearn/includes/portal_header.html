@@ -1,17 +1,47 @@
 {% load static %}
 <header class="app-header">
   <div class="app-header__track">
-    <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get">
+    <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get" data-header-filter-form>
       <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, tareas o recursos" }}</label>
-      <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, tareas, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" />
+      <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, tareas, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" data-header-filter-input />
     </form>
     <div class="header-actions">
-      <span class="header-bell-slot" aria-hidden="true">
-        <svg class="header-bell-ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-          <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
-          <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
-        </svg>
-      </span>
+      <div class="header-bell" id="header-bell">
+        <button type="button" class="header-bell__trigger" id="header-bell-trigger" aria-expanded="false" aria-haspopup="true" aria-controls="header-bell-menu" aria-label="Notificaciones{% if portal_notifications_unread %} ({{ portal_notifications_unread }} sin leer){% endif %}">
+          <svg class="header-bell-ico" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
+            <path d="M10.3 21a1.94 1.94 0 0 0 3.4 0" />
+          </svg>
+          {% if portal_notifications_unread %}
+          <span class="header-bell__badge" aria-hidden="true">{{ portal_notifications_unread }}</span>
+          {% endif %}
+        </button>
+        <div id="header-bell-menu" class="header-bell__dropdown" role="menu" hidden>
+          <div class="header-bell__head">
+            <span>Notificaciones</span>
+            {% if portal_notifications_unread %}
+            <form method="post" action="{% url 'notifications_mark_read' %}" class="header-bell__mark-all" data-mark-all-read>
+              {% csrf_token %}
+              <button type="submit" class="btn-tertiary">Marcar todas leídas</button>
+            </form>
+            {% endif %}
+          </div>
+          <ul class="header-bell__list">
+            {% for n in portal_notifications %}
+            <li class="header-bell__item{% if not n.read_at %} is-unread{% endif %}">
+              <a href="{{ n.link|default:'#' }}" class="header-bell__link" data-notification-id="{{ n.id }}">
+                <span class="header-bell__kind badge-txt badge-txt--{% if n.kind == 'grade' %}ok{% elif n.kind == 'due_date' %}warn{% elif n.kind == 'announcement' %}draft{% else %}muted{% endif %}">{{ n.get_kind_display }}</span>
+                <strong class="header-bell__title">{{ n.title }}</strong>
+                {% if n.message %}<span class="header-bell__msg">{{ n.message|truncatechars:90 }}</span>{% endif %}
+                <time class="header-bell__time" datetime="{{ n.created_at|date:'c' }}">{{ n.created_at|timesince }} atrás</time>
+              </a>
+            </li>
+            {% empty %}
+            <li class="header-bell__empty muted">No tiene notificaciones recientes.</li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
       <span class="header-actions__rule" aria-hidden="true"></span>
       <div class="header-profile">
         <button
@@ -23,7 +53,7 @@
           aria-controls="header-profile-menu"
           aria-label="Menú de cuenta: {{ student.get_full_name|default:student.username }}"
         >
-          {% if student.profile.photo %}
+          {% if student.profile and student.profile.photo %}
             <img class="header-profile__img" src="{{ student.profile.photo.url }}" alt="" width="40" height="40" decoding="async" />
           {% else %}
             <span class="header-profile__photo" aria-hidden="true">
@@ -36,7 +66,15 @@
           {% endif %}
           <div class="header-profile__meta">
             <div class="header-profile__name">{{ student.get_full_name|default:student.username }}</div>
-            <div class="header-profile__subtitle">{% if portal_role_label %}{{ portal_role_label }}{% else %}{{ student.profile.degree|default:"Estudiante" }}{% endif %}</div>
+            <div class="header-profile__subtitle">
+              {% if student.academic_program %}
+                {{ student.academic_program.name|truncatechars:28 }}{% if student.academic_semester %} · Sem. {{ student.academic_semester }}{% endif %}
+              {% elif portal_role_label %}
+                {{ portal_role_label }}
+              {% else %}
+                Estudiante
+              {% endif %}
+            </div>
           </div>
           <span class="header-profile__chevron" aria-hidden="true">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
