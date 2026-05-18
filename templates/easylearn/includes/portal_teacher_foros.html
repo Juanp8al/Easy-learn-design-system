@@ -3,69 +3,60 @@
                   <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
                   <h1 id="teacher-foros-title">Foros y avisos</h1>
                   <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
-                    Resumen de <strong>avisos y publicaciones</strong> por curso. El detalle de foros y moderación se unificará con el aula de cada asignatura.
+                    Avisos y foros de sus cursos. Publique avisos desde <strong>Gestionar curso</strong>; abra o cierre foros aquí.
                   </p>
                 </header>
 
                 <div class="bottom-pair bottom-pair-dash margin-b">
                   <article class="panel panel--dg-sheet">
-                    <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Actividades publicadas</h2></div>
+                    <div class="panel__head panel__head--dg panel__head--dash-soft">
+                      <h2>Foros</h2>
+                    </div>
                     <div class="data-table-wrap dg-dash-actividades-scroll">
                       <table class="sheet sheet--dash-soft">
                         <thead>
-                          <tr>
-                            <th>Actividad</th>
-                            <th>Curso</th>
-                            <th>Semana</th>
-                            <th>Estado</th>
-                            <th>Límite</th>
-                            <th>Acción</th>
-                          </tr>
+                          <tr><th>Foro</th><th>Curso</th><th>Semana</th><th>Estado</th><th>Acción</th></tr>
                         </thead>
                         <tbody>
-                          <tr data-search="ensayo principios ux ihc activa editar">
-                            <td>Ensayo sobre principios de UX</td>
-                            <td>IHC</td>
-                            <td>5</td>
-                            <td><span class="badge-txt badge-txt--ok">Activa</span></td>
-                            <td>Hoy</td>
-                            <td><span class="btn-sm btn-outline" style="pointer-events:none;opacity:0.85;">Editar</span></td>
+                          {% for forum in teacher_forums %}
+                          <tr data-search="{{ forum.title|lower }} {{ forum.week.offering.code|lower }}">
+                            <td>{{ forum.title }}</td>
+                            <td><span class="tb-course">{{ forum.week.offering.code }}</span></td>
+                            <td>{{ forum.week.week_number }}</td>
+                            <td><span class="badge-txt badge-txt--{% if forum.status == 'open' %}ok{% else %}muted{% endif %}">{{ forum.get_status_display }}</span></td>
+                            <td>
+                              <form method="post" action="{% url 'classroom:teacher_toggle_forum' forum.id %}" style="display:inline;">{% csrf_token %}
+                                <button type="submit" class="btn-sm btn-outline">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button>
+                              </form>
+                            </td>
                           </tr>
-                          <tr data-search="foro ergonomía ihc abierto">
-                            <td>Foro · ergonomía</td>
-                            <td>IHC</td>
-                            <td>5</td>
-                            <td><span class="badge-txt badge-txt--draft">Abierto</span></td>
-                            <td>9 may</td>
-                            <td><span class="btn-sm btn-outline" style="pointer-events:none;opacity:0.85;">Ver foro</span></td>
-                          </tr>
-                          <tr data-search="quiz heurísticas arq sw cerrado resultados">
-                            <td>Quiz · heurísticas</td>
-                            <td>Arq. SW</td>
-                            <td>4</td>
-                            <td><span class="badge-txt badge-txt--muted">Cerrado</span></td>
-                            <td>8 may</td>
-                            <td><span class="btn-sm btn-outline" style="pointer-events:none;opacity:0.85;">Resultados</span></td>
-                          </tr>
+                          {% empty %}
+                          <tr><td colspan="5" class="muted">No hay foros en sus cursos.</td></tr>
+                          {% endfor %}
                         </tbody>
                       </table>
                     </div>
                   </article>
+
                   <article class="panel panel--dg-events">
-                    <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Avisos y publicaciones recientes</h2></div>
+                    <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Avisos publicados</h2></div>
                     <div class="data-table-wrap dg-events-table-wrap">
                       <table class="sheet sheet--dash-soft">
                         <thead>
-                          <tr>
-                            <th>Aviso</th>
-                            <th>Curso</th>
-                            <th>Fecha</th>
-                          </tr>
+                          <tr><th>Aviso</th><th>Curso</th><th>Semana</th><th>Fecha</th><th></th></tr>
                         </thead>
                         <tbody>
-                          <tr data-search="material semana 6 ihc"><td>Material nuevo en Semana 6</td><td>IHC</td><td>Hoy</td></tr>
-                          <tr data-search="cambio fecha taller arq sw"><td>Cambio de fecha en taller</td><td>Arq. SW</td><td>Ayer</td></tr>
-                          <tr data-search="foro moderación ihc"><td>Foro abierto · pendiente moderación</td><td>IHC</td><td>8 may</td></tr>
+                          {% for ann in teacher_announcements %}
+                          <tr data-search="{{ ann.title|lower }} {{ ann.offering.code|lower }}">
+                            <td><strong>{{ ann.title }}</strong><br><span class="muted">{{ ann.content|truncatechars:60 }}</span></td>
+                            <td>{{ ann.offering.code }}</td>
+                            <td>{% if ann.week %}S. {{ ann.week.week_number }}{% else %}—{% endif %}</td>
+                            <td>{{ ann.published_at|date:"j M Y" }}</td>
+                            <td><a class="btn-sm btn-outline" href="{% url 'classroom:teacher_manage_course' ann.offering_id %}">Gestionar</a></td>
+                          </tr>
+                          {% empty %}
+                          <tr><td colspan="5" class="muted">Sin avisos. Publíquelos al gestionar un curso.</td></tr>
+                          {% endfor %}
                         </tbody>
                       </table>
                     </div>

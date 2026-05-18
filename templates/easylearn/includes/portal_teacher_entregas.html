@@ -3,53 +3,117 @@
                   <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
                   <h1 id="teacher-entregas-title">Entregas</h1>
                   <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
-                    Centralice aquí el <strong>seguimiento de entregas</strong> por actividad y curso. La tabla muestra un ejemplo de flujo; las filas reales se alimentarán desde las actividades publicadas en el aula.
+                    Por actividad: cantidad de entregas, límite y estado. Califique entregas individuales desde la tabla inferior.
                   </p>
                 </header>
 
+                <div class="summary-row summary-row--triple margin-b">
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Pendientes de nota</div>
+                    <div class="summary-card__value">{{ teacher_pending_submission_count|default:0 }}</div>
+                    <div class="summary-card__sub">Entregas sin calificar</div>
+                  </article>
+                  <article class="summary-card summary-card--dg-white">
+                    <div class="summary-card__eyebrow">Calificadas</div>
+                    <div class="summary-card__value">{{ teacher_graded_submission_count|default:0 }}</div>
+                    <div class="summary-card__sub">En sus cursos</div>
+                  </article>
+                </div>
+
+                <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de entregas">
+                  <label class="catalog-toolbar__field-label" for="ent-filter-course">Curso</label>
+                  <select id="ent-filter-course" class="select-ui catalog-toolbar__select">
+                    <option value="">Todos</option>
+                    {% for o in teacher_offering_filter_choices %}
+                    <option value="{{ o.id }}">{{ o.code }} — {{ o.name|truncatechars:24 }}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="ent-filter-status">Estado</label>
+                  <select id="ent-filter-status" class="select-ui catalog-toolbar__select">
+                    <option value="">Todos</option>
+                    <option value="pending">Pendientes de nota</option>
+                    <option value="graded">Calificadas</option>
+                    <option value="due_today">Vence hoy</option>
+                  </select>
+                </div>
+
                 <article class="panel panel--dg-sheet dg-mer-main margin-b">
                   <div class="panel__head panel__head--dg panel__head--dash-soft">
-                    <h2>Entregas pendientes</h2>
+                    <h2>Resumen por actividad</h2>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet">
+                    <table class="sheet" id="teacher-delivery-activity-table">
                       <thead>
                         <tr>
                           <th>Actividad</th>
                           <th>Curso</th>
                           <th>Semana</th>
                           <th>Entregas</th>
+                          <th>Pendientes</th>
                           <th>Límite</th>
+                          <th>Estado</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for row in teacher_delivery_rows %}
+                        <tr
+                          data-offering-id="{{ row.offering_id }}"
+                          data-status="{% if row.pending_count %}pending{% else %}graded{% endif %}{% if row.due_today %} due_today{% endif %}"
+                          data-search="{{ row.activity.title|lower }} {{ row.offering.code|lower }}"
+                          class="{% if row.due_today and row.pending_count %}text-warn-strong{% endif %}"
+                        >
+                          <td>{{ row.activity.title }}</td>
+                          <td><span class="tb-course">{{ row.offering.code }}</span></td>
+                          <td>{{ row.week_number }}</td>
+                          <td>{{ row.submission_count }}</td>
+                          <td>{% if row.pending_count %}<strong>{{ row.pending_count }}</strong>{% else %}0{% endif %}</td>
+                          <td>{% if row.activity.due_at %}{{ row.activity.due_at|date:"j M, H:i" }}{% if row.due_today %} <span class="badge-txt badge-txt--warn">Hoy</span>{% endif %}{% else %}—{% endif %}</td>
+                          <td><span class="badge-txt badge-txt--{{ row.badge }}">{{ row.status_label }}</span></td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="7" class="muted">No hay actividades publicadas en sus cursos.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+
+                <article class="panel panel--dg-sheet margin-b">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Entregas individuales pendientes</h2>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet" id="teacher-submissions-table">
+                      <thead>
+                        <tr>
+                          <th>Estudiante</th>
+                          <th>Actividad</th>
+                          <th>Curso</th>
+                          <th>Semana</th>
+                          <th>Entregada</th>
                           <th>Acción</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr data-search="ensayo principios ux ihc semana 5 entregas calificar">
-                          <td>Ensayo · principios de UX</td>
-                          <td><span class="tb-course">IHC</span></td>
-                          <td>Semana 5</td>
-                          <td>12</td>
-                          <td class="text-warn-strong">Hoy</td>
-                          <td><span class="btn-sm btn-accent" style="pointer-events:none;opacity:0.85;">Calificar</span></td>
+                        {% for sub in teacher_pending_submissions %}
+                        <tr
+                          data-offering-id="{{ sub.activity.week.offering_id }}"
+                          data-status="pending"
+                          data-search="{{ sub.student.username|lower }} {{ sub.activity.title|lower }}"
+                        >
+                          <td>{{ sub.student.get_full_name|default:sub.student.username }}</td>
+                          <td>{{ sub.activity.title }}</td>
+                          <td><span class="tb-course">{{ sub.activity.week.offering.code }}</span></td>
+                          <td>{{ sub.activity.week.week_number }}</td>
+                          <td>{{ sub.submitted_at|date:"j M Y, H:i" }}</td>
+                          <td><a class="btn-sm btn-accent" href="{% url 'classroom:teacher_grade_submission' sub.id %}">Calificar</a></td>
                         </tr>
-                        <tr data-search="quiz evaluación heurística ihc cerrado revisar">
-                          <td>Quiz · evaluación heurística</td>
-                          <td><span class="tb-course">IHC</span></td>
-                          <td>Semana 5</td>
-                          <td>28</td>
-                          <td>Cerrado</td>
-                          <td><span class="btn-sm btn-outline" style="pointer-events:none;opacity:0.85;">Revisar</span></td>
-                        </tr>
-                        <tr data-search="taller diagrama arquitectura arq sw semana 6 calificar">
-                          <td>Taller · diagrama de arquitectura</td>
-                          <td><span class="tb-course">Arq. SW</span></td>
-                          <td>Semana 6</td>
-                          <td>9</td>
-                          <td>Mañana</td>
-                          <td><span class="btn-sm btn-accent" style="pointer-events:none;opacity:0.85;">Calificar</span></td>
-                        </tr>
+                        {% empty %}
+                        <tr><td colspan="6" class="muted">No hay entregas pendientes.</td></tr>
+                        {% endfor %}
                       </tbody>
                     </table>
                   </div>
                 </article>
               </section>
+
