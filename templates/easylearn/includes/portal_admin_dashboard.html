@@ -1,3 +1,6 @@
+              {% url 'admin:academia_academicperiod_add' as period_add_url %}
+              {% url 'admin:accounts_student_add' as user_add_url %}
+              {% url 'admin:academia_enrollment_add' as enrollment_add_url %}
               <section id="view-admin-dashboard" class="view is-visible view-dash-dg view-dash-mer" aria-labelledby="admin-dash-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
@@ -14,65 +17,65 @@
                     <div class="summary-card__sub summary-card__sub--academic">
                       <span>Cuentas habilitadas · {{ user_count }} registradas en total</span>
                     </div>
-                    <a class="card-glass-link" href="{% url 'admin:accounts_student_changelist' %}?is_active__exact=1">Gestionar usuarios ›</a>
+                    <button type="button" class="btn-tertiary" data-goto="usuarios">Ver usuarios ›</button>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Cursos ofertados</div>
                     <div class="summary-card__value">{{ offering_count }}</div>
                     <div class="summary-card__sub">Asignaturas abiertas por carrera, período y grupo</div>
-                    <a class="link-arrow-soft" href="{% url 'admin:academia_offering_changelist' %}">Gestionar cursos ›</a>
+                    <button type="button" class="btn-tertiary" data-goto="ofertas">Ver cursos ›</button>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Matrículas activas</div>
                     <div class="summary-card__value">{{ active_enrollment_count }}</div>
                     <div class="summary-card__sub">Estudiantes inscritos en cursos vigentes</div>
-                    <a class="link-arrow-soft" href="{% url 'admin:academia_enrollment_changelist' %}?status__exact=active">Ver matrículas ›</a>
+                    <button type="button" class="btn-tertiary" data-goto="matriculas">Ver matrículas ›</button>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Período actual</div>
                     <div class="summary-card__value">{% if current_period %}{{ current_period.name }}{% else %}—{% endif %}</div>
                     <div class="summary-card__sub">{{ period_count }} período(s) configurado(s) en el sistema</div>
-                    <a class="link-arrow-soft" href="{% url 'admin:academia_academicperiod_changelist' %}">Gestionar períodos ›</a>
+                    <button type="button" class="btn-tertiary" data-goto="periodos">Ver períodos ›</button>
                   </article>
                 </div>
 
                 <nav class="portal-quick-actions margin-b" aria-label="Creación rápida">
-                  <a class="portal-quick-actions__btn" href="{% url 'admin:accounts_student_add' %}">+ Crear usuario</a>
-                  <a class="portal-quick-actions__btn" href="{% url 'admin:academia_program_add' %}">+ Crear carrera</a>
-                  <a class="portal-quick-actions__btn" href="{% url 'admin:academia_offering_add' %}">+ Crear curso ofertado</a>
-                  <a class="portal-quick-actions__btn" href="{% url 'admin:academia_enrollment_add' %}">+ Crear matrícula</a>
-                  <a class="portal-quick-actions__btn" href="{% url 'admin:academia_academicperiod_add' %}">+ Crear período</a>
+                  <button type="button" class="portal-quick-actions__btn" data-goto="usuarios">+ Usuario</button>
+                  <button type="button" class="portal-quick-actions__btn" data-goto="carreras">+ Carrera</button>
+                  <button type="button" class="portal-quick-actions__btn" data-goto="ofertas">+ Curso ofertado</button>
+                  <button type="button" class="portal-quick-actions__btn" data-goto="matriculas">+ Matrícula</button>
+                  <button type="button" class="portal-quick-actions__btn" data-goto="periodos">+ Período</button>
                 </nav>
 
                 <p class="muted" style="margin:0 0 1rem;font-size:0.82rem;">Docentes: <strong>{{ teacher_count }}</strong> · Estudiantes: <strong>{{ student_role_count }}</strong> · Cursos sin docente: <strong>{{ offerings_without_teacher }}</strong> · Estudiantes sin carrera: <strong>{{ students_missing_program_count }}</strong></p>
 
-                <nav class="mer-admin-mer-bar" aria-label="Indicadores y accesos">
-                  <a class="mer-admin-mer-bar__link" href="{% url 'admin:academia_program_changelist' %}">
-                    <span class="mer-admin-mer-bar__eyebrow">Carreras</span>
-                    <span class="mer-admin-mer-bar__value">{{ program_count }}</span>
-                    <span class="mer-admin-mer-bar__hint">Programas académicos ›</span>
-                  </a>
-                  <a class="mer-admin-mer-bar__link" href="{% url 'admin:academia_academicperiod_changelist' %}">
-                    <span class="mer-admin-mer-bar__eyebrow">Períodos</span>
-                    <span class="mer-admin-mer-bar__value">{{ period_count }}</span>
-                    <span class="mer-admin-mer-bar__hint">{% if current_period %}Vigente: {{ current_period.name }}{% else %}Marcar período vigente ›{% endif %}</span>
-                  </a>
-                  <a class="mer-admin-mer-bar__link" href="{% url 'admin:academia_enrollment_changelist' %}">
-                    <span class="mer-admin-mer-bar__eyebrow">Matrículas</span>
-                    <span class="mer-admin-mer-bar__value">{{ active_enrollment_count }}</span>
-                    <span class="mer-admin-mer-bar__hint">Activas · {{ withdrawn_enrollment_count }} bajas ›</span>
-                  </a>
-                  <a class="mer-admin-mer-bar__link" href="#admin-mer-reportes">
-                    <span class="mer-admin-mer-bar__eyebrow">Reportes</span>
-                    <span class="mer-admin-mer-bar__value">—</span>
-                    <span class="mer-admin-mer-bar__hint">Consultas y exportes ›</span>
-                  </a>
+                <nav class="portal-kpi-bar" aria-label="Indicadores y accesos">
+                  <button type="button" class="portal-kpi-bar__link" data-goto="carreras">
+                    <span class="portal-kpi-bar__eyebrow">Carreras</span>
+                    <span class="portal-kpi-bar__value">{{ program_count }}</span>
+                    <span class="portal-kpi-bar__hint">Programas académicos ›</span>
+                  </button>
+                  <button type="button" class="portal-kpi-bar__link" data-goto="periodos">
+                    <span class="portal-kpi-bar__eyebrow">Períodos</span>
+                    <span class="portal-kpi-bar__value">{{ period_count }}</span>
+                    <span class="portal-kpi-bar__hint">{% if current_period %}Vigente: {{ current_period.name }}{% else %}Marcar período vigente ›{% endif %}</span>
+                  </button>
+                  <button type="button" class="portal-kpi-bar__link" data-goto="matriculas">
+                    <span class="portal-kpi-bar__eyebrow">Matrículas</span>
+                    <span class="portal-kpi-bar__value">{{ active_enrollment_count }}</span>
+                    <span class="portal-kpi-bar__hint">Activas · {{ withdrawn_enrollment_count }} bajas ›</span>
+                  </button>
+                  <button type="button" class="portal-kpi-bar__link" data-goto="ofertas">
+                    <span class="portal-kpi-bar__eyebrow">Cursos</span>
+                    <span class="portal-kpi-bar__value">{{ offering_count }}</span>
+                    <span class="portal-kpi-bar__hint">Oferta académica ›</span>
+                  </button>
                 </nav>
 
                 <article class="panel panel--dg-sheet margin-b" id="admin-mer-periodos">
                   <div class="panel__head panel__head--dg panel__head--dash-soft">
                     <h2>Períodos académicos</h2>
-                    <a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_add' %}">+ Nuevo período</a>
+                    <button type="button" class="btn-sm btn-outline" data-goto="periodos">Ver todos ›</button>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
                     <table class="sheet sheet--dash-soft">
@@ -92,10 +95,10 @@
                           <td>{% if p.starts_on %}{{ p.starts_on|date:"j M Y" }}{% else %}—{% endif %}</td>
                           <td>{% if p.ends_on %}{{ p.ends_on|date:"j M Y" }}{% else %}—{% endif %}</td>
                           <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Sí</span>{% else %}<span class="muted">No</span>{% endif %}</td>
-                          <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_change' p.id %}">Editar</a></td>
+                          <td><button type="button" class="btn-sm btn-outline" data-goto="periodos">Ver ›</button></td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="5" class="muted">No hay períodos registrados. Use <strong>+ Crear período</strong> arriba o la administración del sitio para dar de alta el calendario académico.</td></tr>
+                        <tr><td colspan="5" class="portal-empty-state__cell">{% include "easylearn/includes/portal_empty_state.html" with empty_title="No hay períodos registrados" empty_text="Cree un período lectivo para organizar cursos y matrículas." empty_cta_label="+ Crear período" empty_cta_href=period_add_url %}</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>
@@ -105,7 +108,8 @@
                 <div class="dashboard-grid dashboard-grid--dash-pair dashboard-grid--dash-mer">
                     <article class="panel panel--dg-sheet dg-mer-main">
                       <div class="panel__head panel__head--dg panel__head--dash-soft">
-                        <h2>Gestión de usuarios</h2>
+                        <h2>Usuarios recientes</h2>
+                        <button type="button" class="btn-sm btn-outline" data-goto="usuarios">Ver todos ›</button>
                       </div>
                       <div class="data-table-wrap dg-dash-actividades-scroll">
                         <table class="sheet">
@@ -125,7 +129,7 @@
                               <td><span class="badge-txt {% if u.role == 'admin' %}badge-txt--warn{% elif u.role == 'teacher' %}badge-txt--draft{% else %}badge-txt--ok{% endif %}">{{ u.get_role_display }}</span></td>
                               <td>{% if u.academic_program %}{{ u.academic_program.name|truncatechars:28 }}{% else %}—{% endif %}</td>
                               <td>{% if u.is_active %}Activa{% else %}Inactiva{% endif %}</td>
-                              <td><a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_change' u.id %}">Editar</a></td>
+                              <td><button type="button" class="btn-sm btn-outline" data-goto="usuarios">Ver ›</button></td>
                             </tr>
                             {% empty %}
                             <tr data-search-skip><td colspan="5" class="muted">No hay usuarios registrados.</td></tr>
@@ -154,13 +158,17 @@
                           <h3>Alertas administrativas</h3>
                         </div>
                         <ul class="dg-mer-rail-list">
-                          {% if offerings_without_teacher %}
-                          <li><span class="text-warn-strong">{{ offerings_without_teacher }}</span> curso(s) ofertado(s) sin docente asignado</li>
-                          {% else %}
-                          <li>Todos los cursos ofertados tienen docente (o no hay cursos configurados).</li>
-                          {% endif %}
-                          <li>Período actual: {% if current_period %}<strong>{{ current_period.name }}</strong>{% else %}<span class="muted">ninguno marcado</span>{% endif %}</li>
-                          <li><a href="{% url 'admin:academia_offering_changelist' %}?teacher__isnull=True">Filtrar cursos sin docente ›</a></li>
+                          {% for alert in admin_alerts %}
+                          <li>
+                            {% if alert.level == 'warn' %}<span class="text-warn-strong">!</span>{% endif %}
+                            {{ alert.text }}
+                            {% if alert.goto %}
+                            <button type="button" data-goto="{{ alert.goto }}"{% if alert.preset_teacher %} data-admin-preset-teacher="{{ alert.preset_teacher }}"{% endif %}>Revisar ›</button>
+                            {% elif alert.url_name %}
+                            <a href="{% url alert.url_name %}{{ alert.url_query }}">Revisar ›</a>
+                            {% endif %}
+                          </li>
+                          {% endfor %}
                         </ul>
                         <p class="mini-cal-hint" role="note">Resumen en tiempo real de la plataforma.</p>
                       </article>
@@ -169,98 +177,13 @@
                           <h3>Acciones rápidas</h3>
                         </div>
                         <ul class="dg-mer-rail-list">
-                          <li><a href="{% url 'admin:academia_program_add' %}">Alta de carrera / programa ›</a></li>
-                          <li><a href="{% url 'admin:academia_academicperiod_add' %}">Alta de período lectivo ›</a></li>
-                          <li><a href="{% url 'admin:academia_offering_add' %}">Nuevo curso ofertado (+ docente) ›</a></li>
-                          <li><a href="{% url 'admin:accounts_student_changelist' %}?role__exact=student&amp;academic_program__isnull=True">Estudiantes sin carrera ({{ students_missing_program_count }}) ›</a></li>
+                          <li><button type="button" class="btn-tertiary" data-goto="carreras">Ver carreras ›</button></li>
+                          <li><button type="button" class="btn-tertiary" data-goto="periodos">Ver períodos ›</button></li>
+                          <li><button type="button" class="btn-tertiary" data-goto="ofertas">Ver cursos ofertados ›</button></li>
+                          <li><button type="button" class="btn-tertiary" data-goto="matriculas">Ver matrículas ›</button></li>
                         </ul>
                       </article>
                     </div>
 
-                    <div class="dg-mer-bottom">
-                    <div class="bottom-pair bottom-pair-dash">
-                      <article class="panel panel--dg-sheet">
-                        <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Cursos ofertados recientes</h2></div>
-                        <div class="data-table-wrap dg-dash-actividades-scroll">
-                          <table class="sheet sheet--dash-soft">
-                            <thead>
-                              <tr>
-                                <th>Curso</th>
-                                <th>Código</th>
-                                <th>Programa</th>
-                                <th>Período</th>
-                                <th>Docente</th>
-                                <th>Inscritos</th>
-                                <th>Acción</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {% for o in recent_offerings %}
-                              <tr data-search="{{ o.name|lower }} {{ o.code|lower }}">
-                                <td>{{ o.name|truncatechars:28 }}</td>
-                                <td>{{ o.code }}</td>
-                                <td>{{ o.program.name|truncatechars:20 }}</td>
-                                <td>{{ o.period.name }}</td>
-                                <td>{% if o.teacher %}{{ o.teacher.get_full_name|default:o.teacher.username }}{% else %}<span class="muted">Sin docente</span>{% endif %}</td>
-                                <td>{{ o.active_student_count }}</td>
-                                <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_offering_change' o.id %}">Editar</a></td>
-                              </tr>
-                              {% empty %}
-                              <tr data-search-skip><td colspan="7" class="muted">No hay cursos ofertados. Use los botones <strong>+ Crear …</strong> de arriba o la administración del sitio para registrar carrera, período y curso.</td></tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      </article>
-                      <article class="panel panel--dg-events">
-                        <div class="panel__head panel__head--dg panel__head--dash-soft">
-                          <h2>Matrículas recientes</h2>
-                          <a class="btn-sm btn-outline" href="{% url 'admin:academia_enrollment_changelist' %}">Todas las inscripciones ›</a>
-                        </div>
-                        <div class="data-table-wrap dg-events-table-wrap">
-                          <table class="sheet sheet--dash-soft">
-                            <thead>
-                              <tr>
-                                <th>Estudiante</th>
-                                <th>Programa</th>
-                                <th>Período</th>
-                                <th>Curso ofertado</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {% for enr in recent_enrollments %}
-                              <tr data-search="{{ enr.student.username|lower }} {{ enr.offering.code|lower }}">
-                                <td>{{ enr.student.get_full_name|default:enr.student.username }}</td>
-                                <td>{{ enr.offering.program.name|truncatechars:22 }}</td>
-                                <td>{{ enr.offering.period.name }}</td>
-                                <td>{{ enr.offering.code }} · {{ enr.offering.name|truncatechars:24 }}</td>
-                              </tr>
-                              {% empty %}
-                              <tr data-search-skip><td colspan="4" class="muted">No hay matrículas activas. Use <strong>+ Crear matrícula</strong> o la administración del sitio para inscribir estudiantes en un curso.</td></tr>
-                              {% endfor %}
-                            </tbody>
-                          </table>
-                        </div>
-                      </article>
-                    </div>
-                    </div>
-
-                    <article class="panel panel--dg-chart dg-mer-aside" id="admin-mer-reportes">
-                      <div class="panel__head panel__head--dg panel__head--dash-soft">
-                        <h2>Reportes y consultas</h2>
-                      </div>
-                      <p style="margin:0 1.2rem 0.75rem;font-size:0.88rem;color:var(--text-muted);line-height:1.45;">
-                        Enlaces a listados filtrables de la administración. Para exportar datos use las acciones del listado (CSV, etc.) según la versión de su sitio.
-                      </p>
-                      <div style="padding:0 1.2rem 1.2rem;display:flex;flex-direction:column;gap:0.5rem;">
-                        <a class="btn-sm btn-accent" href="/admin/">Abrir administración Django ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:academia_program_changelist' %}">Reporte · listado de carreras ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_changelist' %}">Reporte · períodos lectivos ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:academia_enrollment_changelist' %}">Reporte · todas las inscripciones (activas y bajas) ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:academia_enrollment_changelist' %}?status__exact=withdrawn">Solo matrículas dadas de baja ({{ withdrawn_enrollment_count }}) ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:academia_offering_changelist' %}?teacher__isnull=True">Cursos sin docente ({{ offerings_without_teacher }}) ›</a>
-                        <a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_changelist' %}?role__exact=student&amp;academic_program__isnull=True">Estudiantes sin programa ({{ students_missing_program_count }}) ›</a>
-                      </div>
-                    </article>
                 </div>
               </section>

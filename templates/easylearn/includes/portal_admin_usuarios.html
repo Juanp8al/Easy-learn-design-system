@@ -1,0 +1,65 @@
+              <section id="view-admin-usuarios" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-usuarios-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
+                  <h1 id="admin-usuarios-title">Usuarios</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Cuentas del sistema: roles, estado y carrera. Use <strong>+ Crear usuario</strong> o <strong>Editar</strong> para cambios puntuales.
+                  </p>
+                </header>
+
+                <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de usuarios">
+                  <label class="catalog-toolbar__field-label" for="admin-filter-user-role">Rol</label>
+                  <select id="admin-filter-user-role" class="select-ui catalog-toolbar__select" data-admin-filter="usuarios">
+                    {% for c in admin_role_choices %}
+                    <option value="{{ c.value }}">{{ c.label }}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="admin-filter-user-active">Estado</label>
+                  <select id="admin-filter-user-active" class="select-ui catalog-toolbar__select" data-admin-filter="usuarios">
+                    <option value="">Todos</option>
+                    <option value="1">Activos</option>
+                    <option value="0">Inactivos</option>
+                  </select>
+                </div>
+
+                <article class="panel panel--dg-sheet">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Listado de usuarios</h2>
+                    <a class="btn-sm btn-accent" href="{% url 'admin:accounts_student_add' %}">+ Crear usuario</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft" id="admin-users-table">
+                      <thead>
+                        <tr>
+                          <th>Usuario</th>
+                          <th>Rol</th>
+                          <th>Carrera / programa</th>
+                          <th>Estado</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for u in admin_users %}
+                        <tr
+                          data-admin-row="usuarios"
+                          data-role="{{ u.role }}"
+                          data-active="{% if u.is_active %}1{% else %}0{% endif %}"
+                          data-search="{{ u.username|lower }} {{ u.get_full_name|default:''|lower }} {{ u.email|lower }}"
+                        >
+                          <td>
+                            <strong>{{ u.get_full_name|default:u.username }}</strong>
+                            <span class="muted" style="display:block;font-size:0.82rem;">{{ u.username }}</span>
+                          </td>
+                          <td><span class="badge-txt {% if u.role == 'admin' %}badge-txt--warn{% elif u.role == 'teacher' %}badge-txt--draft{% else %}badge-txt--ok{% endif %}">{{ u.get_role_display }}</span></td>
+                          <td>{% if u.academic_program %}{{ u.academic_program.name }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td>{% if u.is_active %}<span class="badge-txt badge-txt--ok">Activo</span>{% else %}<span class="muted">Inactivo</span>{% endif %}</td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_change' u.id %}">Editar</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr data-search-skip><td colspan="5" class="muted">No hay usuarios registrados.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>

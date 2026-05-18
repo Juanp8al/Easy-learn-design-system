@@ -1,0 +1,45 @@
+              <section id="view-admin-carreras" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-carreras-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
+                  <h1 id="admin-carreras-title">Carreras</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Programas académicos (carreras) con cursos ofertados y estudiantes asociados.
+                  </p>
+                </header>
+
+                <article class="panel panel--dg-sheet">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Programas académicos</h2>
+                    <a class="btn-sm btn-accent" href="{% url 'admin:academia_program_add' %}">+ Crear carrera</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft">
+                      <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Código</th>
+                          <th>Cursos ofertados</th>
+                          <th>Estudiantes</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in admin_programs %}
+                        <tr data-search="{{ p.name|lower }} {{ p.code|lower }} {{ p.slug|lower }}">
+                          <td><strong>{{ p.name }}</strong></td>
+                          <td>{{ p.code|default:"—" }}</td>
+                          <td>{{ p.offering_count }}</td>
+                          <td>{{ p.student_count }}</td>
+                          <td>
+                            <a class="btn-sm btn-outline" href="{% url 'admin:academia_program_change' p.id %}">Editar</a>
+                            <button type="button" class="btn-sm btn-outline" data-goto="ofertas" data-admin-goto-filter-program="{{ p.id }}">Ver cursos</button>
+                          </td>
+                        </tr>
+                        {% empty %}
+                        <tr data-search-skip><td colspan="5" class="muted">No hay carreras registradas.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>

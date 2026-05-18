@@ -1,0 +1,82 @@
+              {% url 'admin:academia_enrollment_add' as enrollment_add_url %}
+              <section id="view-admin-matriculas" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-matriculas-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
+                  <h1 id="admin-matriculas-title">Matrículas</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Inscripciones de estudiantes a cursos ofertados por período y carrera.
+                  </p>
+                </header>
+
+                <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de matrículas">
+                  <label class="catalog-toolbar__field-label" for="admin-filter-enrollment-period">Período</label>
+                  <select id="admin-filter-enrollment-period" class="select-ui catalog-toolbar__select" data-admin-filter="matriculas">
+                    <option value="">Todos</option>
+                    {% for p in admin_period_choices %}
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="admin-filter-enrollment-program">Carrera</label>
+                  <select id="admin-filter-enrollment-program" class="select-ui catalog-toolbar__select" data-admin-filter="matriculas">
+                    <option value="">Todas</option>
+                    {% for p in admin_program_choices %}
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="admin-filter-enrollment-status">Estado</label>
+                  <select id="admin-filter-enrollment-status" class="select-ui catalog-toolbar__select" data-admin-filter="matriculas">
+                    {% for c in admin_enrollment_status_choices %}
+                    <option value="{{ c.value }}">{{ c.label }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <article class="panel panel--dg-sheet">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Inscripciones</h2>
+                    <a class="btn-sm btn-accent" href="{% url 'admin:academia_enrollment_add' %}">+ Crear matrícula</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft" id="admin-enrollments-table">
+                      <thead>
+                        <tr>
+                          <th>Estudiante</th>
+                          <th>Curso</th>
+                          <th>Carrera</th>
+                          <th>Período</th>
+                          <th>Estado</th>
+                          <th>Fecha</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for enr in admin_enrollments %}
+                        <tr
+                          data-admin-row="matriculas"
+                          data-period-id="{{ enr.offering.period_id }}"
+                          data-program-id="{{ enr.offering.program_id }}"
+                          data-status="{{ enr.status }}"
+                          data-search="{{ enr.student.username|lower }} {{ enr.offering.code|lower }} {{ enr.offering.name|lower }}"
+                        >
+                          <td>{{ enr.student.get_full_name|default:enr.student.username }}</td>
+                          <td>{{ enr.offering.code }} · {{ enr.offering.name|truncatechars:28 }}</td>
+                          <td>{{ enr.offering.program.name|truncatechars:22 }}</td>
+                          <td>{{ enr.offering.period.name }}</td>
+                          <td>
+                            {% if enr.status == 'active' %}
+                            <span class="badge-txt badge-txt--ok">{{ enr.get_status_display }}</span>
+                            {% else %}
+                            <span class="muted">{{ enr.get_status_display }}</span>
+                            {% endif %}
+                          </td>
+                          <td>{{ enr.enrolled_at|date:"j M Y" }}</td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_enrollment_change' enr.id %}">Editar</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr data-search-skip><td colspan="7" class="portal-empty-state__cell">{% include "easylearn/includes/portal_empty_state.html" with empty_title="No hay matrículas registradas" empty_text="Inscriba estudiantes en los cursos ofertados del período vigente. Si necesita apoyo, contacte a secretaría académica." empty_cta_label="+ Crear matrícula" empty_cta_href=enrollment_add_url %}</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>

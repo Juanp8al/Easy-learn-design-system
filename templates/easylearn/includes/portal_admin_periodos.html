@@ -1,0 +1,61 @@
+              <section id="view-admin-periodos" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-periodos-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
+                  <h1 id="admin-periodos-title">Períodos</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Calendario lectivo. Solo un período puede estar marcado como <strong>actual</strong> a la vez.
+                  </p>
+                </header>
+
+                <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de períodos">
+                  <label class="catalog-toolbar__field-label" for="admin-filter-period-current">Vigencia</label>
+                  <select id="admin-filter-period-current" class="select-ui catalog-toolbar__select" data-admin-filter="periodos">
+                    <option value="">Todos</option>
+                    <option value="1">Solo período actual</option>
+                    <option value="0">Sin marcar como actual</option>
+                  </select>
+                </div>
+
+                {% if current_period %}
+                <p class="muted margin-b" style="font-size:0.88rem;">Período vigente: <strong>{{ current_period.name }}</strong></p>
+                {% else %}
+                <p class="text-warn-strong margin-b" style="font-size:0.88rem;">No hay período marcado como actual. Edite un período y active la opción «Período actual» (solo puede haber uno vigente).</p>
+                {% endif %}
+
+                <article class="panel panel--dg-sheet">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Períodos académicos</h2>
+                    <a class="btn-sm btn-accent" href="{% url 'admin:academia_academicperiod_add' %}">+ Crear período</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft" id="admin-periods-table">
+                      <thead>
+                        <tr>
+                          <th>Nombre</th>
+                          <th>Inicio</th>
+                          <th>Fin</th>
+                          <th>Actual</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for p in admin_periods %}
+                        <tr
+                          data-admin-row="periodos"
+                          data-is-current="{% if p.is_current %}1{% else %}0{% endif %}"
+                          data-search="{{ p.name|lower }}"
+                        >
+                          <td><strong>{{ p.name }}</strong></td>
+                          <td>{% if p.starts_on %}{{ p.starts_on|date:"j M Y" }}{% else %}—{% endif %}</td>
+                          <td>{% if p.ends_on %}{{ p.ends_on|date:"j M Y" }}{% else %}—{% endif %}</td>
+                          <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Actual</span>{% else %}<span class="muted">No</span>{% endif %}</td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_change' p.id %}">Editar</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr data-search-skip><td colspan="5" class="muted">No hay períodos registrados.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>

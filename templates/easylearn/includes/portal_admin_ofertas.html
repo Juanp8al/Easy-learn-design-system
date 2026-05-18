@@ -1,0 +1,77 @@
+              <section id="view-admin-ofertas" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-ofertas-title">
+                <header class="hero hero-dash-dg">
+                  <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
+                  <h1 id="admin-ofertas-title">Cursos ofertados</h1>
+                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
+                    Asignaturas por período, carrera, grupo y docente asignado.
+                  </p>
+                </header>
+
+                <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de cursos ofertados">
+                  <label class="catalog-toolbar__field-label" for="admin-filter-offering-period">Período</label>
+                  <select id="admin-filter-offering-period" class="select-ui catalog-toolbar__select" data-admin-filter="ofertas">
+                    <option value="">Todos los períodos</option>
+                    {% for p in admin_period_choices %}
+                    <option value="{{ p.id }}">{{ p.name }}{% if p.is_current %} (actual){% endif %}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="admin-filter-offering-program">Carrera</label>
+                  <select id="admin-filter-offering-program" class="select-ui catalog-toolbar__select" data-admin-filter="ofertas">
+                    <option value="">Todas las carreras</option>
+                    {% for p in admin_program_choices %}
+                    <option value="{{ p.id }}">{{ p.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <label class="catalog-toolbar__field-label" for="admin-filter-offering-teacher">Docente</label>
+                  <select id="admin-filter-offering-teacher" class="select-ui catalog-toolbar__select" data-admin-filter="ofertas">
+                    <option value="">Todos</option>
+                    <option value="missing">Sin docente</option>
+                    <option value="assigned">Con docente</option>
+                  </select>
+                </div>
+
+                <article class="panel panel--dg-sheet">
+                  <div class="panel__head panel__head--dg panel__head--dash-soft">
+                    <h2>Listado de cursos ofertados</h2>
+                    <a class="btn-sm btn-accent" href="{% url 'admin:academia_offering_add' %}">+ Crear curso</a>
+                  </div>
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--dash-soft" id="admin-offerings-table">
+                      <thead>
+                        <tr>
+                          <th>Curso</th>
+                          <th>Código</th>
+                          <th>Carrera</th>
+                          <th>Período</th>
+                          <th>Grupo</th>
+                          <th>Docente</th>
+                          <th>Inscritos</th>
+                          <th>Acción</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for o in admin_offerings %}
+                        <tr
+                          data-admin-row="ofertas"
+                          data-period-id="{{ o.period_id }}"
+                          data-program-id="{{ o.program_id }}"
+                          data-teacher-missing="{% if o.teacher_id %}0{% else %}1{% endif %}"
+                          data-search="{{ o.name|lower }} {{ o.code|lower }}"
+                        >
+                          <td>{{ o.name }}</td>
+                          <td>{{ o.code }}</td>
+                          <td>{{ o.program.name }}</td>
+                          <td>{{ o.period.name }}</td>
+                          <td>{{ o.group|default:"—" }}</td>
+                          <td>{% if o.teacher %}{{ o.teacher.get_full_name|default:o.teacher.username }}{% else %}<span class="text-warn-strong">Sin docente</span>{% endif %}</td>
+                          <td>{{ o.active_student_count }}</td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_offering_change' o.id %}">Editar</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr data-search-skip><td colspan="8" class="muted">No hay cursos ofertados.</td></tr>
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              </section>
