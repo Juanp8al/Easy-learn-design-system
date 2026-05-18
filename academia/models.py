@@ -1,5 +1,5 @@
 """
-Modelo académico MER: Carrera → Curso (oferta) → Docente + Inscripción (estudiante).
+Estructura académica institucional: carrera → curso ofertado → docente + matrícula.
 El vínculo docente–estudiante es siempre a través del curso ofertado.
 """
 

@@ -4,4 +4,7 @@ from django.apps import AppConfig
 class AcademiaConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "academia"
-    verbose_name = "Academia (MER)"
+    verbose_name = "Academia"
+
+    def ready(self):
+        import academia.signals  # noqa: F401
