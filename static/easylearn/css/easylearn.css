@@ -2141,7 +2141,12 @@ table.sheet tbody tr:hover {
   display: none;
 }
 
-@media (max-width: 768px) {
+.portal-nav-edge-open {
+  display: none;
+  pointer-events: auto;
+}
+
+@media (max-width: 1024px) {
   :root {
     --widgets-w: min(100%, 320px);
     --main-padding-x: 0.75rem;
@@ -2153,24 +2158,27 @@ table.sheet tbody tr:hover {
     gap: 0;
   }
 
+  /* Móvil/tablet: botón chevron del borde (como escritorio), no hamburguesa en header */
   .portal-nav-toggle {
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    margin-right: 0.35rem;
-    padding: 0;
-    border: none;
-    border-radius: 10px;
-    background: rgb(23 31 77 / 0.08);
-    color: var(--ds-blue-900, #171f4d);
-    cursor: pointer;
+    display: none !important;
   }
 
-  .portal-nav-toggle svg {
-    width: 22px;
-    height: 22px;
+  .portal-nav-edge-open {
+    display: grid;
+    position: fixed;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 220;
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+    box-shadow: 4px 0 16px rgb(0 0 0 / 0.2);
+    pointer-events: auto;
+  }
+
+  body.is-portal-nav-open .portal-nav-edge-open {
+    display: none !important;
+    pointer-events: none;
   }
 
   .portal-nav-backdrop {
@@ -2220,11 +2228,35 @@ table.sheet tbody tr:hover {
     box-shadow: 8px 0 32px rgb(0 0 0 / 0.35);
   }
 
+  body.is-portal-nav-open .sidebar__collapse-row {
+    min-height: 2.85rem;
+    padding-right: 0.15rem;
+    margin-top: 0.65rem;
+    margin-bottom: 0.5rem;
+  }
+
+  body.is-portal-nav-open .sidebar__collapse-row .sidebar__rule {
+    margin-right: 2.35rem;
+    border-color: rgb(255 255 255 / 0.14);
+  }
+
+  body.is-portal-nav-open .sidebar__collapse {
+    right: -0.85rem;
+    z-index: 6;
+    background: var(--sidebar-deep);
+    border-color: rgb(255 255 255 / 0.2);
+    box-shadow: 2px 0 10px rgb(0 0 0 / 0.28);
+  }
+
   .app-shell.is-sidebar-collapsed .sidebar {
     width: min(var(--sidebar-w), 88vw);
   }
 
   .sidebar__collapse-row {
+    display: flex;
+  }
+
+  body:not(.is-portal-nav-open) .sidebar__collapse-row {
     display: none;
   }
 
@@ -2245,20 +2277,15 @@ table.sheet tbody tr:hover {
 
   .app-header__track {
     display: grid;
-    grid-template-columns: auto 1fr auto;
+    grid-template-columns: 1fr auto;
     align-items: center;
     row-gap: 0.65rem;
     column-gap: 0.5rem;
     padding: 0.65rem var(--main-padding-x-end) 0.65rem var(--main-padding-x);
   }
 
-  .portal-nav-toggle {
-    grid-column: 1;
-    grid-row: 1;
-  }
-
   .header-actions {
-    grid-column: 3;
+    grid-column: 2;
     grid-row: 1;
     flex: initial;
     justify-content: flex-end;
@@ -7892,7 +7919,7 @@ table.sheet.sheet--grades-activity .td-num {
   }
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 640px) {
   .summary-row.summary-row--quad {
     grid-template-columns: 1fr;
   }
@@ -10543,6 +10570,178 @@ a.portal-quick-actions__btn {
 
 .dg-dash-actividades-scroll {
   max-width: 100%;
+}
+
+/* Tabla actividades / entregas · columnas equilibradas en escritorio */
+#dash-activity-table.sheet--dash-priority,
+#teacher-dash-pending-table.sheet--dash-priority {
+  table-layout: auto;
+  width: 100%;
+  min-width: 0;
+}
+
+#dash-activity-table.sheet--dash-priority thead th:nth-child(1),
+#teacher-dash-pending-table.sheet--dash-priority thead th:nth-child(2) {
+  min-width: 7.5rem;
+}
+
+#dash-activity-table.sheet--dash-priority thead th:nth-child(4),
+#teacher-dash-pending-table.sheet--dash-priority thead th:nth-child(4) {
+  white-space: nowrap;
+}
+
+#dash-activity-table.sheet--dash-priority thead th:last-child,
+#teacher-dash-pending-table.sheet--dash-priority thead th:last-child {
+  width: 8.5rem;
+}
+
+#dash-activity-table.sheet--dash-priority tbody td:last-child .btn-sm,
+#teacher-dash-pending-table.sheet--dash-priority tbody td:last-child .btn-sm {
+  white-space: nowrap;
+}
+
+/* ——— Dashboard portal · tablet (≈600–900px) y móvil ——— */
+@media (max-width: 900px) {
+  .summary-row.summary-row--quad {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.85rem;
+  }
+
+  .summary-row.summary-row--quad .summary-card--dg-gradient {
+    grid-column: 1 / -1;
+  }
+
+  .canvas-body:has(#view-dashboard.is-visible),
+  .canvas-body:has(#view-teacher-dashboard.is-visible) {
+    padding: 1rem 0.9rem 1.35rem;
+  }
+
+  .view-dash-dg .summary-row-dash {
+    gap: 0.85rem;
+  }
+
+  .view-dash-dg .summary-card {
+    min-height: 0;
+    padding: 1rem 1rem;
+  }
+
+  .view-dash-dg .dashboard-grid {
+    gap: 1rem;
+  }
+
+  .view-dash-dg .widget-dg.dg-dash-calendario {
+    width: 100%;
+    max-width: none;
+  }
+
+  .panel--dg-chart .perf-chart-dg {
+    height: auto;
+    min-height: 180px;
+    padding-bottom: 1rem;
+  }
+}
+
+@media (max-width: 900px) and (min-width: 721px) {
+  .view-dash-dg .dg-dash-actividades-scroll:has(.sheet--dash-priority) {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .view-dash-dg .sheet--dash-priority {
+    min-width: 34rem;
+    width: max-content;
+    max-width: none;
+  }
+}
+
+@media (max-width: 720px) {
+  .view-dash-dg .dg-dash-actividades-scroll:has(.sheet--dash-priority) {
+    max-height: none;
+    overflow: visible;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+
+  .view-dash-dg .sheet--dash-priority {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .view-dash-dg .sheet--dash-priority thead {
+    display: none;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody tr {
+    display: block;
+    margin: 0 var(--dash-pad-inline) 0.65rem;
+    padding: 0.8rem 0.85rem;
+    border: 1px solid rgb(226 232 240);
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 1px 4px rgb(15 23 42 / 0.04);
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody tr:nth-child(even) td,
+  .view-dash-dg .sheet--dash-priority tbody tr:hover td {
+    background: transparent;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td {
+    display: grid;
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    align-items: center;
+    gap: 0.25rem 0.6rem;
+    padding: 0.38rem 0 !important;
+    border: none !important;
+    background: transparent !important;
+    font-size: 0.84rem;
+    text-align: left;
+    white-space: normal;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td::before {
+    content: attr(data-label);
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td[colspan] {
+    display: block;
+    grid-template-columns: 1fr;
+    padding: 0.5rem 0 !important;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td[colspan]::before {
+    display: none;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td:last-child:not([colspan]) {
+    display: block;
+    grid-template-columns: 1fr;
+    padding-top: 0.55rem !important;
+    margin-top: 0.15rem;
+    border-top: 1px solid rgb(241 245 249) !important;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td:last-child::before {
+    display: none;
+  }
+
+  .view-dash-dg .sheet--dash-priority tbody td:last-child .btn-sm {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .view-dash-dg .sheet--dash-priority .portal-empty-state__cell {
+    margin: 0;
+    padding: 1rem !important;
+  }
 }
 
 @media (max-width: 640px) {

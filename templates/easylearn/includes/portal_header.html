@@ -9,9 +9,17 @@
       aria-expanded="false"
       aria-controls="portal-sidebar"
     >
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
-      </svg>
+      <span class="portal-nav-toggle__icon portal-nav-toggle__icon--menu" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+        </svg>
+      </span>
+      <span class="portal-nav-toggle__icon portal-nav-toggle__icon--close" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 6 6 18" />
+          <path d="m6 6 12 12" />
+        </svg>
+      </span>
     </button>
     <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get" data-header-filter-form>
       <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, actividades o recursos" }}</label>
