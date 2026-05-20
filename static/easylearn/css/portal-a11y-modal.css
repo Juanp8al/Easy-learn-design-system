@@ -38,44 +38,60 @@
   color: #0f172a;
 }
 
-.portal-a11y-dialog__head-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-}
-
-.portal-a11y-dialog__icon-btn {
-  display: grid;
-  place-items: center;
-  width: 40px;
-  height: 40px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  background: #f8fafc;
-  color: #475569;
-  cursor: pointer;
-}
-
-.portal-a11y-dialog__icon-btn:hover {
-  background: #f1f5f9;
-}
-
 .portal-a11y-dialog__close {
   display: grid;
   place-items: center;
-  width: 40px;
-  height: 40px;
-  border: none;
-  border-radius: 50%;
-  background: #3b82f6;
-  color: #fff;
-  font-size: 1.35rem;
-  line-height: 1;
+  flex-shrink: 0;
+  width: 2.25rem;
+  height: 2.25rem;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #64748b;
   cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
 .portal-a11y-dialog__close:hover {
-  background: #2563eb;
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+  color: #334155;
+}
+
+.portal-a11y-dialog__close:focus-visible {
+  outline: 2px solid rgb(96 165 250 / 0.55);
+  outline-offset: 2px;
+}
+
+.portal-a11y-dialog__foot {
+  margin-top: 1.15rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid #e2e8f0;
+  text-align: center;
+}
+
+.portal-a11y-dialog__reset {
+  margin: 0;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.portal-a11y-dialog__reset:hover {
+  color: #334155;
 }
 
 .portal-a11y-dialog__section-label {
@@ -195,9 +211,27 @@ html[data-theme="dark"] .portal-a11y-dialog__title {
   color: #f1f5f9;
 }
 
-html[data-theme="dark"] .portal-a11y-dialog__icon-btn {
+html[data-theme="dark"] .portal-a11y-dialog__close {
   background: #334155;
   border-color: #475569;
+  color: #cbd5e1;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__close:hover {
+  background: #475569;
+  border-color: #64748b;
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__foot {
+  border-top-color: #334155;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__reset {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__reset:hover {
   color: #e2e8f0;
 }
 
@@ -221,6 +255,30 @@ html[data-theme="dark"] .portal-a11y-tile[aria-pressed="true"] {
   border-color: #60a5fa;
   background: rgb(96 165 250 / 0.15);
   color: #bfdbfe;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__section-label {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__theme-hint {
+  color: #cbd5e1;
+}
+
+html[data-theme="dark"] .portal-a11y-slider {
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .portal-a11y-slider__label {
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"] .portal-a11y-slider__val {
+  color: #94a3b8;
+}
+
+html[data-theme="dark"] .portal-a11y-slider input[type="range"] {
+  accent-color: #60a5fa;
 }
 
 /* Filtros aplicados al tablero (.canvas-body) */

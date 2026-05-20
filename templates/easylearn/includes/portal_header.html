@@ -14,8 +14,8 @@
       </svg>
     </button>
     <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get" data-header-filter-form>
-      <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, tareas o recursos" }}</label>
-      <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, tareas, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" data-header-filter-input />
+      <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, actividades o recursos" }}</label>
+      <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, actividades, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" data-header-filter-input />
     </form>
     <div class="header-actions">
       <div class="header-bell" id="header-bell">

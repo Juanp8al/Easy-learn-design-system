@@ -57,9 +57,11 @@ class PortalAccessTests(TestCase):
         self._login("estudiante_demo")
         response = self.client.get(reverse("profile"))
         self.assertContains(response, "Cambiar contraseña")
-        self.assertContains(response, "Contraseña actual")
-        self.assertContains(response, "Confirmar nueva contraseña")
+        self.assertContains(response, "portal-password-dialog")
+        self.assertContains(response, "data-portal-password-open")
+        self.assertContains(response, "¿Desea cambiar su contraseña")
         self.assertNotContains(response, "Olvidó su contraseña")
+        self.assertNotContains(response, 'id="cambiar-contraseña"')
 
     def test_profile_password_change_succeeds(self):
         user = self.User.objects.get(username="estudiante_demo")

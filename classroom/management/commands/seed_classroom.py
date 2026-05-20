@@ -118,7 +118,7 @@ class Command(BaseCommand):
                 due_offset = 8 - i
                 Activity.objects.get_or_create(
                     week=week,
-                    title=f"Tarea semana {i} · {offering.code}",
+                    title=f"Actividad semana {i} · {offering.code}",
                     defaults={
                         "description": f"Entrega formativa de la semana {i}.",
                         "instructions": "Adjunte PDF o enlace según indique el docente.",

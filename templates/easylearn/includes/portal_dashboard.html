@@ -29,7 +29,7 @@
                     <div class="summary-card__eyebrow">Cursos inscritos</div>
                     <div class="summary-card__value">{{ academic_enrollment_count }}</div>
                     <div class="summary-card__sub">Asignaturas activas este período</div>
-                    <a class="link-arrow-soft" href="{% url 'classroom:course_list' %}">Ir al aula ›</a>
+                    <a class="link-arrow-soft" href="{% url 'classroom:course_list' %}">Mis cursos ›</a>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Actividades pendientes</div>
@@ -67,12 +67,18 @@
                               <td>{{ row.activity.title }}</td>
                               <td><span class="tb-course">{{ row.activity.week.offering.code }}</span></td>
                               <td><span class="badge-txt badge-txt--{{ row.badge }}">{{ row.status_label }}</span></td>
-                              <td class="{% if row.is_overdue %}text-warn-strong{% endif %}">{% if row.activity.due_at %}{{ row.activity.due_at|date:"j M, H:i" }}{% else %}—{% endif %}</td>
-                              <td><a class="btn-sm btn-accent" href="{% url 'classroom:activity_submit' row.activity.id %}">{% if row.state == 'overdue' %}Entregar{% else %}Abrir{% endif %} ›</a></td>
+                              <td class="{% if row.is_overdue %}text-danger-strong{% elif row.state == 'pending' and row.activity.due_at %}text-warn-strong{% endif %}">{% if row.activity.due_at %}{{ row.activity.due_at|date:"j M, H:i" }}{% else %}—{% endif %}</td>
+                              <td>
+                                {% if row.action_url %}
+                                <a class="btn-sm {{ row.action_btn_class }}" href="{{ row.action_url }}">{{ row.action_label }} ›</a>
+                                {% else %}
+                                <span class="muted">—</span>
+                                {% endif %}
+                              </td>
                             </tr>
                             {% empty %}
                             <tr>
-                              <td colspan="5" class="portal-empty-state__cell">{% include "easylearn/includes/portal_empty_state.html" with empty_title="Sin actividades pendientes" empty_text="Cuando su docente publique nuevas tareas, aparecerán aquí y en el aula virtual." empty_cta_label="Ir al aula ›" empty_cta_href=aula_url %}</td>
+                              <td colspan="5" class="portal-empty-state__cell">{% include "easylearn/includes/portal_empty_state.html" with empty_title="Sin actividades pendientes" empty_text="Cuando su docente publique nuevas actividades, aparecerán aquí y en el aula virtual." empty_cta_label="Ir al aula ›" empty_cta_href=aula_url %}</td>
                             </tr>
                             {% endfor %}
                           </tbody>

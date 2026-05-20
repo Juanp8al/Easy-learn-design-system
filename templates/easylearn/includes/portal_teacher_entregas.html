@@ -1,4 +1,4 @@
-              <section id="view-teacher-entregas" class="view view-dash-dg view-dash-mer" aria-labelledby="teacher-entregas-title">
+              <section id="view-teacher-entregas" class="view view-dash-dg view-dash-mer view-teacher-portal" aria-labelledby="teacher-entregas-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
                   <h1 id="teacher-entregas-title">Entregas</h1>
@@ -42,7 +42,10 @@
                     <h2>Resumen por actividad</h2>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet" id="teacher-delivery-activity-table">
+                    <table class="sheet sheet--dash-soft" id="teacher-delivery-activity-table">
+                      <colgroup>
+                        <col /><col /><col /><col /><col /><col /><col />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Actividad</th>
@@ -83,7 +86,10 @@
                     <h2>Entregas individuales pendientes</h2>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet" id="teacher-submissions-table">
+                    <table class="sheet sheet--dash-soft" id="teacher-submissions-table">
+                      <colgroup>
+                        <col /><col /><col /><col /><col /><col />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Estudiante</th>
@@ -106,7 +112,7 @@
                           <td><span class="tb-course">{{ sub.activity.week.offering.code }}</span></td>
                           <td>{{ sub.activity.week.week_number }}</td>
                           <td>{{ sub.submitted_at|date:"j M Y, H:i" }}</td>
-                          <td><a class="btn-sm btn-accent" href="{% url 'classroom:teacher_grade_submission' sub.id %}">Calificar</a></td>
+                          <td><a class="btn-sm btn-outline" href="{% url 'classroom:teacher_grade_submission' sub.id %}">Calificar</a></td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="6" class="muted">No hay entregas pendientes.</td></tr>

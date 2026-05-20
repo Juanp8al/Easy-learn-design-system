@@ -3,83 +3,177 @@
 {% block classroom_title %}{{ current_activity.title }} · EasyLearn{% endblock %}
 
 {% block classroom_content %}
-<header class="hero hero--dense">
-  <h1>{{ current_activity.title }}</h1>
-  <p>{{ current_offering.name }} · Semana {{ current_week.week_number }}</p>
-  <p style="margin-top:0.35rem;"><span class="badge-txt badge-txt--{{ activity_status.badge }}">{{ activity_status.status_label }}</span></p>
-</header>
+<div class="activity-submit">
+  <header class="week-hero activity-submit__hero">
+    <div class="week-hero__main">
+      <p class="week-hero__course">{{ current_offering.name }} · Semana {{ current_week.week_number }}</p>
+      <h1 class="week-hero__title">{{ current_activity.title }}</h1>
+      <p class="activity-submit__meta">
+        <span class="badge-txt badge-txt--{{ activity_status.badge }}">{{ activity_status.status_label }}</span>
+      </p>
+    </div>
+    <nav class="week-hero__nav" aria-label="Volver al curso">
+      <a class="btn-sm btn-outline" href="{% url 'classroom:week_detail' current_offering.id current_week.week_number %}">‹ Semana {{ current_week.week_number }}</a>
+    </nav>
+  </header>
 
-<article class="panel margin-b">
-  <div class="panel__head panel__head--dash-soft">
-    <h2>Instrucciones</h2>
-  </div>
-  <div style="padding:0 1rem 1rem;">
-    {% if current_activity.instructions %}
-    <p style="margin:0;white-space:pre-wrap;">{{ current_activity.instructions }}</p>
-    {% elif current_activity.description %}
-    <p style="margin:0;white-space:pre-wrap;">{{ current_activity.description }}</p>
-    {% else %}
-    <p class="muted">Sin instrucciones adicionales.</p>
-    {% endif %}
-    {% if current_activity.due_at %}
-    <p class="muted" style="margin-top:0.75rem;">Fecha límite: <strong>{{ current_activity.due_at|date:"j M Y, H:i" }}</strong></p>
-    {% endif %}
-  </div>
-</article>
+  <section class="week-block activity-submit__instructions" aria-labelledby="activity-instructions-heading">
+    <div class="week-block__head">
+      <span class="week-block__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      </span>
+      <h2 id="activity-instructions-heading" class="week-block__title">Instrucciones</h2>
+    </div>
+    <div class="activity-submit__instructions-body">
+      {% if current_activity.instructions %}
+      <p class="activity-submit__prose">{{ current_activity.instructions }}</p>
+      {% elif current_activity.description %}
+      <p class="activity-submit__prose">{{ current_activity.description }}</p>
+      {% else %}
+      <p class="muted">Sin instrucciones adicionales.</p>
+      {% endif %}
+      {% if current_activity.due_at %}
+      <p class="activity-submit__due muted">Fecha límite: <strong>{{ current_activity.due_at|date:"j M Y, H:i" }}</strong></p>
+      {% endif %}
+    </div>
+  </section>
 
-<form method="post" enctype="multipart/form-data" class="panel margin-b" id="activity-submit-form" data-el-loader="book" data-el-loader-draft="skip">
-  {% csrf_token %}
-  <div class="panel__head panel__head--dash-soft">
-    <h2>Tu entrega</h2>
-    {% if current_submission.grade %}
-    <span class="badge-txt badge-txt--ok">Calificada: {{ current_submission.grade.score }}</span>
-    {% elif not current_submission.is_draft %}
-    <span class="badge-txt badge-txt--draft">Entregada</span>
-    {% endif %}
-  </div>
-  <div style="padding:0 1rem 1rem;">
-    {% if not current_submission.grade %}
-    <fieldset class="margin-b" style="border:1px solid var(--border);border-radius:8px;padding:0.75rem 1rem;">
-      <legend style="font-weight:600;font-size:0.9rem;">Checklist antes de entregar</legend>
-      <label style="display:block;margin:0.35rem 0;"><input type="checkbox" name="check_instructions" class="submit-check" /> Leí las instrucciones</label>
-      <label style="display:block;margin:0.35rem 0;"><input type="checkbox" name="check_format" class="submit-check" /> El archivo cumple formato y tamaño (máx. 10 MB)</label>
-      <label style="display:block;margin:0.35rem 0;"><input type="checkbox" name="check_confirm" id="check-confirm-ready" value="1" /> Confirmo que mi entrega está lista</label>
-    </fieldset>
-    {% endif %}
-    <label class="el-login__label" for="submission-comment">Comentario (opcional)</label>
-    <textarea id="submission-comment" name="comment" class="catalog-toolbar__input" rows="4" style="width:100%;margin-bottom:0.75rem;" {% if current_submission.grade %}readonly{% endif %}>{{ current_submission.comment }}</textarea>
-    <label class="el-login__label" for="submission-file">Archivo</label>
-    <input id="submission-file" type="file" name="file" class="catalog-toolbar__input" style="width:100%;margin-bottom:0.75rem;" accept=".pdf,.doc,.docx,.odt,.txt,.zip,.png,.jpg,.jpeg,.gif,.webp,.ppt,.pptx,.xls,.xlsx" {% if current_submission.grade %}disabled{% endif %} />
-    <p class="muted" style="font-size:0.82rem;margin:0 0 0.75rem;">PDF, Word, imágenes, ZIP u Office. Máximo 10 MB.</p>
-    {% if current_submission.file %}
-    <p class="muted">Archivo actual: <a href="{{ current_submission.file.url }}">{{ current_submission.file.name }}</a></p>
-    {% endif %}
-    {% if current_submission.grade and current_submission.grade.feedback %}
-    <p style="margin-top:1rem;"><strong>Retroalimentación:</strong> {{ current_submission.grade.feedback }}</p>
-    {% endif %}
-    <input type="hidden" name="confirm_ready" id="confirm-ready-field" value="0" />
-  </div>
-  <div class="task-actions" style="padding:0 1rem 1rem;">
-    {% if current_activity.allows_draft and not current_submission.grade %}
-    <button type="submit" name="save_draft" value="1" class="btn-secondary">Guardar borrador</button>
-    {% endif %}
-    {% if not current_submission.grade %}
-    <button type="submit" class="btn-main" id="btn-submit-activity">Entregar actividad</button>
-    {% endif %}
-    <a class="btn-secondary" href="{% url 'classroom:week_detail' current_offering.id current_week.week_number %}">Volver a la semana</a>
-  </div>
-</form>
-<script>
-(function () {
-  var form = document.getElementById("activity-submit-form");
-  if (!form) return;
-  form.addEventListener("submit", function (e) {
-    var draft = e.submitter && e.submitter.name === "save_draft";
-    if (draft) return;
-    var ok = document.getElementById("check-confirm-ready");
-    var hidden = document.getElementById("confirm-ready-field");
-    if (hidden && ok) hidden.value = ok.checked ? "1" : "0";
-  });
-})();
-</script>
+  <form
+    method="post"
+    enctype="multipart/form-data"
+    class="week-block activity-submit-panel panel panel--dg-sheet task-panel"
+    id="activity-submit-form"
+    data-el-loader="book"
+    data-requires-file="{% if activity_labels.requires_file %}1{% else %}0{% endif %}"
+    data-existing-file="{% if current_submission.file %}{{ current_submission.file.name }}{% endif %}"
+  >
+    {% csrf_token %}
+    <div class="week-block__head activity-submit-panel__head">
+      <span class="week-block__ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      </span>
+      <h2 class="week-block__title">{{ activity_labels.delivery_heading }}</h2>
+      {% if current_submission.grade %}
+      <span class="badge-txt badge-txt--ok">Calificada: {{ current_submission.grade.score }}</span>
+      {% endif %}
+    </div>
+
+    <div class="activity-submit-panel__body">
+      {% if not current_submission.grade %}
+      <fieldset class="activity-submit-checklist">
+        <legend>{{ activity_labels.checklist_legend }}</legend>
+        <div class="checklist--task">
+          <label><input type="checkbox" name="check_instructions" class="submit-check" /> {{ activity_labels.check_instructions }}</label>
+          <label><input type="checkbox" name="check_format" class="submit-check" /> {{ activity_labels.check_format }}</label>
+          <label><input type="checkbox" name="check_confirm" id="check-confirm-ready" value="1" class="submit-check" /> {{ activity_labels.check_confirm }}</label>
+        </div>
+      </fieldset>
+      {% endif %}
+
+      <div class="activity-submit-grid">
+        <div class="activity-submit-field">
+          <label class="activity-submit-field__label" for="submission-comment">{{ activity_labels.comment_label }}</label>
+          <textarea
+            id="submission-comment"
+            name="comment"
+            class="activity-submit-field__input"
+            rows="4"
+            placeholder="{{ activity_labels.comment_placeholder }}"
+            {% if current_submission.grade %}readonly{% endif %}
+          >{{ current_submission.comment }}</textarea>
+        </div>
+
+        <div class="activity-submit-field activity-submit-grid__file">
+          <span class="activity-submit-field__label" id="submission-file-label">{{ activity_labels.file_label }}</span>
+          {% if current_submission.grade %}
+          <div
+            class="activity-file-status{% if current_submission.file %} activity-file-status--has-file{% else %} activity-file-status--empty{% endif %}"
+            role="status"
+            aria-labelledby="submission-file-label"
+          >
+            <span class="activity-file-status__ico" aria-hidden="true">
+              {% if current_submission.file %}
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              {% else %}
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              {% endif %}
+            </span>
+            <div class="activity-file-status__body">
+              {% if current_submission.file %}
+              <strong class="activity-file-status__title">Archivo entregado</strong>
+              <p class="activity-file-status__sub">Documento incluido en tu entrega.</p>
+              <a class="activity-file-status__link" href="{{ current_submission.file.url }}" target="_blank" rel="noopener">Descargar archivo ›</a>
+              {% else %}
+              <strong class="activity-file-status__title">Sin archivo adjunto</strong>
+              <p class="activity-file-status__sub">Esta entrega se publicó solo con comentario de texto.</p>
+              {% endif %}
+            </div>
+          </div>
+          {% else %}
+          <div class="upload-zone upload-zone--submit" id="upload-zone" role="group" aria-labelledby="submission-file-label">
+            <div class="upload-zone__state upload-zone__state--empty" id="upload-zone-empty">
+              <p class="upload-zone__lead">{{ activity_labels.upload_empty }}</p>
+              <p class="upload-zone__hint">{{ activity_labels.upload_prompt }}</p>
+              <button type="button" class="btn-sm btn-outline upload-zone__btn" id="btn-pick-file">Elegir archivo ›</button>
+            </div>
+            <div class="upload-zone__state upload-zone__state--filled" id="upload-zone-filled" hidden>
+              <div class="upload-file-card">
+                <span class="upload-file-card__ico" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </span>
+                <div class="upload-file-card__meta">
+                  <strong class="upload-file-card__name" id="upload-zone-filename"></strong>
+                  <span class="upload-file-card__sub muted" id="upload-zone-filemeta"></span>
+                  {% if current_submission.file %}
+                  <a class="upload-file-card__link" id="upload-zone-download" href="{{ current_submission.file.url }}" target="_blank" rel="noopener">Ver archivo guardado</a>
+                  {% else %}
+                  <a class="upload-file-card__link" id="upload-zone-download" href="#" hidden>Ver archivo</a>
+                  {% endif %}
+                </div>
+                <div class="upload-file-card__actions">
+                  <button type="button" class="btn-sm btn-outline" id="btn-change-file">Cambiar ›</button>
+                  <button type="button" class="btn-sm btn-outline upload-file-card__remove" id="btn-remove-file">Eliminar</button>
+                </div>
+              </div>
+            </div>
+            <input
+              id="submission-file"
+              type="file"
+              name="file"
+              class="upload-zone__input"
+              accept=".pdf,.doc,.docx,.odt,.txt,.zip,.png,.jpg,.jpeg,.gif,.webp,.ppt,.pptx,.xls,.xlsx"
+            />
+          </div>
+          <p class="activity-submit-field__hint muted">{{ activity_labels.file_hint }}</p>
+          <div class="alert-zone" id="file-feedback" aria-live="polite"></div>
+          <input type="hidden" name="clear_file" id="clear-file-field" value="0" />
+          {% endif %}
+        </div>
+      </div>
+
+      {% if current_submission.grade and current_submission.grade.feedback %}
+      <aside class="activity-submit-feedback" aria-labelledby="activity-feedback-heading">
+        <div class="activity-submit-feedback__head">
+          <span class="activity-submit-feedback__ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </span>
+          <h3 id="activity-feedback-heading" class="activity-submit-feedback__title">Retroalimentación del docente</h3>
+        </div>
+        <div class="activity-submit-feedback__body">
+          <p class="activity-submit-feedback__text">{{ current_submission.grade.feedback }}</p>
+        </div>
+      </aside>
+      {% endif %}
+
+      <input type="hidden" name="confirm_ready" id="confirm-ready-field" value="0" />
+    </div>
+
+    <div class="activity-submit-panel__actions">
+      {% if not current_submission.grade %}
+      <button type="submit" class="btn-sm btn-portal-success" id="btn-submit-activity" disabled>{{ activity_labels.submit_button }} ›</button>
+      {% endif %}
+      <a class="btn-sm btn-outline" href="{% url 'classroom:week_detail' current_offering.id current_week.week_number %}">Volver a la semana ›</a>
+    </div>
+  </form>
+</div>
 {% endblock %}

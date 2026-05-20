@@ -1,34 +1,81 @@
-              <section id="view-calendario" class="view" aria-label="Calendario académico">
+              <section id="view-calendario" class="view view-portal-calendar view-dash-dg" aria-label="Calendario académico">
                 <header class="hero hero--dense">
                   <h1>Calendario</h1>
-                  <p>Entregas de tus cursos y, si lo deseas, objetivos de repaso personal.</p>
+                  <p>Entregas de tus cursos por mes. Elige un día para ver el detalle o abre la semana del curso.</p>
                 </header>
 
-                <div class="catalog-toolbar margin-b" role="tablist">
-                  <button type="button" class="btn-sm btn-accent cal-tab is-on" data-cal-tab="academico">Académico</button>
-                  <button type="button" class="btn-sm btn-outline cal-tab" data-cal-tab="repaso">Repaso personal</button>
+                <div class="cal-view-tabs margin-b" role="tablist" aria-label="Tipo de calendario">
+                  <button type="button" class="cal-view-tabs__btn is-on" role="tab" aria-selected="true" id="cal-tab-academico" data-cal-tab="academico" aria-controls="cal-panel-academico">Académico</button>
+                  <button type="button" class="cal-view-tabs__btn" role="tab" aria-selected="false" id="cal-tab-repaso" data-cal-tab="repaso" aria-controls="cal-panel-repaso">Repaso personal</button>
                 </div>
 
-                <div id="cal-panel-academico" class="cal-panel">
-                  <article class="panel margin-b">
-                    <div class="panel__head panel__head--dash-soft"><h2>Próximas entregas</h2></div>
-                    <div class="data-table-wrap">
-                      <table class="sheet sheet--dash-soft">
+                <div id="cal-panel-academico" class="cal-panel cal-panel--visible" role="tabpanel" aria-labelledby="cal-tab-academico">
+                  {{ academic_calendar_events_payload|json_script:"portal-cal-events-data" }}
+                  <article class="panel panel--portal-month-cal margin-b">
+                    <div
+                      id="portal-month-cal"
+                      class="portal-month-cal"
+                      data-year="{{ calendar_year }}"
+                      data-month="{{ calendar_month }}"
+                      data-today-year="{{ calendar_year }}"
+                      data-today-month="{{ calendar_month }}"
+                      data-today-day="{{ calendar_today }}"
+                    >
+                      <div class="portal-month-cal__toolbar">
+                        <button type="button" class="mini-cal-arrow portal-month-cal__nav" id="portal-cal-prev" aria-label="Mes anterior">‹</button>
+                        <h2 class="portal-month-cal__title" id="portal-cal-month-label">{{ calendar_month_label }}</h2>
+                        <button type="button" class="mini-cal-arrow portal-month-cal__nav" id="portal-cal-next" aria-label="Mes siguiente">›</button>
+                        <button type="button" class="btn-sm btn-outline portal-month-cal__today" id="portal-cal-today">Hoy</button>
+                      </div>
+                      <div class="portal-month-cal__frame">
+                        <div class="portal-month-cal__weekdays" aria-hidden="true">
+                          <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                        </div>
+                        <div class="portal-month-cal__grid" id="portal-month-cal-grid" role="grid" aria-label="Calendario mensual de entregas"></div>
+                      </div>
+                      <div class="portal-month-cal__legend" role="note">
+                        <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--today" aria-hidden="true"></i> Hoy</span>
+                        <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--warn" aria-hidden="true"></i> Pendiente</span>
+                        <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--danger" aria-hidden="true"></i> Vencida</span>
+                        <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--ok" aria-hidden="true"></i> Entregada / calificada</span>
+                      </div>
+                    </div>
+                  </article>
+
+                  <article class="panel panel--dg-sheet margin-b">
+                    <div class="panel__head panel__head--dash-soft portal-cal-list-head">
+                      <h2 id="portal-cal-list-title">Próximas entregas</h2>
+                      <button type="button" class="btn-sm btn-outline" id="portal-cal-show-all" hidden>Ver todas</button>
+                    </div>
+                    <div class="data-table-wrap dg-dash-actividades-scroll">
+                      <table class="sheet sheet--dash-soft" id="portal-cal-events-table">
                         <thead>
-                          <tr><th>Fecha</th><th>Hora</th><th>Actividad</th><th>Curso</th><th>Estado</th><th></th></tr>
+                          <tr>
+                            <th scope="col">Fecha límite</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Actividad</th>
+                            <th scope="col">Curso</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col"></th>
+                          </tr>
                         </thead>
                         <tbody>
                           {% for ev in academic_calendar_events %}
-                          <tr>
+                          <tr data-date="{{ ev.date_iso }}" data-search="{{ ev.search }}">
                             <td>{{ ev.date|date:"j M Y" }}</td>
                             <td>{{ ev.time_label }}</td>
-                            <td>{{ ev.title|truncatechars:40 }}</td>
-                            <td><span class="tb-course">{{ ev.offering_code }}</span></td>
-                            <td><span class="badge-txt badge-txt--draft">{{ ev.status_label }}</span></td>
-                            <td><a class="btn-sm btn-outline" href="{{ ev.url }}">Abrir</a></td>
+                            <td>{{ ev.title|truncatechars:44 }}</td>
+                            <td><span class="tb-course" title="{{ ev.offering_name }}">{{ ev.offering_code }}</span></td>
+                            <td><span class="badge-txt badge-txt--{{ ev.badge }}">{{ ev.status_label }}</span></td>
+                            <td class="portal-cal-actions">
+                              <a class="btn-sm btn-portal-primary" href="{{ ev.week_url }}">Semana ›</a>
+                              {% if ev.action_url %}
+                              <a class="btn-sm {{ ev.action_btn_class }}" href="{{ ev.action_url }}">{{ ev.action_label }} ›</a>
+                              {% endif %}
+                            </td>
                           </tr>
                           {% empty %}
-                          <tr><td colspan="6" class="muted">No hay entregas con fecha límite en tus cursos.</td></tr>
+                          <tr class="portal-cal-empty-row"><td colspan="6" class="muted">No hay entregas con fecha límite en tus cursos.</td></tr>
                           {% endfor %}
                         </tbody>
                       </table>
@@ -36,7 +83,7 @@
                   </article>
                 </div>
 
-                <div id="cal-panel-repaso" class="cal-panel" hidden>
+                <div id="cal-panel-repaso" class="cal-panel" role="tabpanel" aria-labelledby="cal-tab-repaso" hidden>
                   <article class="panel margin-b">
                     <p class="muted" style="padding:1rem;">Objetivos de repaso que usted define.</p>
                     <ul style="list-style:none;margin:0;padding:0 1rem 1rem;">
@@ -53,29 +100,4 @@
                     <p style="padding:0 1rem 1rem;"><button type="button" class="btn-cta-outline" data-goto="repaso">Ver materiales de repaso ›</button></p>
                   </article>
                 </div>
-              </section>
-
-              <section id="view-mensajes" class="view" aria-label="Mensajes">
-                <header class="hero hero--dense">
-                  <h1>Mensajes</h1>
-                  <p>Avisos de tus docentes y comunicaciones del sistema.</p>
-                </header>
-
-                <div class="catalog-toolbar margin-b" role="toolbar">
-                  <button type="button" class="btn-sm btn-accent msg-filter is-on" data-msg-filter="all">Todos</button>
-                  <button type="button" class="btn-sm btn-outline msg-filter" data-msg-filter="docente">Docentes</button>
-                  <button type="button" class="btn-sm btn-outline msg-filter" data-msg-filter="sistema">Sistema</button>
-                </div>
-
-                <ul class="msg-list panel" id="msg-list">
-                  {% for msg in portal_messages %}
-                  <li class="msg-item" data-msg-source="{{ msg.source }}">
-                    <strong>{{ msg.title }}</strong>
-                    <span>{{ msg.when|timesince }} atrás</span>
-                    <p>{% if msg.offering_code %}<span class="tb-course">{{ msg.offering_code }}</span> · {% endif %}{{ msg.preview }}</p>
-                  </li>
-                  {% empty %}
-                  <li class="msg-item muted">No hay mensajes.</li>
-                  {% endfor %}
-                </ul>
               </section>

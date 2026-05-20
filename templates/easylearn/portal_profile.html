@@ -3,6 +3,9 @@
 
 {% block title %}Mi perfil · EasyLearn{% endblock %}
 {% block body_attrs %} data-easylearn-page="profile"{% endblock %}
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'easylearn/css/portal-password-dialog.css' %}?v=20260520h" />
+{% endblock %}
 
 {% block sidebar %}{% include "easylearn/includes/portal_sidebar_pick.html" %}{% endblock %}
 
@@ -37,7 +40,10 @@
           </div>
           <h2 class="portal-profile-card__name">{{ student.get_full_name|default:student.username }}</h2>
           <p class="portal-profile-card__role">{{ portal_role_label }}</p>
-          <a class="btn-cta-outline portal-profile-card__cta" href="{% url 'edit_profile' %}">Editar perfil ›</a>
+          <div class="portal-profile-card__actions">
+            <a class="btn-sm btn-outline" href="{% url 'edit_profile' %}">Editar perfil</a>
+            <button type="button" class="btn-sm btn-outline" data-portal-password-open>Cambiar contraseña</button>
+          </div>
         </article>
       </aside>
 
@@ -145,13 +151,15 @@
           </div>
         </article>
         {% elif student.role == 'admin' %}
-        <article class="portal-profile-card">
-          <header class="portal-profile-card__head">
-            <h2 class="portal-profile-card__title">Área administración</h2>
+        <article class="portal-profile-card portal-profile-card--admin-area">
+          <header class="portal-profile-card__head portal-profile-card__head--stacked portal-profile-card__head--solo">
+            <div class="portal-profile-card__title-group">
+              <h2 class="portal-profile-card__title">Área administración</h2>
+              <p class="portal-profile-card__lede">
+                Gestiona usuarios, carreras, ofertas y matrículas desde el <a href="{% url 'dashboard_admin' %}">panel administrador</a>.
+              </p>
+            </div>
           </header>
-          <p class="portal-profile-block__text" style="padding:0 var(--dash-pad-inline) 1rem;margin:0;">
-            Gestiona usuarios, carreras, ofertas y matrículas desde el <a href="{% url 'dashboard_admin' %}">panel administrador</a>.
-          </p>
         </article>
         {% endif %}
 
@@ -174,10 +182,9 @@
           <h2 class="portal-profile-card__title">Miscelánea</h2>
           <ul class="portal-profile-rail">
             <li><a href="{% url 'edit_profile' %}">Editar perfil completo</a></li>
-            <li><a href="#cambiar-contraseña">Cambiar contraseña</a></li>
+            <li><button type="button" class="portal-profile-rail__btn" data-portal-password-open>Cambiar contraseña</button></li>
             {% if student.role == 'student' %}
-            <li><a href="{{ portal_dashboard_url }}#mensajes">Mensajes en el portal</a></li>
-            <li><a href="{% url 'classroom:course_list' %}">Aula virtual</a></li>
+            <li><a href="{% url 'classroom:course_list' %}">Mis cursos</a></li>
             <li><a href="{{ portal_dashboard_url }}#repaso">Materiales de repaso</a></li>
             {% elif student.role == 'teacher' %}
             <li><a href="{% url 'dashboard_teacher' %}#foros">Foros y avisos</a></li>
@@ -224,23 +231,13 @@
           </dl>
         </article>
 
-        <article id="cambiar-contraseña" class="portal-profile-card portal-profile-card--compact portal-profile-card--password">
-          <h2 class="portal-profile-card__title">Cambiar contraseña</h2>
-          <p class="portal-profile-hint portal-password-form__intro">
-            Ingrese su contraseña actual y la nueva dos veces para confirmar el cambio.
-          </p>
-          <form method="post" class="portal-password-form" novalidate data-el-loader="server">
-            {% csrf_token %}
-            <input type="hidden" name="form_type" value="password" />
-            <div class="portal-password-form__body">
-              {% include "easylearn/includes/portal_password_fields.html" %}
-            </div>
-            <div class="portal-password-form__actions">
-              <button type="submit" class="btn-main">Guardar nueva contraseña</button>
-            </div>
-          </form>
-        </article>
       </aside>
     </div>
   </section>
+
+  {% include "easylearn/includes/portal_password_change_dialog.html" %}
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'easylearn/js/portal-password-dialog.js' %}?v=20260520" defer></script>
 {% endblock %}

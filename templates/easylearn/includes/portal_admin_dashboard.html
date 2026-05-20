@@ -1,7 +1,7 @@
               {% url 'admin:academia_academicperiod_add' as period_add_url %}
               {% url 'admin:accounts_student_add' as user_add_url %}
               {% url 'admin:academia_enrollment_add' as enrollment_add_url %}
-              <section id="view-admin-dashboard" class="view is-visible view-dash-dg view-dash-mer" aria-labelledby="admin-dash-title">
+              <section id="view-admin-dashboard" class="view is-visible view-dash-dg view-dash-mer view-admin-portal" aria-labelledby="admin-dash-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
                   <h1 id="admin-dash-title">Hola, {{ student.get_full_name|default:student.username }}</h1>
@@ -78,7 +78,10 @@
                     <button type="button" class="btn-sm btn-outline" data-goto="periodos">Ver todos ›</button>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet sheet--dash-soft">
+                    <table class="sheet sheet--dash-soft" id="admin-mer-periods-table">
+                      <colgroup>
+                        <col /><col /><col /><col /><col />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Nombre</th>
@@ -94,7 +97,7 @@
                           <td><strong>{{ p.name }}</strong></td>
                           <td>{% if p.starts_on %}{{ p.starts_on|date:"j M Y" }}{% else %}—{% endif %}</td>
                           <td>{% if p.ends_on %}{{ p.ends_on|date:"j M Y" }}{% else %}—{% endif %}</td>
-                          <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Sí</span>{% else %}<span class="muted">No</span>{% endif %}</td>
+                          <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Sí</span>{% else %}<span class="badge-txt badge-txt--muted">No</span>{% endif %}</td>
                           <td><button type="button" class="btn-sm btn-outline" data-goto="periodos">Ver ›</button></td>
                         </tr>
                         {% empty %}

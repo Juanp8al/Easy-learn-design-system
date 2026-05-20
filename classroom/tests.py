@@ -45,7 +45,7 @@ class ClassroomFlowTests(TestCase):
         )
         self.activity = Activity.objects.create(
             week=self.week,
-            title="Tarea",
+            title="Actividad",
             status=Activity.Status.PUBLISHED,
         )
 

@@ -1,4 +1,4 @@
-              <section id="view-admin-periodos" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-periodos-title">
+              <section id="view-admin-periodos" class="view view-dash-dg view-dash-mer view-admin-portal" aria-labelledby="admin-periodos-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
                   <h1 id="admin-periodos-title">Períodos</h1>
@@ -25,10 +25,13 @@
                 <article class="panel panel--dg-sheet">
                   <div class="panel__head panel__head--dg panel__head--dash-soft">
                     <h2>Períodos académicos</h2>
-                    <a class="btn-sm btn-accent" href="{% url 'admin:academia_academicperiod_add' %}">+ Crear período</a>
+                    <a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_add' %}">+ Crear período</a>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
                     <table class="sheet sheet--dash-soft" id="admin-periods-table">
+                      <colgroup>
+                        <col /><col /><col /><col /><col />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Nombre</th>
@@ -48,7 +51,7 @@
                           <td><strong>{{ p.name }}</strong></td>
                           <td>{% if p.starts_on %}{{ p.starts_on|date:"j M Y" }}{% else %}—{% endif %}</td>
                           <td>{% if p.ends_on %}{{ p.ends_on|date:"j M Y" }}{% else %}—{% endif %}</td>
-                          <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Actual</span>{% else %}<span class="muted">No</span>{% endif %}</td>
+                          <td>{% if p.is_current %}<span class="badge-txt badge-txt--ok">Actual</span>{% else %}<span class="badge-txt badge-txt--muted">No</span>{% endif %}</td>
                           <td><a class="btn-sm btn-outline" href="{% url 'admin:academia_academicperiod_change' p.id %}">Editar</a></td>
                         </tr>
                         {% empty %}

@@ -1,4 +1,4 @@
-              <section id="view-admin-usuarios" class="view view-dash-dg view-dash-mer" aria-labelledby="admin-usuarios-title">
+              <section id="view-admin-usuarios" class="view view-dash-dg view-dash-mer view-admin-portal" aria-labelledby="admin-usuarios-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área administración</p>
                   <h1 id="admin-usuarios-title">Usuarios</h1>
@@ -25,10 +25,17 @@
                 <article class="panel panel--dg-sheet">
                   <div class="panel__head panel__head--dg panel__head--dash-soft">
                     <h2>Listado de usuarios</h2>
-                    <a class="btn-sm btn-accent" href="{% url 'admin:accounts_student_add' %}">+ Crear usuario</a>
+                    <a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_add' %}">+ Crear usuario</a>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet sheet--dash-soft" id="admin-users-table">
+                    <table class="sheet sheet--dash-soft admin-users-table" id="admin-users-table">
+                      <colgroup>
+                        <col class="admin-users-table__col-name" />
+                        <col class="admin-users-table__col-role" />
+                        <col class="admin-users-table__col-program" />
+                        <col class="admin-users-table__col-status" />
+                        <col class="admin-users-table__col-action" />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Usuario</th>
@@ -50,10 +57,12 @@
                             <strong>{{ u.get_full_name|default:u.username }}</strong>
                             <span class="muted" style="display:block;font-size:0.82rem;">{{ u.username }}</span>
                           </td>
-                          <td><span class="badge-txt {% if u.role == 'admin' %}badge-txt--warn{% elif u.role == 'teacher' %}badge-txt--draft{% else %}badge-txt--ok{% endif %}">{{ u.get_role_display }}</span></td>
+                          <td>
+                            <span class="badge-txt badge-txt--role {% if u.role == 'admin' %}badge-txt--role-admin{% elif u.role == 'teacher' %}badge-txt--role-teacher{% else %}badge-txt--role-student{% endif %}">{{ u.get_role_display }}</span>
+                          </td>
                           <td>{% if u.academic_program %}{{ u.academic_program.name }}{% else %}<span class="muted">—</span>{% endif %}</td>
-                          <td>{% if u.is_active %}<span class="badge-txt badge-txt--ok">Activo</span>{% else %}<span class="muted">Inactivo</span>{% endif %}</td>
-                          <td><a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_change' u.id %}">Editar</a></td>
+                          <td>{% if u.is_active %}<span class="badge-txt badge-txt--ok">Activo</span>{% else %}<span class="badge-txt badge-txt--muted">Inactivo</span>{% endif %}</td>
+                          <td class="admin-users-table__action"><a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_change' u.id %}">Editar</a></td>
                         </tr>
                         {% empty %}
                         <tr data-search-skip><td colspan="5" class="muted">No hay usuarios registrados.</td></tr>

@@ -1,0 +1,14 @@
+{% for field in form %}
+<div class="portal-form-field{% if field.field.widget.input_type == 'file' or field.name == 'username' or field.name == 'email' or field.name == 'academic_program' or field.name == 'academic_semester' %} portal-profile-edit__field--full{% endif %}">
+  <label class="portal-profile-block__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+  {{ field }}
+  {% if field.help_text %}
+  <p class="portal-profile-edit__help muted">{{ field.help_text }}</p>
+  {% endif %}
+  {% if field.errors %}
+  <ul class="el-form-errors portal-password-form__errors">
+    {% for err in field.errors %}<li>{{ err }}</li>{% endfor %}
+  </ul>
+  {% endif %}
+</div>
+{% endfor %}

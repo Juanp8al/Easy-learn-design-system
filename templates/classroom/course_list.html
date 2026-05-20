@@ -1,55 +1,58 @@
 {% extends "classroom/layout.html" %}
 
-{% block classroom_title %}Aula virtual · EasyLearn{% endblock %}
+{% block classroom_title %}Mis cursos · EasyLearn{% endblock %}
 
 {% block classroom_content %}
-<header class="hero hero-dash-dg">
-  <p class="hero-kicker hero-dash-dg__line1">Área académica</p>
-  <h1>Aula virtual</h1>
-  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;line-height:1.45;">
-    Asignaturas en las que está matriculado. El aula de cada curso tiene semanas, materiales, actividades y calificaciones oficiales.
+<section class="catalog-cursos view-dash-dg" aria-label="Mis cursos">
+  <header class="catalog-hero hero hero-dash-dg">
+    <p class="hero-kicker hero-dash-dg__line1">Área académica</p>
+    <h1 class="catalog-hero__title">Mis cursos</h1>
+    {% if catalog_period_label %}
+    <p class="catalog-hero__period">Período {{ catalog_period_label }}</p>
+    {% endif %}
+  </header>
+
+  <div class="catalog-toolbar margin-b" role="toolbar" aria-label="Filtros de cursos">
+    <p class="catalog-toolbar__title">Mis asignaturas</p>
+    <div class="catalog-toolbar__controls">
+      <label class="catalog-toolbar__field-label" for="inst-view-mode">Ver como</label>
+      <select id="inst-view-mode" class="select-ui catalog-toolbar__select catalog-toolbar__select--view">
+        <option value="tarjeta" selected>Tarjeta</option>
+        <option value="lista">Lista</option>
+      </select>
+      <label class="catalog-toolbar__field-label" for="inst-search-course">Buscar</label>
+      <input
+        id="inst-search-course"
+        class="catalog-toolbar__input"
+        type="search"
+        placeholder="Nombre o código…"
+        autocomplete="off"
+      />
+      <label class="catalog-toolbar__field-label" for="inst-sort-course">Ordenar</label>
+      <select id="inst-sort-course" class="select-ui catalog-toolbar__select catalog-toolbar__select--sort">
+        <option value="name-asc" selected>Nombre · A-Z</option>
+        <option value="name-desc">Nombre · Z-A</option>
+        <option value="code-asc">Código · A-Z</option>
+        <option value="code-desc">Código · Z-A</option>
+      </select>
+    </div>
+  </div>
+
+  <div id="inst-course-root" class="course-catalog-root course-catalog-root--tarjeta">
+    <div id="inst-course-cards" class="course-catalog-grid-wrap">
+      {% if enrollment_cards %}
+      <div class="course-catalog-grid">
+        {% include "classroom/includes/course_catalog_cards.html" %}
+      </div>
+      {% else %}
+      <p class="muted portal-empty-inline">No tiene matrículas activas. Cuando administración lo inscriba, verá aquí sus asignaturas.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <p class="muted margin-b" style="margin-top:1.25rem;font-size:0.9rem;line-height:1.45;">
+    Para <strong>materiales de estudio y objetivos de repaso</strong>, use la pestaña
+    <a href="{% url 'notes:dashboard' %}#repaso">Repaso</a> en el menú lateral.
   </p>
-</header>
-
-<article class="panel panel--dg-sheet margin-b">
-  <div class="panel__head panel__head--dg panel__head--dash-soft">
-    <h2>Cursos institucionales</h2>
-  </div>
-  <div class="data-table-wrap dg-dash-actividades-scroll">
-    <table class="sheet">
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Curso</th>
-          <th>Programa</th>
-          <th>Período</th>
-          <th>Docente</th>
-          <th>Grupo</th>
-          <th>Acción</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for enr in academic_enrollments %}
-        <tr>
-          <td><span class="tb-course">{{ enr.offering.code }}</span></td>
-          <td>{{ enr.offering.name|truncatechars:40 }}</td>
-          <td>{{ enr.offering.program.name|truncatechars:24 }}</td>
-          <td>{{ enr.offering.period.name }}</td>
-          <td>{% if enr.offering.teacher %}{{ enr.offering.teacher.get_full_name|default:enr.offering.teacher.username }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</td>
-          <td>{{ enr.offering.group }}</td>
-          <td><a class="btn-sm btn-accent" href="{% url 'classroom:course_detail' enr.offering.id %}">Ir al curso</a></td>
-        </tr>
-        {% empty %}
-        <tr>
-          <td colspan="7" class="muted">No tiene matrículas activas. Cuando administración lo inscriba, verá aquí sus asignaturas.</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
-  </div>
-</article>
-
-<article class="panel margin-b">
-  <p class="muted" style="margin:0 1rem 1rem;">Para <strong>materiales de estudio y objetivos de repaso</strong>, use la pestaña <a href="{% url 'notes:dashboard' %}#repaso">Repaso</a> en el menú lateral.</p>
-</article>
+</section>
 {% endblock %}

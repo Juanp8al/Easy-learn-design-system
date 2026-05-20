@@ -1,89 +1,60 @@
-              <section id="view-calificaciones" class="view view-grades-table" aria-label="Calificaciones">
-                <header class="hero hero-dash-dg">
-                  <p class="hero-kicker hero-dash-dg__line1">Área académica</p>
-                  <h1>Calificaciones</h1>
-                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;">Resumen de su rendimiento por curso. Las notas provienen de actividades evaluadas por sus docentes.</p>
+              <section id="view-calificaciones" class="view view-grades-mock" aria-label="Calificaciones">
+                <header class="grades-header-mock">
+                  <p class="grades-header-mock__crumb muted">Inicio › Calificaciones</p>
+                  <h1 class="grades-header-mock__title">Calificaciones</h1>
+                  <p class="grades-header-mock__period">Periodo {% if current_period %}{{ current_period.name }}{% elif grades_period_label %}{{ grades_period_label }}{% else %}—{% endif %}</p>
                 </header>
 
-                <div class="summary-row summary-row--quad margin-b">
+                <div class="summary-row summary-row--triple margin-b">
                   <article class="summary-card summary-card--dg-gradient">
                     <div class="summary-card__eyebrow">Promedio general</div>
                     <div class="summary-card__value">{% if overall_avg_display %}{{ overall_avg_display }}{% else %}—{% endif %}</div>
-                    <div class="summary-card__sub">Solo actividades ya calificadas</div>
                   </article>
                   <article class="summary-card summary-card--light">
-                    <div class="summary-card__eyebrow">Cursos inscritos</div>
-                    <div class="summary-card__value">{{ academic_enrollment_count }}</div>
-                    <div class="summary-card__sub">Asignaturas institucionales</div>
-                  </article>
-                  <article class="summary-card summary-card--light">
-                    <div class="summary-card__eyebrow">Pendientes de nota</div>
-                    <div class="summary-card__value">{{ pending_grade_count|default:0 }}</div>
-                    <div class="summary-card__sub">Entregas sin calificación del docente</div>
-                  </article>
-                  <article class="summary-card summary-card--light">
-                    <div class="summary-card__eyebrow">Completadas</div>
+                    <div class="summary-card__eyebrow">Actividades completadas</div>
                     <div class="summary-card__value">{{ graded_activity_count|default:0 }}</div>
-                    <div class="summary-card__sub">Registros oficiales en el aula</div>
+                    <div class="summary-card__sub">Periodo vigente</div>
+                  </article>
+                  <article class="summary-card summary-card--light">
+                    <div class="summary-card__eyebrow">Pendientes / sin nota</div>
+                    <div class="summary-card__value">{{ pending_activity_count|default:0 }}</div>
                   </article>
                 </div>
 
                 <article class="panel panel--grades-main-table panel--grades-genesys-stack margin-b">
-                  <div class="panel__head panel__head--dash-soft" style="padding:0.85rem 1rem;border-bottom:1px solid var(--border);">
-                    <h2 style="margin:0;font-size:1rem;">Resumen por curso</h2>
+                  <div class="panel__head panel__head--dash-soft">
+                    <h2>Resumen por materia</h2>
                   </div>
                   <div class="data-table-wrap data-table-wrap--genesys-scroll">
-                    <table class="sheet sheet--genesys" aria-label="Calificaciones por curso institucional">
+                    <table class="sheet sheet--genesys" aria-label="Resumen de calificaciones por materia">
                       <thead>
                         <tr>
-                          <th scope="col">Código</th>
-                          <th scope="col">Curso</th>
-                          <th scope="col">Docente</th>
-                          <th scope="col">Promedio</th>
+                          <th scope="col">Grupo</th>
+                          <th scope="col">Materia</th>
+                          <th scope="col">Semestre</th>
+                          <th scope="col">Créditos</th>
+                          <th scope="col">Corte 1 / 30%</th>
+                          <th scope="col">Corte 2 / 30%</th>
+                          <th scope="col">Corte 3 / 40%</th>
+                          <th scope="col">Acumulado</th>
+                          <th scope="col">Def. final</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {% for row in enrollment_grade_rows %}
-                        <tr data-search="{{ row.offering.code|lower }} {{ row.offering.name|lower }}">
-                          <td class="td-grupo">{{ row.offering.code }}</td>
-                          <td class="td-materia">{{ row.offering.name|truncatechars:36 }}</td>
-                          <td class="td-num">{% if row.offering.teacher %}{{ row.offering.teacher.get_full_name|default:row.offering.teacher.username }}{% else %}<span class="muted">Por asignar</span>{% endif %}</td>
-                          <td class="td-num">{% if row.average %}<strong>{{ row.average }}</strong>{% else %}<span class="muted">—</span>{% endif %}</td>
+                        {% for row in course_grade_rows %}
+                        <tr data-search="{{ row.search }}">
+                          <td class="td-grupo">{{ row.group }}</td>
+                          <td class="td-materia">{{ row.name|truncatechars:40 }}</td>
+                          <td class="td-num">{{ row.semester }}</td>
+                          <td class="td-num">{{ row.credits }}</td>
+                          <td class="td-num">{% if row.p1_display %}{{ row.p1_display }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td class="td-num">{% if row.p2_display %}{{ row.p2_display }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td class="td-num">{% if row.p3_display %}{{ row.p3_display }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td class="td-num td-strong">{% if row.acumulado_display %}{{ row.acumulado_display }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td class="td-num">{% if row.final_display %}<strong>{{ row.final_display }}</strong>{% else %}<span class="muted">—</span>{% endif %}</td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="4" class="muted">Sin cursos matriculados aún. Cuando estés inscrito, verás aquí el seguimiento de notas por asignatura.</td></tr>
-                        {% endfor %}
-                      </tbody>
-                    </table>
-                  </div>
-                </article>
-
-                <article class="panel panel--grades-activity-table margin-b" aria-labelledby="grades-inst-heading">
-                  <div class="panel__head panel__head--grades-activity-mock">
-                    <h2 id="grades-inst-heading" class="grades-activity-bar__title">Detalle por actividad</h2>
-                  </div>
-                  <div class="data-table-wrap">
-                    <table class="sheet sheet--grades-detail">
-                      <thead>
-                        <tr>
-                          <th scope="col">Actividad</th>
-                          <th scope="col">Curso</th>
-                          <th scope="col">Nota</th>
-                          <th scope="col">Retroalimentación</th>
-                          <th scope="col">Fecha</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {% for row in grade_rows %}
-                        <tr data-search="{{ row.activity.title|lower }} {{ row.offering.code|lower }}">
-                          <td>{{ row.activity.title }}</td>
-                          <td><span class="tb-course">{{ row.offering.code }}</span></td>
-                          <td class="sheet--grades-detail__num"><strong>{{ row.grade.score }}</strong></td>
-                          <td>{{ row.grade.feedback|default:"—"|truncatechars:48 }}</td>
-                          <td>{{ row.grade.graded_at|date:"j M Y" }}</td>
-                        </tr>
-                        {% empty %}
-                        <tr><td colspan="5" class="muted">Aún no tienes calificaciones publicadas por tus docentes.</td></tr>
+                        <tr><td colspan="9" class="muted">Sin cursos matriculados. Cuando estés inscrito verás el resumen por materia.</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>
@@ -92,31 +63,30 @@
 
                 <article class="panel panel--grades-activity-table" aria-labelledby="grades-activity-heading">
                   <div class="panel__head panel__head--grades-activity-mock">
-                    <h2 id="grades-activity-heading" class="grades-activity-bar__title">Material de estudio personal</h2>
+                    <h2 id="grades-activity-heading" class="grades-activity-bar__title">Detalle por actividad</h2>
                   </div>
-                  <p class="muted" style="margin:0 1rem 0.75rem;font-size:0.86rem;">Apuntes y borradores en tus espacios de notas; complementan, pero no sustituyen, las calificaciones del curso.</p>
-                  <div class="data-table-wrap">
-                    <table class="sheet sheet--grades-detail" id="grades-detail-table">
+                  <div class="data-table-wrap dg-dash-actividades-scroll">
+                    <table class="sheet sheet--grades-activity" id="grades-activity-table" aria-label="Detalle por actividad">
                       <thead>
                         <tr>
-                          <th scope="col">Apunte</th>
-                          <th scope="col">Actualizado</th>
+                          <th scope="col">Actividad</th>
+                          <th scope="col">Fecha entrega</th>
                           <th scope="col">Estado</th>
-                          <th scope="col" class="sheet--grades-detail__num">Curso</th>
-                          <th scope="col">Acción</th>
+                          <th scope="col">Nota</th>
+                          <th scope="col">Retroalimentación</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {% for entry in latest_entries %}
-                        <tr data-search="{{ entry.name|lower }}" data-course="{{ entry.subtopic.topic.course.name|lower }}">
-                          <td>{{ entry.name }}</td>
-                          <td>{{ entry.updated|date:"j M" }}</td>
-                          <td><span class="badge-txt badge-txt--draft">Borrador</span></td>
-                          <td class="sheet--grades-detail__num muted-em">{{ entry.subtopic.topic.course.name|truncatechars:20 }}</td>
-                          <td><a class="btn-sm btn-sm--link week-action-link" href="{{ entry.get_absolute_url }}">Abrir ›</a></td>
+                        {% for row in activity_grade_detail_rows %}
+                        <tr data-search="{{ row.search }}">
+                          <td>{{ row.activity.title }}</td>
+                          <td class="td-date">{% if row.delivery_date %}{{ row.delivery_date|date:"j M" }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td><span class="grades-status-text grades-status-text--{{ row.status_class }}">{{ row.status_label }}</span></td>
+                          <td class="td-num">{% if row.score_display %}<strong>{{ row.score_display }}</strong>{% else %}<span class="muted">—</span>{% endif %}</td>
+                          <td>{{ row.feedback|truncatechars:56 }}</td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="5" class="muted">No hay apuntes recientes. Créalos desde <a href="{% url 'notes:dashboard' %}#repaso">Repaso</a> o tus espacios de notas.</td></tr>
+                        <tr><td colspan="5" class="muted">No hay actividades publicadas en tus cursos del periodo.</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>

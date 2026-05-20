@@ -1,13 +1,13 @@
-              <section id="view-repaso" class="view view-dash-dg" aria-label="Repaso y materiales">
+              <section id="view-repaso" class="view view-dash-dg view-repaso" aria-label="Repaso y materiales">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área de estudio</p>
                   <h1>Repaso</h1>
-                  <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);max-width:52rem;">
+                  <p class="repaso-hero__desc">
                     Materiales de estudio de tus cursos matriculados, organizados por semana. Use el aula virtual para actividades y entregas.
                   </p>
                 </header>
 
-                <div class="summary-row summary-row--quad margin-b">
+                <div class="summary-row summary-row--quad repaso-summary margin-b">
                   <article class="summary-card summary-card--dg-gradient">
                     <div class="summary-card__eyebrow">Cursos con material</div>
                     <div class="summary-card__value">{{ repaso_course_count }}</div>
@@ -20,10 +20,10 @@
                     <div class="summary-card__sub">Lecturas, enlaces y archivos del docente</div>
                   </article>
                   <article class="summary-card summary-card--dg-white">
-                    <div class="summary-card__eyebrow">Aula virtual</div>
+                    <div class="summary-card__eyebrow">Mis cursos</div>
                     <div class="summary-card__value">{{ academic_enrollment_count }}</div>
                     <div class="summary-card__sub">Cursos institucionales inscritos</div>
-                    <a class="btn-tertiary" href="{% url 'classroom:course_list' %}">Abrir aula ›</a>
+                    <a class="btn-tertiary" href="{% url 'classroom:course_list' %}">Ver mis cursos ›</a>
                   </article>
                   <article class="summary-card summary-card--dg-white">
                     <div class="summary-card__eyebrow">Objetivos personales</div>
@@ -34,10 +34,10 @@
                 </div>
 
                 {% if repaso_courses %}
-                <div class="repaso-course-list margin-b" id="repaso-course-list">
+                <div class="repaso-course-list" id="repaso-course-list">
                   {% for item in repaso_courses %}
                   <article
-                    class="panel panel--dg-sheet repaso-course-card margin-b"
+                    class="panel panel--dg-sheet repaso-course-card"
                     data-search="{{ item.offering.code|lower }} {{ item.offering.name|lower }}"
                   >
                     <div class="panel__head panel__head--dg panel__head--dash-soft repaso-course-card__head">
@@ -49,69 +49,69 @@
                           · {{ item.week_count }} semana{{ item.week_count|pluralize:"s" }}
                         </p>
                       </div>
-                      <a class="btn-sm btn-cta-outline" href="{{ item.aula_url }}">Ir al curso ›</a>
+                      <a class="btn-sm btn-outline" href="{{ item.aula_url }}">Ir al curso ›</a>
                     </div>
 
-                    {% for block in item.weeks %}
-                    <div class="repaso-week-block">
-                      <h3 class="repaso-week-block__title">
-                        Semana {{ block.week.week_number }} · {{ block.week.title }}
-                      </h3>
-                      <div class="data-table-wrap dg-dash-actividades-scroll repaso-week-block__table">
-                        <table class="sheet sheet--dash-soft">
-                          <thead>
-                            <tr>
-                              <th scope="col">Recurso</th>
-                              <th scope="col">Tipo</th>
-                              <th scope="col">Acción</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {% for mat in block.materials %}
-                            <tr>
-                              <td>
-                                <strong>{{ mat.title }}</strong>
-                                {% if mat.description %}
-                                <br><span class="muted">{{ mat.description|truncatechars:72 }}</span>
-                                {% endif %}
-                                {% if mat.is_required %}<br><span class="badge-txt badge-txt--draft">Obligatorio</span>{% endif %}
-                              </td>
-                              <td>{{ mat.get_material_type_display }}</td>
-                              <td>
-                                {% if mat.file %}
-                                <a class="btn-sm btn-outline" href="{{ mat.file.url }}" target="_blank" rel="noopener">Descargar</a>
-                                {% elif mat.external_url %}
-                                <a class="btn-sm btn-outline" href="{{ mat.external_url }}" target="_blank" rel="noopener">Abrir</a>
-                                {% else %}
-                                <span class="muted">—</span>
-                                {% endif %}
-                              </td>
-                            </tr>
-                            {% endfor %}
-                          </tbody>
-                        </table>
-                      </div>
+                    <div class="data-table-wrap repaso-course-card__table">
+                      <table class="sheet sheet--dash-soft sheet--repaso">
+                        <thead>
+                          <tr>
+                            <th scope="col">Recurso</th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Acción</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for block in item.weeks %}
+                          <tr class="repaso-week-separator">
+                            <td colspan="3">
+                              <span class="repaso-week-separator__label">Semana {{ block.week.week_number }} · {{ block.week.title }}</span>
+                            </td>
+                          </tr>
+                          {% for mat in block.materials %}
+                          <tr>
+                            <td>
+                              <strong>{{ mat.title }}</strong>
+                              {% if mat.description %}
+                              <br><span class="muted repaso-resource-desc">{{ mat.description|truncatechars:72 }}</span>
+                              {% endif %}
+                              {% if mat.is_required %}<br><span class="badge-txt badge-txt--draft repaso-badge-required">Obligatorio</span>{% endif %}
+                            </td>
+                            <td class="repaso-resource-type">{{ mat.get_material_type_display }}</td>
+                            <td>
+                              {% if mat.file %}
+                              <a class="btn-sm btn-outline" href="{{ mat.file.url }}" target="_blank" rel="noopener">Descargar</a>
+                              {% elif mat.external_url %}
+                              <a class="btn-sm btn-outline" href="{{ mat.external_url }}" target="_blank" rel="noopener">Abrir</a>
+                              {% else %}
+                              <span class="muted">—</span>
+                              {% endif %}
+                            </td>
+                          </tr>
+                          {% endfor %}
+                          {% endfor %}
+                        </tbody>
+                      </table>
                     </div>
-                    {% endfor %}
                   </article>
                   {% endfor %}
                 </div>
                 {% else %}
-                <article class="panel panel--dg-sheet margin-b">
-                  <div class="portal-empty-state" style="padding:1.5rem 1.25rem;">
+                <article class="panel panel--dg-sheet repaso-empty-panel margin-b">
+                  <div class="portal-empty-state repaso-empty-state">
                     <p class="portal-empty-state__title">Sin materiales publicados</p>
                     <p class="portal-empty-state__text">Cuando sus docentes publiquen lecturas o recursos en el aula, aparecerán aquí por curso y semana.</p>
-                    <a class="btn-cta-outline" href="{% url 'classroom:course_list' %}">Ir al aula virtual ›</a>
+                    <a class="btn-sm btn-outline" href="{% url 'classroom:course_list' %}">Ir a mis cursos ›</a>
                   </div>
                 </article>
                 {% endif %}
 
-                <article class="panel panel--dg-sheet margin-b">
+                <article class="panel panel--dg-sheet repaso-personal-section">
                   <div class="panel__head panel__head--dash-soft">
                     <h2>Repaso personal (apuntes y objetivos)</h2>
                   </div>
-                  <div style="padding:0.85rem var(--dash-pad-inline) 1rem;">
-                    <p class="muted" style="margin:0 0 0.85rem;font-size:0.88rem;">
+                  <div class="repaso-personal-panel">
+                    <p class="repaso-personal-panel__intro muted">
                       Objetivos y apuntes que usted crea para organizar su estudio fuera del material oficial del curso.
                     </p>
                     <ul class="repaso-personal-list">
@@ -131,8 +131,8 @@
                       <li class="muted">No tiene objetivos activos.</li>
                       {% endif %}
                     </ul>
-                    <div class="cta-row" style="margin-top:1rem;padding-top:0.85rem;border-top:1px solid var(--border);">
-                      <a class="btn-cta-outline" href="{% url 'revision:create_objective' %}">+ Nuevo objetivo de repaso</a>
+                    <div class="repaso-personal-panel__actions">
+                      <a class="btn-sm btn-outline" href="{% url 'revision:create_objective' %}">+ Nuevo objetivo de repaso</a>
                     </div>
                   </div>
                 </article>

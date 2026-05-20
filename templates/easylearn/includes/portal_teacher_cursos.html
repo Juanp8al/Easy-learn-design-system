@@ -1,4 +1,4 @@
-              <section id="view-teacher-cursos" class="view view-dash-dg view-dash-mer" aria-labelledby="teacher-cursos-title">
+              <section id="view-teacher-cursos" class="view view-dash-dg view-dash-mer view-teacher-portal" aria-labelledby="teacher-cursos-title">
                 <header class="hero hero-dash-dg">
                   <p class="hero-kicker hero-dash-dg__line1">Área docente</p>
                   <h1 id="teacher-cursos-title">Mis cursos</h1>
@@ -12,7 +12,10 @@
                     <h2>Cursos que imparte</h2>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet" id="teacher-courses-table">
+                    <table class="sheet sheet--dash-soft" id="teacher-courses-table">
+                      <colgroup>
+                        <col /><col /><col /><col /><col /><col /><col />
+                      </colgroup>
                       <thead>
                         <tr>
                           <th>Código</th>
@@ -29,12 +32,12 @@
                         <tr data-search="{{ o.code|lower }} {{ o.name|lower }}">
                           <td><span class="tb-course">{{ o.code }}</span></td>
                           <td>{{ o.name|truncatechars:36 }}</td>
-                          <td>{{ o.program.name|truncatechars:20 }}</td>
+                          <td class="teacher-courses-table__program">{{ o.program.name }}</td>
                           <td>{{ o.period.name }}</td>
                           <td>{{ o.group }}</td>
                           <td>{{ o.active_student_count }}</td>
                           <td>
-                            <a class="btn-sm btn-accent" href="{% url 'classroom:teacher_manage_course' o.id %}">Gestionar curso</a>
+                            <a class="btn-sm btn-outline" href="{% url 'classroom:teacher_manage_course' o.id %}">Gestionar curso</a>
                           </td>
                         </tr>
                         {% empty %}

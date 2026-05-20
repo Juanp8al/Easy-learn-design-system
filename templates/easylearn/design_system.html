@@ -21,22 +21,33 @@
   </header>
 
   <article class="panel panel--dg-sheet margin-b">
-    <div class="panel__head panel__head--dash-soft"><h2>Botones</h2></div>
-    <div class="cta-row" style="padding:1rem 1.2rem;">
-      <button type="button" class="btn-main">Primario</button>
-      <button type="button" class="btn-outline">Secundario</button>
+    <div class="panel__head panel__head--dash-soft"><h2>Botones · semántica tablero</h2></div>
+    <div class="cta-row" style="padding:1rem 1.2rem;flex-wrap:wrap;gap:0.55rem;">
+      <button type="button" class="btn-sm btn-portal-primary">+ Crear (azul sólido)</button>
+      <button type="button" class="btn-sm btn-outline">Ver curso ›</button>
+      <button type="button" class="btn-sm btn-outline">Editar</button>
+      <button type="button" class="btn-sm btn-portal-success">Publicar / Activar</button>
+      <button type="button" class="btn-sm btn-portal-danger">Eliminar</button>
+      <button type="button" class="btn-main">Guardar cambios</button>
+      <button type="button" class="btn-main btn-portal-success">Publicar (form)</button>
       <button type="button" class="btn-tertiary">Terciario ›</button>
-      <button type="button" class="btn-main is-loading" disabled>Cargando</button>
     </div>
+    <p class="muted" style="margin:0;padding:0 1.2rem 1rem;font-size:0.82rem;line-height:1.45;">
+      Azul outline = navegación y edición · Azul sólido = crear y guardar · Verde = confirmar/publicar · Rojo = acciones peligrosas.
+    </p>
   </article>
 
   <article class="panel panel--dg-sheet margin-b">
-    <div class="panel__head panel__head--dash-soft"><h2>Badges</h2></div>
-    <p style="padding:1rem 1.2rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
-      <span class="badge-txt badge-txt--ok">Calificado</span>
-      <span class="badge-txt badge-txt--warn">Pendiente</span>
-      <span class="badge-txt badge-txt--draft">Disponible</span>
+    <div class="panel__head panel__head--dash-soft"><h2>Badges · estados</h2></div>
+    <p style="padding:1rem 1.2rem 0.5rem;display:flex;flex-wrap:wrap;gap:0.5rem;">
+      <span class="badge-txt badge-txt--ok">Calificado / Confirmado</span>
+      <span class="badge-txt badge-txt--warn">Pendiente / Fecha cercana</span>
+      <span class="badge-txt badge-txt--draft">Disponible / En borrador</span>
+      <span class="badge-txt badge-txt--danger">Vencida / Error</span>
       <span class="badge-txt badge-txt--muted">Inactivo</span>
+    </p>
+    <p class="muted" style="margin:0;padding:0 1.2rem 1rem;font-size:0.82rem;line-height:1.45;">
+      Azul = navegación · Verde = éxito · Amarillo = pendiente/aviso · Rojo = vencido/peligro.
     </p>
   </article>
 

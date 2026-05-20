@@ -8,7 +8,6 @@
     cursos: "view-cursos",
     calificaciones: "view-calificaciones",
     calendario: "view-calendario",
-    mensajes: "view-mensajes",
     repaso: "view-repaso",
   };
 
@@ -17,7 +16,6 @@
     cursos: "EasyLearn · Mis cursos",
     calificaciones: "EasyLearn · Calificaciones",
     calendario: "EasyLearn · Calendario",
-    mensajes: "EasyLearn · Mensajes",
     repaso: "EasyLearn · Repaso",
   };
 
@@ -41,9 +39,6 @@
         break;
       case "calendario":
         el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Calendario", null);
-        break;
-      case "mensajes":
-        el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Mensajes", null);
         break;
       case "repaso":
         el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Repaso", null);
@@ -91,10 +86,215 @@
     renderBreadcrumbs(route);
     document.title = titles[route] || "EasyLearn";
     if (route === "calificaciones") syncGradesActivities();
+    if (route === "calendario") renderPortalMonthCal();
     try {
       history.replaceState(null, "", "#" + route);
     } catch (_) {}
 
+  }
+
+  var portalCalMonthNames = [
+    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+  ];
+  var portalCalState = null;
+
+  function loadPortalCalEvents() {
+    var el = document.getElementById("portal-cal-events-data");
+    if (!el) return [];
+    try {
+      return JSON.parse(el.textContent || "[]");
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function portalCalDayTone(dayEvents) {
+    if (!dayEvents.length) return "";
+    if (dayEvents.some(function (e) { return e.state === "overdue"; })) return "danger";
+    if (dayEvents.some(function (e) { return e.state === "pending"; })) return "warn";
+    if (dayEvents.some(function (e) {
+      return e.state === "submitted" || e.state === "graded";
+    })) return "ok";
+    return "draft";
+  }
+
+  function portalCalEventsByDate(events) {
+    var map = {};
+    events.forEach(function (ev) {
+      if (!map[ev.date]) map[ev.date] = [];
+      map[ev.date].push(ev);
+    });
+    return map;
+  }
+
+  function initPortalMonthCalendar() {
+    var root = document.getElementById("portal-month-cal");
+    if (!root || root.dataset.inited === "1") return;
+    root.dataset.inited = "1";
+    var events = loadPortalCalEvents();
+    portalCalState = {
+      events: events,
+      byDate: portalCalEventsByDate(events),
+      viewYear: parseInt(root.getAttribute("data-year"), 10) || new Date().getFullYear(),
+      viewMonth: parseInt(root.getAttribute("data-month"), 10) || new Date().getMonth() + 1,
+      todayYear: parseInt(root.getAttribute("data-today-year"), 10) || new Date().getFullYear(),
+      todayMonth: parseInt(root.getAttribute("data-today-month"), 10) || new Date().getMonth() + 1,
+      todayDay: parseInt(root.getAttribute("data-today-day"), 10) || new Date().getDate(),
+      selectedDate: null,
+    };
+    var prev = document.getElementById("portal-cal-prev");
+    var next = document.getElementById("portal-cal-next");
+    var todayBtn = document.getElementById("portal-cal-today");
+    var showAll = document.getElementById("portal-cal-show-all");
+    if (prev) {
+      prev.addEventListener("click", function () {
+        portalCalState.viewMonth -= 1;
+        if (portalCalState.viewMonth < 1) {
+          portalCalState.viewMonth = 12;
+          portalCalState.viewYear -= 1;
+        }
+        renderPortalMonthCal();
+      });
+    }
+    if (next) {
+      next.addEventListener("click", function () {
+        portalCalState.viewMonth += 1;
+        if (portalCalState.viewMonth > 12) {
+          portalCalState.viewMonth = 1;
+          portalCalState.viewYear += 1;
+        }
+        renderPortalMonthCal();
+      });
+    }
+    if (todayBtn) {
+      todayBtn.addEventListener("click", function () {
+        portalCalState.viewYear = portalCalState.todayYear;
+        portalCalState.viewMonth = portalCalState.todayMonth;
+        portalCalState.selectedDate =
+          portalCalIso(portalCalState.todayYear, portalCalState.todayMonth, portalCalState.todayDay);
+        renderPortalMonthCal();
+      });
+    }
+    if (showAll) {
+      showAll.addEventListener("click", function () {
+        portalCalState.selectedDate = null;
+        renderPortalMonthCal();
+      });
+    }
+    renderPortalMonthCal();
+  }
+
+  function portalCalIso(y, m, d) {
+    return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+  }
+
+  function renderPortalMonthCal() {
+    if (!portalCalState) initPortalMonthCalendar();
+    if (!portalCalState) return;
+    var root = document.getElementById("portal-month-cal");
+    var grid = document.getElementById("portal-month-cal-grid");
+    var label = document.getElementById("portal-cal-month-label");
+    var listTitle = document.getElementById("portal-cal-list-title");
+    var showAll = document.getElementById("portal-cal-show-all");
+    if (!root || !grid) return;
+    var y = portalCalState.viewYear;
+    var m = portalCalState.viewMonth;
+    if (label) {
+      label.textContent = portalCalMonthNames[m - 1] + " " + y;
+    }
+    var first = new Date(y, m - 1, 1);
+    var daysInMonth = new Date(y, m, 0).getDate();
+    var startPad = (first.getDay() + 6) % 7;
+    grid.innerHTML = "";
+    var i;
+    for (i = 0; i < startPad; i++) {
+      var empty = document.createElement("div");
+      empty.className = "mc-day is-empty";
+      empty.innerHTML = "&nbsp;";
+      grid.appendChild(empty);
+    }
+    for (i = 1; i <= daysInMonth; i++) {
+      var iso = portalCalIso(y, m, i);
+      var dayEvents = portalCalState.byDate[iso] || [];
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "mc-day";
+      cell.textContent = String(i);
+      cell.setAttribute("data-date", iso);
+      cell.setAttribute("aria-label", i + " de " + portalCalMonthNames[m - 1]);
+      if (
+        y === portalCalState.todayYear &&
+        m === portalCalState.todayMonth &&
+        i === portalCalState.todayDay
+      ) {
+        cell.classList.add("is-today");
+      }
+      if (dayEvents.length) {
+        cell.classList.add("has-event");
+        var tone = portalCalDayTone(dayEvents);
+        if (tone) cell.classList.add("mc-day--tone-" + tone);
+        cell.setAttribute(
+          "aria-label",
+          i + " de " + portalCalMonthNames[m - 1] + ", " + dayEvents.length + " entrega(s)"
+        );
+      }
+      if (portalCalState.selectedDate === iso) {
+        cell.classList.add("is-selected");
+        cell.setAttribute("aria-pressed", "true");
+      } else {
+        cell.setAttribute("aria-pressed", "false");
+      }
+      cell.addEventListener("click", function () {
+        var dateKey = cell.getAttribute("data-date");
+        portalCalState.selectedDate =
+          portalCalState.selectedDate === dateKey ? null : dateKey;
+        renderPortalMonthCal();
+      });
+      grid.appendChild(cell);
+    }
+    while (grid.children.length % 7 !== 0) {
+      var pad = document.createElement("div");
+      pad.className = "mc-day is-empty";
+      pad.innerHTML = "&nbsp;";
+      grid.appendChild(pad);
+    }
+    filterPortalCalTable();
+    if (listTitle) {
+      if (portalCalState.selectedDate) {
+        var parts = portalCalState.selectedDate.split("-");
+        listTitle.textContent =
+          "Entregas del " +
+          parseInt(parts[2], 10) +
+          " " +
+          portalCalMonthNames[parseInt(parts[1], 10) - 1] +
+          " " +
+          parts[0];
+      } else {
+        listTitle.textContent = "Próximas entregas";
+      }
+    }
+    if (showAll) showAll.hidden = !portalCalState.selectedDate;
+  }
+
+  function filterPortalCalTable(needleLower) {
+    var tbody = document.querySelector("#portal-cal-events-table tbody");
+    if (!tbody) return;
+    if (needleLower === undefined) needleLower = getHeaderSearchNeedle();
+    var selected = portalCalState ? portalCalState.selectedDate : null;
+    tbody.querySelectorAll("tr").forEach(function (tr) {
+      if (tr.classList.contains("portal-cal-empty-row")) return;
+      var dateKey = tr.getAttribute("data-date") || "";
+      var search = tr.getAttribute("data-search") || tr.textContent;
+      var matchDay = !selected || dateKey === selected;
+      var matchSearch =
+        needleLower === "" || search.toLowerCase().indexOf(needleLower) !== -1;
+      tr.style.display = matchDay && matchSearch ? "" : "none";
+    });
+  }
+
+  function syncCalendarEvents(needleLower) {
+    filterPortalCalTable(needleLower);
   }
 
   function renderDashboardMiniCal() {
@@ -139,7 +339,7 @@
     var gradesView = document.getElementById("view-calificaciones");
     if (!gradesView || !gradesView.classList.contains("is-visible")) return;
     if (needleLower === undefined) needleLower = getHeaderSearchNeedle();
-    var gTb = gradesView.querySelector("#grades-detail-table tbody");
+    var gTb = gradesView.querySelector("#grades-activity-table tbody");
     if (!gTb) return;
     gTb.querySelectorAll("tr").forEach(function (tr) {
       var d = tr.getAttribute("data-search") || tr.textContent;
@@ -160,6 +360,7 @@
       });
     }
     syncGradesActivities(needle);
+    syncCalendarEvents(needle);
     document.querySelectorAll(".repaso-course-card").forEach(function (card) {
       var t = card.getAttribute("data-search") || card.textContent;
       card.style.display = needle === "" || t.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
@@ -182,6 +383,231 @@
     rows.forEach(function (tr) {
       tr.style.display = needle === "" || tr.textContent.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
     });
+  }
+
+  function initActivitySubmitPage() {
+    var form = document.getElementById("activity-submit-form");
+    if (!form) return;
+
+    var uploadZone = document.getElementById("upload-zone");
+    var zoneEmpty = document.getElementById("upload-zone-empty");
+    var zoneFilled = document.getElementById("upload-zone-filled");
+    var fileInput = document.getElementById("submission-file");
+    var btnPick = document.getElementById("btn-pick-file");
+    var btnChange = document.getElementById("btn-change-file");
+    var btnRemove = document.getElementById("btn-remove-file");
+    var btnSubmit = document.getElementById("btn-submit-activity");
+    var fb = document.getElementById("file-feedback");
+    var fileNameEl = document.getElementById("upload-zone-filename");
+    var fileMetaEl = document.getElementById("upload-zone-filemeta");
+    var fileDownload = document.getElementById("upload-zone-download");
+    var clearFileField = document.getElementById("clear-file-field");
+    var comment = document.getElementById("submission-comment");
+    var preChecks = form.querySelectorAll(".submit-check");
+    var requiresFile = form.getAttribute("data-requires-file") === "1";
+    var hadServerFile = !!(form.getAttribute("data-existing-file") || "").trim();
+    var hasServerFile = hadServerFile;
+
+    function escapeHtml(s) {
+      return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    }
+
+    function basename(path) {
+      var p = String(path || "");
+      var i = Math.max(p.lastIndexOf("/"), p.lastIndexOf("\\"));
+      return i >= 0 ? p.slice(i + 1) : p;
+    }
+
+    function formatSize(bytes) {
+      if (!bytes && bytes !== 0) return "";
+      if (bytes < 1024) return bytes + " B";
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + " KB";
+      return (bytes / (1024 * 1024)).toFixed(1) + " MB";
+    }
+
+    function setClearFileFlag(on) {
+      if (clearFileField) clearFileField.value = on ? "1" : "0";
+    }
+
+    function showEmptyState() {
+      if (!uploadZone) return;
+      uploadZone.classList.remove("is-filled");
+      if (zoneEmpty) zoneEmpty.hidden = false;
+      if (zoneFilled) zoneFilled.hidden = true;
+      if (fb) {
+        fb.className = "alert-zone";
+        fb.textContent = "";
+      }
+    }
+
+    function showFilledState(name, meta, downloadUrl) {
+      if (!uploadZone) return;
+      uploadZone.classList.add("is-filled");
+      if (zoneEmpty) zoneEmpty.hidden = true;
+      if (zoneFilled) zoneFilled.hidden = false;
+      if (fileNameEl) fileNameEl.textContent = name;
+      if (fileMetaEl) fileMetaEl.textContent = meta || "";
+      if (fileDownload) {
+        if (downloadUrl) {
+          fileDownload.href = downloadUrl;
+          fileDownload.hidden = false;
+        } else {
+          fileDownload.hidden = true;
+        }
+      }
+      if (fb) {
+        fb.className = "alert-zone alert-ok";
+        fb.textContent = "Puedes cambiar o eliminar el archivo antes de entregar.";
+      }
+    }
+
+    function hasSelectedFile() {
+      return uploadZone && uploadZone.classList.contains("is-filled");
+    }
+
+    function fileReady() {
+      if (!requiresFile) {
+        return hasSelectedFile() || (comment && comment.value.trim().length > 0);
+      }
+      return hasSelectedFile();
+    }
+
+    function validateSubmitReady() {
+      if (!btnSubmit) return;
+      var checksOk = Array.from(preChecks).every(function (c) {
+        return c.checked;
+      });
+      btnSubmit.disabled = !(fileReady() && checksOk);
+    }
+
+    function applyFile(f) {
+      if (!f) return;
+      setClearFileFlag(false);
+      hasServerFile = false;
+      showFilledState(f.name, formatSize(f.size), null);
+      validateSubmitReady();
+    }
+
+    function openPicker() {
+      if (fileInput) fileInput.click();
+    }
+
+    function removeFile() {
+      if (fileInput) fileInput.value = "";
+      if (hasServerFile) setClearFileFlag(true);
+      else setClearFileFlag(false);
+      hasServerFile = false;
+      showEmptyState();
+      validateSubmitReady();
+    }
+
+    if (btnPick) btnPick.addEventListener("click", openPicker);
+    if (btnChange) btnChange.addEventListener("click", openPicker);
+    if (btnRemove) btnRemove.addEventListener("click", removeFile);
+
+    if (uploadZone && fileInput) {
+      if (zoneEmpty) {
+        zoneEmpty.addEventListener("click", function (e) {
+          if (e.target.closest("button, a")) return;
+          openPicker();
+        });
+      }
+      uploadZone.addEventListener("dragover", function (e) {
+        e.preventDefault();
+        uploadZone.classList.add("is-dragover");
+      });
+      uploadZone.addEventListener("dragleave", function () {
+        uploadZone.classList.remove("is-dragover");
+      });
+      uploadZone.addEventListener("drop", function (e) {
+        e.preventDefault();
+        uploadZone.classList.remove("is-dragover");
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+          fileInput.files = e.dataTransfer.files;
+          applyFile(e.dataTransfer.files[0]);
+        }
+      });
+      fileInput.addEventListener("change", function () {
+        if (!fileInput.files || !fileInput.files[0]) return;
+        applyFile(fileInput.files[0]);
+      });
+    }
+
+    if (hadServerFile) {
+      var existing = form.getAttribute("data-existing-file");
+      var dl = fileDownload ? fileDownload.getAttribute("href") : null;
+      showFilledState(basename(existing), "Archivo guardado en el servidor", dl);
+      setClearFileFlag(false);
+    }
+
+    if (comment) comment.addEventListener("input", validateSubmitReady);
+    preChecks.forEach(function (c) {
+      c.addEventListener("change", validateSubmitReady);
+    });
+
+    form.addEventListener("submit", function () {
+      var hidden = document.getElementById("confirm-ready-field");
+      var ok = document.getElementById("check-confirm-ready");
+      if (hidden && ok) hidden.value = ok.checked ? "1" : "0";
+    });
+
+    validateSubmitReady();
+  }
+
+  function initInstitutionalCourseCatalog() {
+    var instView = document.getElementById("inst-view-mode");
+    var instRoot = document.getElementById("inst-course-root");
+    var instTable = document.getElementById("inst-course-table");
+    var instSort = document.getElementById("inst-sort-course");
+    if (!instRoot) return;
+
+    function applyInstCourseView() {
+      if (!instView) return;
+      var lista = instView.value === "lista";
+      instRoot.className = "course-catalog-root course-catalog-root--" + (lista ? "lista" : "tarjeta");
+      if (instTable) instTable.toggleAttribute("hidden", !lista);
+    }
+
+    function sortInstCards() {
+      var grid = instRoot.querySelector(".course-catalog-grid");
+      if (!grid || !instSort) return;
+      var cards = Array.from(grid.querySelectorAll(".course-catalog-card"));
+      var mode = instSort.value;
+      cards.sort(function (a, b) {
+        var an = a.getAttribute("data-sort-name") || "";
+        var bn = b.getAttribute("data-sort-name") || "";
+        var ac = a.getAttribute("data-sort-code") || "";
+        var bc = b.getAttribute("data-sort-code") || "";
+        if (mode.indexOf("code") === 0) {
+          return mode.endsWith("desc") ? bc.localeCompare(ac) : ac.localeCompare(bc);
+        }
+        return mode.endsWith("desc") ? bn.localeCompare(an) : an.localeCompare(bn);
+      });
+      cards.forEach(function (c) {
+        grid.appendChild(c);
+      });
+    }
+
+    if (instView) {
+      instView.addEventListener("change", applyInstCourseView);
+      applyInstCourseView();
+    }
+
+    if (instSort) {
+      instSort.addEventListener("change", sortInstCards);
+      sortInstCards();
+    }
+
+    var instSearch = document.getElementById("inst-search-course");
+    if (instSearch) {
+      instSearch.addEventListener("input", function () {
+        var needle = instSearch.value.trim().toLowerCase();
+        instRoot.querySelectorAll("[data-catalog-scope]").forEach(function (el) {
+          var t = (el.getAttribute("data-catalog-scope") || "") + " " + el.textContent;
+          el.style.display = needle === "" || t.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
+        });
+      });
+    }
   }
 
   function initPortalHeaderChrome() {
@@ -698,10 +1124,13 @@
 
     if (rolePage === "profile" || rolePage === "classroom" || !document.getElementById("view-dashboard")) {
       initPortalShellExtras();
+      initInstitutionalCourseCatalog();
+      initActivitySubmitPage();
       return;
     }
 
     renderDashboardMiniCal();
+    initPortalMonthCalendar();
 
     var canvas = document.querySelector(".canvas-body");
     if (canvas) {
@@ -881,64 +1310,40 @@
       applyCourseCatalogView();
     }
 
-    var instView = document.getElementById("inst-view-mode");
-    var instRoot = document.getElementById("inst-course-root");
-    var instCards = document.getElementById("inst-course-cards");
-    var instTable = document.getElementById("inst-course-table");
-  function applyInstCourseView() {
-      if (!instRoot || !instView) return;
-      var lista = instView.value === "lista";
-      instRoot.className = "course-catalog-root course-catalog-root--" + (lista ? "lista" : "tarjeta");
-      if (instCards) instCards.toggleAttribute("hidden", lista);
-      if (instTable) instTable.toggleAttribute("hidden", !lista);
-    }
-    if (instView) {
-      instView.addEventListener("change", applyInstCourseView);
-      applyInstCourseView();
-    }
-    var instSearch = document.getElementById("inst-search-course");
-    if (instSearch && instRoot) {
-      instSearch.addEventListener("input", function () {
-        var needle = instSearch.value.trim().toLowerCase();
-        instRoot.querySelectorAll("[data-catalog-scope]").forEach(function (el) {
-          var t = (el.getAttribute("data-catalog-scope") || "") + " " + el.textContent;
-          el.style.display = needle === "" || t.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
-        });
+    initInstitutionalCourseCatalog();
+
+    function setCalViewTab(tab) {
+      document.querySelectorAll(".cal-view-tabs__btn").forEach(function (b) {
+        var on = b.getAttribute("data-cal-tab") === tab;
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-selected", on ? "true" : "false");
       });
+      var ac = document.getElementById("cal-panel-academico");
+      var rep = document.getElementById("cal-panel-repaso");
+      if (ac) {
+        ac.hidden = tab !== "academico";
+        ac.classList.toggle("cal-panel--visible", tab === "academico");
+      }
+      if (rep) {
+        rep.hidden = tab !== "repaso";
+        rep.classList.toggle("cal-panel--visible", tab === "repaso");
+      }
+      if (tab === "academico") renderPortalMonthCal();
     }
 
-    document.querySelectorAll(".cal-tab").forEach(function (btn) {
+    document.querySelectorAll(".cal-view-tabs__btn").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var tab = btn.getAttribute("data-cal-tab");
-        document.querySelectorAll(".cal-tab").forEach(function (b) {
-          b.classList.toggle("btn-accent", b === btn);
-          b.classList.toggle("btn-outline", b !== btn);
-          b.classList.toggle("is-on", b === btn);
-        });
-        var ac = document.getElementById("cal-panel-academico");
-        var rep = document.getElementById("cal-panel-repaso");
-        if (ac) ac.hidden = tab !== "academico";
-        if (rep) rep.hidden = tab !== "repaso";
-      });
-    });
-
-    document.querySelectorAll(".msg-filter").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        var f = btn.getAttribute("data-msg-filter");
-        document.querySelectorAll(".msg-filter").forEach(function (b) {
-          b.classList.toggle("btn-accent", b === btn);
-          b.classList.toggle("btn-outline", b !== btn);
-          b.classList.toggle("is-on", b === btn);
-        });
-        document.querySelectorAll("#msg-list .msg-item").forEach(function (li) {
-          var src = li.getAttribute("data-msg-source") || "";
-          var show = f === "all" || src === f;
-          li.style.display = show ? "" : "none";
-        });
+        setCalViewTab(btn.getAttribute("data-cal-tab"));
       });
     });
 
     var hash = (location.hash || "").replace(/^#/, "");
+    if (hash === "mensajes") {
+      try {
+        history.replaceState(null, "", location.pathname + location.search);
+      } catch (_) {}
+      hash = "dashboard";
+    }
     if (hash === "curso" || hash === "semana" || hash === "tareas" || hash === "cursos") {
       window.location.replace("/aula/");
       return;

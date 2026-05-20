@@ -231,6 +231,8 @@ def profile(request, user_id=None, username=None):
         return redirect("profile")
 
     password_form = PortalPasswordChangeForm(user=student)
+    password_dialog_open = False
+    password_dialog_step = 1
     if request.method == "POST" and request.POST.get("form_type") == "password":
         password_form = PortalPasswordChangeForm(user=student, data=request.POST)
         if password_form.is_valid():
@@ -238,6 +240,11 @@ def profile(request, user_id=None, username=None):
             update_session_auth_hash(request, user)
             messages.success(request, "Su contraseña se actualizó correctamente.")
             return redirect("profile")
+        password_dialog_open = True
+        if password_form.errors.get("old_password"):
+            password_dialog_step = 2
+        else:
+            password_dialog_step = 3
         messages.error(
             request,
             "No se pudo cambiar la contraseña. Verifique la contraseña actual y que la nueva coincida.",
@@ -245,6 +252,8 @@ def profile(request, user_id=None, username=None):
 
     ctx = _portal_profile_context(student)
     ctx["password_form"] = password_form
+    ctx["password_dialog_open"] = password_dialog_open
+    ctx["password_dialog_step"] = password_dialog_step
     return render(request, "easylearn/portal_profile.html", ctx)
 
 

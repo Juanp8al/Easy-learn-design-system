@@ -8,8 +8,60 @@ from django.urls import reverse
 from django.utils import timezone
 
 from academia.models import Enrollment
-from classroom.context import _submission_stats_for_offering
+from classroom.context import _submission_stats_for_offering, build_enrollment_cards
 from classroom.models import AcademicWeek, Activity, Announcement, Grade, StudyMaterial, Submission
+
+
+def resolve_student_activity_action(activity_id, state, activity_type=None):
+    """
+    Botón de acción según estado:
+    pendiente → Entregar (verde); entregada → Ver entrega (azul);
+    calificada → Ver calificación (verde); vencida → sin acción.
+    """
+    submit_url = reverse("classroom:activity_submit", args=[activity_id])
+    if state == "overdue":
+        return {
+            "action_label": None,
+            "action_url": None,
+            "action_btn_class": None,
+        }
+    if activity_type == "forum":
+        if state in ("graded", "submitted"):
+            return {
+                "action_label": "Ver calificación" if state == "graded" else "Ver entrega",
+                "action_url": submit_url,
+                "action_btn_class": (
+                    "btn-portal-success" if state == "graded" else "btn-outline"
+                ),
+            }
+        return {
+            "action_label": "Participar",
+            "action_url": submit_url,
+            "action_btn_class": "btn-portal-success",
+        }
+    if state == "pending":
+        return {
+            "action_label": "Entregar",
+            "action_url": submit_url,
+            "action_btn_class": "btn-portal-success",
+        }
+    if state == "graded":
+        return {
+            "action_label": "Ver calificación",
+            "action_url": submit_url,
+            "action_btn_class": "btn-portal-success",
+        }
+    if state == "submitted":
+        return {
+            "action_label": "Ver entrega",
+            "action_url": submit_url,
+            "action_btn_class": "btn-outline",
+        }
+    return {
+        "action_label": "Ver entrega",
+        "action_url": submit_url,
+        "action_btn_class": "btn-outline",
+    }
 
 
 def describe_activity_status(activity, submission=None):
@@ -24,16 +76,20 @@ def describe_activity_status(activity, submission=None):
         }
     if submission and not submission.is_draft:
         return {
-            "status_label": "Entregada",
-            "badge": "draft",
+            "status_label": "Entregado",
+            "badge": "ok",
             "state": "submitted",
             "is_overdue": False,
         }
-    overdue = bool(activity.due_at and activity.due_at < now)
+    overdue = bool(
+        activity.due_at
+        and activity.due_at < now
+        and not activity.allow_late
+    )
     if overdue:
         return {
             "status_label": "Vencida",
-            "badge": "warn",
+            "badge": "danger",
             "state": "overdue",
             "is_overdue": True,
         }
@@ -59,42 +115,6 @@ def _active_offering_ids(student):
     ).values_list("offering_id", flat=True)
 
 
-def build_enrollment_cards(student):
-    """Tarjetas de curso institucional con avance y semana actual."""
-    enrollments = (
-        Enrollment.objects.filter(student=student, status=Enrollment.Status.ACTIVE)
-        .select_related("offering", "offering__teacher", "offering__period")
-        .order_by("-offering__period__name", "offering__code")
-    )
-    cards = []
-    for enr in enrollments:
-        off = enr.offering
-        weeks = list(AcademicWeek.objects.filter(offering=off).order_by("week_number"))
-        current_week = next(
-            (w for w in weeks if w.status == AcademicWeek.Status.IN_PROGRESS),
-            None,
-        )
-        if not current_week and weeks:
-            completed = [w for w in weeks if w.status == AcademicWeek.Status.COMPLETED]
-            if len(completed) < len(weeks):
-                idx = len(completed)
-                current_week = weeks[idx] if idx < len(weeks) else weeks[-1]
-        total_weeks = len(weeks) or 1
-        done_weeks = sum(1 for w in weeks if w.status == AcademicWeek.Status.COMPLETED)
-        progress_pct = round(100 * done_weeks / total_weeks) if weeks else 0
-        stats = _submission_stats_for_offering(student, off)
-        cards.append(
-            {
-                "enrollment": enr,
-                "offering": off,
-                "current_week": current_week,
-                "progress_pct": progress_pct,
-                "stats": stats,
-            }
-        )
-    return cards
-
-
 def build_dashboard_activities(student):
     """Actividades prioritarias (solo institucionales)."""
     offering_ids = list(_active_offering_ids(student))
@@ -117,6 +137,9 @@ def build_dashboard_activities(student):
                 "activity": act,
                 "submission": sub,
                 **meta,
+                **resolve_student_activity_action(
+                    act.id, meta["state"], act.activity_type
+                ),
             }
         )
     rows.sort(
@@ -271,86 +294,133 @@ def build_next_class_hint(student):
 
 
 def build_academic_calendar_events(student):
-    """Eventos para la vista Calendario (entregas)."""
+    """Entregas con fecha límite para calendario mensual + tabla del portal."""
     now = timezone.now()
     offering_ids = list(_active_offering_ids(student))
+    range_start = now - timedelta(days=60)
+    range_end = now + timedelta(days=365)
     events = []
     for act in (
         Activity.objects.filter(
             week__offering_id__in=offering_ids,
             status=Activity.Status.PUBLISHED,
+            due_at__gte=range_start,
+            due_at__lte=range_end,
         )
         .exclude(due_at__isnull=True)
         .select_related("week", "week__offering")
-        .order_by("due_at")[:60]
+        .order_by("due_at")
     ):
+        local = timezone.localtime(act.due_at)
+        week = act.week
         meta = describe_activity_status(
             act, Submission.objects.filter(activity=act, student=student).first()
         )
+        action = resolve_student_activity_action(
+            act.id, meta["state"], act.activity_type
+        )
         events.append(
             {
-                "date": timezone.localtime(act.due_at).date(),
-                "time_label": timezone.localtime(act.due_at).strftime("%H:%M"),
+                "date": local.date(),
+                "date_iso": local.date().isoformat(),
+                "year": local.year,
+                "month": local.month,
+                "day": local.day,
+                "time_label": local.strftime("%H:%M"),
                 "title": act.title,
                 "offering_code": act.week.offering.code,
+                "offering_name": act.week.offering.name,
                 "type": "entrega",
                 "status_label": meta["status_label"],
-                "url": reverse("classroom:activity_submit", args=[act.id]),
+                "badge": meta["badge"],
+                "state": meta["state"],
+                "week_url": reverse(
+                    "classroom:week_detail",
+                    kwargs={
+                        "offering_id": week.offering_id,
+                        "week_number": week.week_number,
+                    },
+                ),
+                "submit_url": action["action_url"],
+                "search": (
+                    f"{act.title} {act.week.offering.code} {meta['status_label']}"
+                ).lower(),
+                **action,
             }
         )
     return events
 
 
-def build_portal_messages(student):
-    """Avisos de docentes y mensajes del sistema."""
-    offering_ids = list(_active_offering_ids(student))
-    msgs = []
-    for ann in (
-        Announcement.objects.filter(offering_id__in=offering_ids)
-        .select_related("offering", "author", "week")
-        .order_by("-published_at")[:40]
-    ):
-        msgs.append(
-            {
-                "title": ann.title,
-                "preview": (ann.content or "")[:160],
-                "when": ann.published_at,
-                "source": "docente",
-                "author": ann.author.get_full_name() if ann.author else ann.offering.teacher,
-                "offering_code": ann.offering.code,
-                "priority": ann.priority,
-            }
-        )
-    if not msgs:
-        msgs.append(
-            {
-                "title": "Bienvenido a EasyLearn",
-                "preview": "Consulte el aula virtual, entregas y calificaciones desde el menú lateral.",
-                "when": timezone.now(),
-                "source": "sistema",
-                "author": "Sistema",
-                "offering_code": "",
-                "priority": "normal",
-            }
-        )
-    msgs.sort(key=lambda m: m["when"], reverse=True)
-    return msgs[:30]
+def build_academic_calendar_events_payload(events):
+    """Payload compacto para el calendario mensual (json_script en plantilla)."""
+    return [
+        {
+            "date": ev["date_iso"],
+            "year": ev["year"],
+            "month": ev["month"],
+            "day": ev["day"],
+            "badge": ev["badge"],
+            "state": ev["state"],
+        }
+        for ev in events
+    ]
+
+
+def _format_reminder_when(due_at, is_today):
+    local = timezone.localtime(due_at)
+    if is_today:
+        return f"Hoy · {local.strftime('%H:%M')}"
+    return local.strftime("%d %b · %H:%M")
+
+
+def build_course_schedule_slots(offering):
+    """Horario de clase en ficha del curso (referencia demo hasta modelo de horarios)."""
+    room = "Aula 402 · Presencial" if offering.group in ("A", "1", "") else f"Grupo {offering.group}"
+    return [
+        {
+            "label": "Clase martes",
+            "meta": room,
+            "time": "7:40 a. m. – 9:20 a. m.",
+            "alt": False,
+        },
+        {
+            "label": "Clase jueves",
+            "meta": "Laboratorio de software",
+            "time": "7:40 a. m. – 9:20 a. m.",
+            "alt": True,
+        },
+    ]
 
 
 def build_course_extras(student, offering):
-    """Recordatorios en panorama del curso."""
+    """Recordatorios, horario y semana actual en panorama del curso."""
     today = timezone.localdate()
-    now = timezone.now()
     due_today = []
-    for act in Activity.objects.filter(
+    course_reminders = []
+
+    published = Activity.objects.filter(
         week__offering=offering,
         status=Activity.Status.PUBLISHED,
-        due_at__date=today,
-    ).order_by("due_at"):
+    ).select_related("week").order_by("due_at")
+
+    for act in published:
         sub = Submission.objects.filter(activity=act, student=student).first()
         meta = describe_activity_status(act, sub)
-        if meta["state"] in ("pending", "overdue"):
+        if act.due_at and act.due_at.date() == today and meta["state"] in ("pending", "overdue"):
             due_today.append({"activity": act, **meta})
+        if meta["state"] in ("pending", "overdue") and act.due_at:
+            is_today = timezone.localtime(act.due_at).date() == today
+            course_reminders.append(
+                {
+                    "activity": act,
+                    "urgent": is_today,
+                    "when_label": _format_reminder_when(act.due_at, is_today),
+                    **meta,
+                }
+            )
+
+    course_reminders.sort(key=lambda r: (not r["urgent"], r["activity"].due_at))
+    course_reminders = course_reminders[:5]
 
     current_week = (
         AcademicWeek.objects.filter(offering=offering)
@@ -358,17 +428,30 @@ def build_course_extras(student, offering):
         .order_by("week_number")
         .first()
     )
-    schedule_hint = None
-    if current_week and current_week.starts_on and current_week.ends_on:
-        schedule_hint = (
-            f"Semana {current_week.week_number}: "
-            f"{current_week.starts_on.strftime('%d %b')} – {current_week.ends_on.strftime('%d %b')}"
+    if not current_week:
+        current_week = (
+            AcademicWeek.objects.filter(offering=offering)
+            .exclude(status=AcademicWeek.Status.LOCKED)
+            .order_by("-week_number")
+            .first()
         )
+
+    stats = _submission_stats_for_offering(student, offering)
+    submissions_count = stats["submissions_count"]
+    activities_total = stats["activities_total"] or 0
+    entregas_hint = (
+        f"Has entregado {submissions_count} de {activities_total} actividades"
+        if activities_total
+        else "Sin actividades publicadas"
+    )
 
     return {
         "current_week_highlight": current_week,
         "course_due_today": due_today,
-        "course_schedule_hint": schedule_hint,
+        "course_reminders": course_reminders,
+        "course_schedule_slots": build_course_schedule_slots(offering),
+        "course_entregas_hint": entregas_hint,
+        "course_stats": stats,
     }
 
 
@@ -440,8 +523,12 @@ def build_student_portal_context(student):
         "show_performance_chart": len(perf_bars) > 0,
         "upcoming_evaluations": build_upcoming_evaluations(student),
         "next_class_hint": build_next_class_hint(student),
-        "academic_calendar_events": build_academic_calendar_events(student),
-        "portal_messages": build_portal_messages(student),
+        "academic_calendar_events": (
+            academic_calendar_events := build_academic_calendar_events(student)
+        ),
+        "academic_calendar_events_payload": build_academic_calendar_events_payload(
+            academic_calendar_events
+        ),
         **build_mini_calendar(student),
         **build_repaso_materials(student),
     }

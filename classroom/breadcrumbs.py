@@ -15,19 +15,19 @@ def _item(label, url_name=None, url_kwargs=None, url_hash=""):
 def student_home_crumbs():
     return [
         _item("Inicio", "notes:dashboard"),
-        _item("Aula virtual", "classroom:course_list"),
+        _item("Mis cursos", "classroom:course_list"),
     ]
 
 
 def course_crumbs(offering):
     crumbs = student_home_crumbs()
-    crumbs.append(_item(offering.name))
+    crumbs.append(_item(offering.code))
     return crumbs
 
 
 def week_crumbs(offering, week):
     crumbs = course_crumbs(offering)
-    crumbs[-1] = _item(offering.name, "classroom:course_detail", {"offering_id": offering.id})
+    crumbs[-1] = _item(offering.code, "classroom:course_detail", {"offering_id": offering.id})
     crumbs.append(_item(f"Semana {week.week_number}"))
     return crumbs
 

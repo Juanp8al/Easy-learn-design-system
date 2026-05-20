@@ -26,7 +26,7 @@
                             <td><span class="badge-txt badge-txt--{% if forum.status == 'open' %}ok{% else %}muted{% endif %}">{{ forum.get_status_display }}</span></td>
                             <td>
                               <form method="post" action="{% url 'classroom:teacher_toggle_forum' forum.id %}" style="display:inline;" data-el-loader-ignore="true">{% csrf_token %}
-                                <button type="submit" class="btn-sm btn-outline">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button>
+                                <button type="submit" class="btn-sm {% if forum.status == 'open' %}btn-portal-danger{% else %}btn-portal-success{% endif %}">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button>
                               </form>
                             </td>
                           </tr>

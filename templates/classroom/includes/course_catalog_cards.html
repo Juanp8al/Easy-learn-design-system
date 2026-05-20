@@ -1,0 +1,47 @@
+{% for card in enrollment_cards %}
+<article
+  class="course-catalog-card{% if card.is_featured %} course-catalog-card--featured{% endif %}"
+  data-catalog-scope="{{ card.offering.code }} {{ card.offering.name }} {{ card.offering.program.name }}"
+  data-sort-name="{{ card.offering.name|lower }}"
+  data-sort-code="{{ card.offering.code|lower }}"
+>
+  <div class="course-catalog-card__banner">
+    <span class="course-catalog-card__pattern course-catalog-card__pattern--{% cycle 'a' 'b' 'c' %}" aria-hidden="true"></span>
+    <span class="course-catalog-card__band-tag">{{ card.offering.program.name|truncatechars:18 }}</span>
+  </div>
+  <div class="course-catalog-card__body">
+    <div class="course-catalog-card__topline">
+      <span class="badge-txt badge-txt--draft">{{ card.status_label }}</span>
+    </div>
+    <h2 class="course-catalog-card__name">{{ card.offering.name }}</h2>
+    <p class="course-catalog-card__meta-subtle">
+      {{ card.offering.code }} · {{ card.offering.credits }} crédito{{ card.offering.credits|pluralize:"s" }}{% if card.offering.group %} · Grupo {{ card.offering.group }}{% endif %}
+    </p>
+    {% if card.offering.teacher %}
+    <p class="course-catalog-card__teacher">
+      Docente <strong>{{ card.offering.teacher.get_full_name|default:card.offering.teacher.username }}</strong>
+    </p>
+    {% endif %}
+    <div class="course-catalog-card__track">
+      <div
+        class="catalog-card-progress"
+        role="progressbar"
+        aria-valuenow="{{ card.progress_pct }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-label="Avance del curso {{ card.progress_pct }} por ciento"
+      >
+        <span class="catalog-card-progress__fill" style="width: {{ card.progress_pct }}%"></span>
+      </div>
+      <span class="course-catalog-card__completed">Avance: {{ card.progress_pct }}% completado del curso</span>
+    </div>
+    {% if card.current_week %}
+    <p class="course-catalog-card__week-line">
+      Semana actual: <span class="course-catalog-card__week-n">{{ card.current_week.week_number }}</span>
+      · {{ card.current_week.title }}
+    </p>
+    {% endif %}
+    <a class="btn-sm btn-portal-success course-catalog-card__cta" href="{% url 'classroom:course_detail' card.offering.id %}">Ir al curso ›</a>
+  </div>
+</article>
+{% endfor %}

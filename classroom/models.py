@@ -103,10 +103,10 @@ class StudyMaterial(models.Model):
 
 
 class Activity(models.Model):
-    """Actividad académica (tarea, quiz, foro, etc.)."""
+    """Actividad académica (actividad, taller, quiz, foro, etc.)."""
 
     class ActivityType(models.TextChoices):
-        TASK = "task", "Tarea"
+        TASK = "task", "Actividad"
         WORKSHOP = "workshop", "Taller"
         FORUM = "forum", "Foro"
         QUIZ = "quiz", "Cuestionario"
