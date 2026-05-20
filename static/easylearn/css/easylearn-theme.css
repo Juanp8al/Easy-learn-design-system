@@ -1407,6 +1407,15 @@ html[data-theme="dark"] .portal-form-field textarea::placeholder {
   color: #94a3b8;
 }
 
+html[data-theme="dark"] .portal-admin-form__check-label {
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .portal-admin-form__card-head {
+  background: linear-gradient(180deg, rgb(30 58 95 / 0.55) 0%, rgb(30 41 59 / 0.35) 100%);
+  border-bottom-color: rgb(255 255 255 / 0.1);
+}
+
 html[data-theme="dark"] .portal-profile-card .panel__head--dash-soft {
   border-bottom-color: rgb(255 255 255 / 0.1);
 }

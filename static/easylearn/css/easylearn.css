@@ -1623,6 +1623,66 @@ table.sheet tbody tr:hover {
   }
 }
 
+/* Calendario · pestaña Repaso personal */
+.cal-repaso-summary .summary-card__value {
+  font-variant-numeric: tabular-nums;
+}
+
+.cal-repaso-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  gap: 1.15rem;
+  align-items: start;
+}
+
+.cal-repaso-cal-card {
+  position: sticky;
+  top: 0.5rem;
+}
+
+.cal-repaso-list-panel .data-table-wrap {
+  max-height: min(28rem, 55vh);
+}
+
+.cal-repaso-empty__actions,
+.cal-repaso-footer__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  justify-content: center;
+  margin-top: 0.85rem;
+}
+
+.cal-repaso-footer {
+  padding: 1rem 1.15rem;
+}
+
+.cal-repaso-footer__text {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.5;
+  max-width: 42rem;
+}
+
+.cal-repaso-footer__actions {
+  margin-top: 0.85rem;
+  justify-content: flex-start;
+}
+
+.view-portal-calendar .hero--dense p {
+  max-width: 40rem;
+}
+
+@media (max-width: 960px) {
+  .cal-repaso-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .cal-repaso-cal-card {
+    position: static;
+  }
+}
+
 /* ─── Calendario portal: mes + tabla (cuadrícula definida) ─ */
 .panel--portal-month-cal {
   padding: 0;
@@ -10266,6 +10326,132 @@ html[data-theme="dark"] .portal-profile-card--password {
 @media (max-width: 640px) {
   .portal-profile-edit__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ——— Admin · formularios de creación (portal) ——— */
+.portal-admin-form.view-dash-dg {
+  max-width: 44rem;
+}
+
+.portal-admin-form--compact.view-dash-dg {
+  max-width: 40rem;
+}
+
+.portal-admin-form__card {
+  margin-top: 0.35rem;
+}
+
+.portal-admin-form__card-head {
+  background: linear-gradient(180deg, rgb(239 246 255) 0%, rgb(248 250 252) 100%);
+  border-bottom: 1px solid rgb(226 232 240);
+}
+
+.portal-admin-form__body {
+  padding-top: 0.15rem;
+}
+
+.portal-admin-form__body .portal-admin-form__section:first-child {
+  margin-top: 0;
+}
+
+.portal-admin-form__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem 1.15rem;
+  align-items: start;
+}
+
+.portal-admin-form__field {
+  min-width: 0;
+}
+
+.portal-admin-form__field .catalog-toolbar__input,
+.portal-admin-form__field .catalog-toolbar__select,
+.portal-admin-form__field select.select-ui {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.portal-admin-form__field .portal-profile-block__label + .catalog-toolbar__input,
+.portal-admin-form__field .portal-profile-block__label + .catalog-toolbar__select,
+.portal-admin-form__field .portal-profile-block__label + select {
+  margin-top: 0.35rem;
+}
+
+.portal-admin-form__field input[type="date"].catalog-toolbar__input {
+  min-height: 2.65rem;
+}
+
+.portal-admin-form__field .select-ui.catalog-toolbar__select {
+  min-height: 2.65rem;
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.portal-admin-form__field--check {
+  display: flex;
+  align-items: flex-start;
+  grid-column: 1 / -1;
+  padding-top: 0.15rem;
+}
+
+.portal-admin-form__check-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-top: 0.15rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.portal-admin-form__check {
+  width: 1.05rem;
+  height: 1.05rem;
+  margin: 0;
+  accent-color: var(--brand-primary, #2563eb);
+  flex-shrink: 0;
+}
+
+.portal-admin-form__req {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.portal-admin-form .portal-profile-edit__help {
+  margin: 0.35rem 0 0;
+  font-size: 0.8rem;
+  line-height: 1.45;
+}
+
+.portal-admin-form .portal-profile-edit__help ul {
+  margin: 0.25rem 0 0;
+  padding-left: 1.15rem;
+}
+
+.portal-admin-form__actions {
+  margin-top: 0;
+  gap: 0.65rem;
+}
+
+a.portal-quick-actions__btn {
+  text-decoration: none;
+  color: inherit;
+}
+
+@media (max-width: 640px) {
+  .portal-admin-form__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .portal-admin-form__field.portal-profile-edit__field--full {
+    grid-column: 1;
   }
 }
 

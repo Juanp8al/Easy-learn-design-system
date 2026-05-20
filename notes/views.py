@@ -12,7 +12,10 @@ from accounts.decorators import role_required
 from accounts.models import Student
 from academia.models import AcademicPeriod, Enrollment
 from classroom.context import build_grades_context
-from classroom.portal import build_student_portal_context
+from classroom.portal import (
+    build_repaso_personal_calendar_context,
+    build_student_portal_context,
+)
 from notes.models import *
 from notes.forms import *
 from glossary.models import *
@@ -72,6 +75,7 @@ def dashboard(request):
         "current_period": current_period,
         **grades_ctx,
         **portal_ctx,
+        **build_repaso_personal_calendar_context(active_objectives, overdue_objectives),
     }
     return render(request, template_path, context)
 

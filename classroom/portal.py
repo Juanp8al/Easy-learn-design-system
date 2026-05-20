@@ -469,6 +469,78 @@ def build_week_navigation(offering, week_number):
     return prev_n, next_n
 
 
+def build_repaso_personal_calendar_context(active_objectives, overdue_objectives):
+    """Objetivos de repaso para la pestaña Calendario · Repaso personal."""
+    today = timezone.localdate()
+    overdue_list = list(overdue_objectives)
+    active_list = list(active_objectives.order_by("end_date", "name"))
+    rows = []
+    events = []
+
+    def _event_from_objective(obj, state, badge):
+        return {
+            "date": obj.end_date.isoformat(),
+            "year": obj.end_date.year,
+            "month": obj.end_date.month,
+            "day": obj.end_date.day,
+            "badge": badge,
+            "state": state,
+        }
+
+    for obj in overdue_list:
+        rows.append(
+            {
+                "objective": obj,
+                "name": obj.name,
+                "url": obj.get_absolute_url(),
+                "end_date": obj.end_date,
+                "end_date_iso": obj.end_date.isoformat(),
+                "start_date": obj.start_date,
+                "course_label": obj.course.name if obj.course_id else "General",
+                "badge": "danger",
+                "status_label": "Vencido",
+                "state": "overdue",
+                "days_label": f"Venció {obj.end_date.strftime('%d %b %Y')}",
+                "search": f"{obj.name} vencido".lower(),
+            }
+        )
+        events.append(_event_from_objective(obj, "overdue", "danger"))
+
+    for obj in active_list:
+        delta = (obj.end_date - today).days
+        if delta <= 2:
+            badge, state, status_label = "warn", "pending", "Urgente"
+            days_label = "Vence hoy" if delta == 0 else f"Vence en {delta} día{'s' if delta != 1 else ''}"
+        else:
+            badge, state, status_label = "draft", "pending", "En curso"
+            days_label = f"Hasta {obj.end_date.strftime('%d %b %Y')}"
+        rows.append(
+            {
+                "objective": obj,
+                "name": obj.name,
+                "url": obj.get_absolute_url(),
+                "end_date": obj.end_date,
+                "end_date_iso": obj.end_date.isoformat(),
+                "start_date": obj.start_date,
+                "course_label": obj.course.name if obj.course_id else "General",
+                "badge": badge,
+                "status_label": status_label,
+                "state": state,
+                "days_label": days_label,
+                "search": f"{obj.name} {status_label}".lower(),
+            }
+        )
+        events.append(_event_from_objective(obj, state, badge))
+
+    return {
+        "repaso_cal_rows": rows,
+        "repaso_cal_events_payload": events,
+        "repaso_cal_active_count": len(active_list),
+        "repaso_cal_overdue_count": len(overdue_list),
+        "repaso_cal_total_count": len(active_list) + len(overdue_list),
+    }
+
+
 def build_repaso_materials(student):
     """Materiales de estudio publicados, agrupados por curso matriculado."""
     enrollments = (

@@ -3,6 +3,13 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from .views import *
 from django.contrib.auth import urls as auth_urls
+from academia.admin_views import (
+    admin_create_enrollment,
+    admin_create_offering,
+    admin_create_period,
+    admin_create_program,
+    admin_create_user,
+)
 
 
 def _auth_urlpatterns():
@@ -14,6 +21,11 @@ urlpatterns = [
     path("login/", RedirectView.as_view(pattern_name="login", permanent=False)),
     path("panel/docente/", dashboard_teacher, name="dashboard_teacher"),
     path("panel/administrador/", dashboard_admin, name="dashboard_admin"),
+    path("panel/administrador/usuario/nuevo/", admin_create_user, name="admin_create_user"),
+    path("panel/administrador/carrera/nueva/", admin_create_program, name="admin_create_program"),
+    path("panel/administrador/periodo/nuevo/", admin_create_period, name="admin_create_period"),
+    path("panel/administrador/curso/nuevo/", admin_create_offering, name="admin_create_offering"),
+    path("panel/administrador/matricula/nueva/", admin_create_enrollment, name="admin_create_enrollment"),
     path(
         "signup/",
         RedirectView.as_view(pattern_name="login", permanent=False),

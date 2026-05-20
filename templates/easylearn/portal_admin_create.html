@@ -1,0 +1,49 @@
+{% extends "easylearn/portal_layout.html" %}
+
+{% block title %}{{ admin_form_title }} · Administración · EasyLearn{% endblock %}
+{% block body_attrs %} data-easylearn-page="admin-form"{% endblock %}
+
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_admin.html" %}{% endblock %}
+
+{% block portal_canvas %}
+  <nav class="breadcrumbs" aria-label="Ruta">
+    <a href="{% url 'dashboard_admin' %}">Administración</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <a href="{{ admin_form_cancel_url }}">{{ admin_form_kicker }}</a>
+    <span class="sep" aria-hidden="true">›</span>
+    <span>{{ admin_form_title }}</span>
+  </nav>
+
+  <section class="view is-visible view-dash-dg view-admin-portal portal-admin-form{% if admin_form_compact %} portal-admin-form--compact{% endif %}" aria-labelledby="admin-form-title">
+    <header class="hero hero-dash-dg hero--dense">
+      <p class="hero-kicker hero-dash-dg__line1">{{ admin_form_kicker }}</p>
+      <h1 id="admin-form-title">{{ admin_form_title }}</h1>
+      <p class="hero-dash-dg__desc">{{ admin_form_description }}</p>
+    </header>
+
+    <form method="post" class="portal-profile-card portal-profile-card--edit-form portal-admin-form__card" novalidate data-el-loader="server">
+      {% csrf_token %}
+      <header class="portal-profile-card__head portal-profile-card__head--stacked portal-admin-form__card-head">
+        <div class="portal-profile-card__title-group">
+          <h2 class="portal-profile-card__title">Datos del registro</h2>
+          <p class="portal-profile-card__lede">Complete los campos obligatorios. Los cambios se guardan en el sistema institucional.</p>
+        </div>
+      </header>
+
+      {% if form.non_field_errors %}
+      <div class="portal-profile-edit__errors">
+        {% for err in form.non_field_errors %}<p class="el-form-errors">{{ err }}</p>{% endfor %}
+      </div>
+      {% endif %}
+
+      <div class="portal-profile-edit__body portal-admin-form__body">
+        {% include "easylearn/includes/portal_admin_form_fields.html" %}
+      </div>
+
+      <div class="portal-profile-edit__actions portal-admin-form__actions">
+        <button type="submit" class="btn-sm btn-portal-primary">Guardar</button>
+        <a class="btn-sm btn-outline" href="{{ admin_form_cancel_url }}">{{ admin_form_cancel_label }}</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

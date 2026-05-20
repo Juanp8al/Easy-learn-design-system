@@ -1,0 +1,40 @@
+{% for section in admin_form_sections %}
+<section class="portal-profile-edit__section portal-admin-form__section" aria-labelledby="admin-form-section-{{ forloop.counter }}">
+  <h3 id="admin-form-section-{{ forloop.counter }}" class="portal-profile-edit__section-title">{{ section.title }}</h3>
+  <div class="portal-profile-edit__grid portal-admin-form__grid">
+    {% for item in section.fields %}
+      {% with field=item.field %}
+        {% if field.field.widget.input_type == 'checkbox' %}
+        <div class="portal-form-field portal-admin-form__field portal-admin-form__field--check portal-profile-edit__field--full">
+          <label class="portal-admin-form__check-label" for="{{ field.id_for_label }}">
+            {{ field }}
+            <span>{{ field.label }}</span>
+          </label>
+          {% if field.help_text %}
+          <p class="portal-profile-edit__help muted">{{ field.help_text }}</p>
+          {% endif %}
+          {% if field.errors %}
+          <ul class="el-form-errors portal-password-form__errors">
+            {% for err in field.errors %}<li>{{ err }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% else %}
+        <div class="portal-form-field portal-admin-form__field{% if item.width == 'full' %} portal-profile-edit__field--full{% endif %}">
+          <label class="portal-profile-block__label" for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} <span class="portal-admin-form__req" aria-hidden="true">*</span>{% endif %}</label>
+          {{ field }}
+          {% if field.help_text %}
+          <p class="portal-profile-edit__help muted">{{ field.help_text }}</p>
+          {% endif %}
+          {% if field.errors %}
+          <ul class="el-form-errors portal-password-form__errors">
+            {% for err in field.errors %}<li>{{ err }}</li>{% endfor %}
+          </ul>
+          {% endif %}
+        </div>
+        {% endif %}
+      {% endwith %}
+    {% endfor %}
+  </div>
+</section>
+{% endfor %}

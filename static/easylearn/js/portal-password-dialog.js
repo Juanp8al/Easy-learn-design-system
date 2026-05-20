@@ -81,13 +81,9 @@
       });
     });
 
+    /* No cerrar con clic fuera del cuadro ni con Escape; solo Atrás / Volver */
     dialog.addEventListener("cancel", function (e) {
       e.preventDefault();
-      closeDialog();
-    });
-
-    dialog.addEventListener("click", function (e) {
-      if (e.target === dialog) closeDialog();
     });
 
     if (dialog.hasAttribute("data-open-on-load") || initial > 1) {

@@ -98,6 +98,7 @@
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
   ];
   var portalCalState = null;
+  var portalRepasoCalState = null;
 
   function loadPortalCalEvents() {
     var el = document.getElementById("portal-cal-events-data");
@@ -277,11 +278,13 @@
     if (showAll) showAll.hidden = !portalCalState.selectedDate;
   }
 
-  function filterPortalCalTable(needleLower) {
-    var tbody = document.querySelector("#portal-cal-events-table tbody");
+  function filterPortalCalTable(needleLower, cfg) {
+    var tableId = (cfg && cfg.tableId) || "portal-cal-events-table";
+    var tbody = document.querySelector("#" + tableId + " tbody");
     if (!tbody) return;
     if (needleLower === undefined) needleLower = getHeaderSearchNeedle();
-    var selected = portalCalState ? portalCalState.selectedDate : null;
+    var state = cfg && cfg.state ? cfg.state : portalCalState;
+    var selected = state ? state.selectedDate : null;
     tbody.querySelectorAll("tr").forEach(function (tr) {
       if (tr.classList.contains("portal-cal-empty-row")) return;
       var dateKey = tr.getAttribute("data-date") || "";
@@ -293,8 +296,166 @@
     });
   }
 
+  function loadPortalRepasoCalEvents() {
+    var el = document.getElementById("portal-repaso-cal-events-data");
+    if (!el) return [];
+    try {
+      return JSON.parse(el.textContent || "[]");
+    } catch (_) {
+      return [];
+    }
+  }
+
+  function initPortalRepasoMonthCalendar() {
+    var root = document.getElementById("portal-repaso-month-cal");
+    if (!root || root.dataset.inited === "1") return;
+    root.dataset.inited = "1";
+    var events = loadPortalRepasoCalEvents();
+    portalRepasoCalState = {
+      events: events,
+      byDate: portalCalEventsByDate(events),
+      viewYear: parseInt(root.getAttribute("data-year"), 10) || new Date().getFullYear(),
+      viewMonth: parseInt(root.getAttribute("data-month"), 10) || new Date().getMonth() + 1,
+      todayYear: parseInt(root.getAttribute("data-today-year"), 10) || new Date().getFullYear(),
+      todayMonth: parseInt(root.getAttribute("data-today-month"), 10) || new Date().getMonth() + 1,
+      todayDay: parseInt(root.getAttribute("data-today-day"), 10) || new Date().getDate(),
+      selectedDate: null,
+    };
+    var prev = document.getElementById("portal-repaso-cal-prev");
+    var next = document.getElementById("portal-repaso-cal-next");
+    var todayBtn = document.getElementById("portal-repaso-cal-today");
+    var showAll = document.getElementById("portal-repaso-cal-show-all");
+    if (prev) {
+      prev.addEventListener("click", function () {
+        portalRepasoCalState.viewMonth -= 1;
+        if (portalRepasoCalState.viewMonth < 1) {
+          portalRepasoCalState.viewMonth = 12;
+          portalRepasoCalState.viewYear -= 1;
+        }
+        renderPortalRepasoMonthCal();
+      });
+    }
+    if (next) {
+      next.addEventListener("click", function () {
+        portalRepasoCalState.viewMonth += 1;
+        if (portalRepasoCalState.viewMonth > 12) {
+          portalRepasoCalState.viewMonth = 1;
+          portalRepasoCalState.viewYear += 1;
+        }
+        renderPortalRepasoMonthCal();
+      });
+    }
+    if (todayBtn) {
+      todayBtn.addEventListener("click", function () {
+        portalRepasoCalState.viewYear = portalRepasoCalState.todayYear;
+        portalRepasoCalState.viewMonth = portalRepasoCalState.todayMonth;
+        portalRepasoCalState.selectedDate = portalCalIso(
+          portalRepasoCalState.todayYear,
+          portalRepasoCalState.todayMonth,
+          portalRepasoCalState.todayDay
+        );
+        renderPortalRepasoMonthCal();
+      });
+    }
+    if (showAll) {
+      showAll.addEventListener("click", function () {
+        portalRepasoCalState.selectedDate = null;
+        renderPortalRepasoMonthCal();
+      });
+    }
+    renderPortalRepasoMonthCal();
+  }
+
+  function renderPortalRepasoMonthCal() {
+    if (!portalRepasoCalState) initPortalRepasoMonthCalendar();
+    if (!portalRepasoCalState) return;
+    var root = document.getElementById("portal-repaso-month-cal");
+    var grid = document.getElementById("portal-repaso-month-cal-grid");
+    var label = document.getElementById("portal-repaso-cal-month-label");
+    var listTitle = document.getElementById("portal-repaso-cal-list-title");
+    var showAll = document.getElementById("portal-repaso-cal-show-all");
+    if (!root || !grid) return;
+    var y = portalRepasoCalState.viewYear;
+    var m = portalRepasoCalState.viewMonth;
+    if (label) label.textContent = portalCalMonthNames[m - 1] + " " + y;
+    var first = new Date(y, m - 1, 1);
+    var daysInMonth = new Date(y, m, 0).getDate();
+    var startPad = (first.getDay() + 6) % 7;
+    grid.innerHTML = "";
+    var i;
+    for (i = 0; i < startPad; i++) {
+      var empty = document.createElement("div");
+      empty.className = "mc-day is-empty";
+      empty.innerHTML = "&nbsp;";
+      grid.appendChild(empty);
+    }
+    for (i = 1; i <= daysInMonth; i++) {
+      var iso = portalCalIso(y, m, i);
+      var dayEvents = portalRepasoCalState.byDate[iso] || [];
+      var cell = document.createElement("button");
+      cell.type = "button";
+      cell.className = "mc-day";
+      cell.textContent = String(i);
+      cell.setAttribute("data-date", iso);
+      if (
+        y === portalRepasoCalState.todayYear &&
+        m === portalRepasoCalState.todayMonth &&
+        i === portalRepasoCalState.todayDay
+      ) {
+        cell.classList.add("is-today");
+      }
+      if (dayEvents.length) {
+        cell.classList.add("has-event");
+        var tone = portalCalDayTone(dayEvents);
+        if (tone) cell.classList.add("mc-day--tone-" + tone);
+      }
+      if (portalRepasoCalState.selectedDate === iso) {
+        cell.classList.add("is-selected");
+        cell.setAttribute("aria-pressed", "true");
+      } else {
+        cell.setAttribute("aria-pressed", "false");
+      }
+      cell.addEventListener("click", function () {
+        var dateKey = cell.getAttribute("data-date");
+        portalRepasoCalState.selectedDate =
+          portalRepasoCalState.selectedDate === dateKey ? null : dateKey;
+        renderPortalRepasoMonthCal();
+      });
+      grid.appendChild(cell);
+    }
+    while (grid.children.length % 7 !== 0) {
+      var padEnd = document.createElement("div");
+      padEnd.className = "mc-day is-empty";
+      padEnd.innerHTML = "&nbsp;";
+      grid.appendChild(padEnd);
+    }
+    filterPortalCalTable(undefined, {
+      state: portalRepasoCalState,
+      tableId: "portal-repaso-cal-events-table",
+    });
+    if (listTitle) {
+      if (portalRepasoCalState.selectedDate) {
+        var parts = portalRepasoCalState.selectedDate.split("-");
+        listTitle.textContent =
+          "Objetivos del " +
+          parseInt(parts[2], 10) +
+          " " +
+          portalCalMonthNames[parseInt(parts[1], 10) - 1] +
+          " " +
+          parts[0];
+      } else {
+        listTitle.textContent = "Objetivos de repaso";
+      }
+    }
+    if (showAll) showAll.hidden = !portalRepasoCalState.selectedDate;
+  }
+
   function syncCalendarEvents(needleLower) {
     filterPortalCalTable(needleLower);
+    filterPortalCalTable(needleLower, {
+      state: portalRepasoCalState,
+      tableId: "portal-repaso-cal-events-table",
+    });
   }
 
   function renderDashboardMiniCal() {
@@ -1329,6 +1490,10 @@
         rep.classList.toggle("cal-panel--visible", tab === "repaso");
       }
       if (tab === "academico") renderPortalMonthCal();
+      if (tab === "repaso") {
+        initPortalRepasoMonthCalendar();
+        renderPortalRepasoMonthCal();
+      }
     }
 
     document.querySelectorAll(".cal-view-tabs__btn").forEach(function (btn) {

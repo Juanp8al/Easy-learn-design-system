@@ -1,7 +1,7 @@
               <section id="view-calendario" class="view view-portal-calendar view-dash-dg" aria-label="Calendario académico">
                 <header class="hero hero--dense">
                   <h1>Calendario</h1>
-                  <p>Entregas de tus cursos por mes. Elige un día para ver el detalle o abre la semana del curso.</p>
+                  <p>En <strong>Académico</strong> ve entregas de tus cursos; en <strong>Repaso personal</strong> planifica objetivos con fecha límite y síguelos en el calendario.</p>
                 </header>
 
                 <div class="cal-view-tabs margin-b" role="tablist" aria-label="Tipo de calendario">
@@ -83,21 +83,113 @@
                   </article>
                 </div>
 
-                <div id="cal-panel-repaso" class="cal-panel" role="tabpanel" aria-labelledby="cal-tab-repaso" hidden>
-                  <article class="panel margin-b">
-                    <p class="muted" style="padding:1rem;">Objetivos de repaso que usted define.</p>
-                    <ul style="list-style:none;margin:0;padding:0 1rem 1rem;">
-                      {% for obj in active_objectives %}
-                      <li style="margin-bottom:0.5rem;"><a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a> · hasta {{ obj.end_date|date:"j M Y" }}</li>
-                      {% endfor %}
-                      {% for obj in overdue_objectives %}
-                      <li style="margin-bottom:0.5rem;" class="text-warn-strong"><a href="{{ obj.get_absolute_url }}">{{ obj.name }}</a> · venció {{ obj.end_date|date:"j M" }}</li>
-                      {% endfor %}
-                      {% if not active_objectives and not overdue_objectives %}
-                      <li class="muted">Sin objetivos activos. <a href="{% url 'revision:create_objective' %}">Crear en Repaso</a></li>
-                      {% endif %}
-                    </ul>
-                    <p style="padding:0 1rem 1rem;"><button type="button" class="btn-cta-outline" data-goto="repaso">Ver materiales de repaso ›</button></p>
+                <div id="cal-panel-repaso" class="cal-panel cal-repaso-panel" role="tabpanel" aria-labelledby="cal-tab-repaso" hidden>
+                  {{ repaso_cal_events_payload|json_script:"portal-repaso-cal-events-data" }}
+
+                  <div class="summary-row summary-row--triple cal-repaso-summary margin-b">
+                    <article class="summary-card summary-card--dg-white">
+                      <div class="summary-card__eyebrow">Objetivos activos</div>
+                      <div class="summary-card__value">{{ repaso_cal_active_count }}</div>
+                      <div class="summary-card__sub">En curso o por vencer pronto</div>
+                    </article>
+                    <article class="summary-card summary-card--dg-white">
+                      <div class="summary-card__eyebrow">Vencidos</div>
+                      <div class="summary-card__value{% if repaso_cal_overdue_count %} text-danger-strong{% endif %}">{{ repaso_cal_overdue_count }}</div>
+                      <div class="summary-card__sub">Requieren atención</div>
+                    </article>
+                    <article class="summary-card summary-card--dg-gradient">
+                      <div class="summary-card__eyebrow">Total en calendario</div>
+                      <div class="summary-card__value">{{ repaso_cal_total_count }}</div>
+                      <div class="summary-card__sub">Metas de repaso personal</div>
+                      <a class="btn-tertiary" href="{% url 'revision:create_objective' %}">+ Nuevo objetivo ›</a>
+                    </article>
+                  </div>
+
+                  {% if repaso_cal_total_count %}
+                  <div class="cal-repaso-layout margin-b">
+                    <article class="panel panel--portal-month-cal cal-repaso-cal-card">
+                      <div
+                        id="portal-repaso-month-cal"
+                        class="portal-month-cal"
+                        data-year="{{ calendar_year }}"
+                        data-month="{{ calendar_month }}"
+                        data-today-year="{{ calendar_year }}"
+                        data-today-month="{{ calendar_month }}"
+                        data-today-day="{{ calendar_today }}"
+                      >
+                        <div class="portal-month-cal__toolbar">
+                          <button type="button" class="mini-cal-arrow portal-month-cal__nav" id="portal-repaso-cal-prev" aria-label="Mes anterior">‹</button>
+                          <h2 class="portal-month-cal__title" id="portal-repaso-cal-month-label">{{ calendar_month_label }}</h2>
+                          <button type="button" class="mini-cal-arrow portal-month-cal__nav" id="portal-repaso-cal-next" aria-label="Mes siguiente">›</button>
+                          <button type="button" class="btn-sm btn-outline portal-month-cal__today" id="portal-repaso-cal-today">Hoy</button>
+                        </div>
+                        <div class="portal-month-cal__frame">
+                          <div class="portal-month-cal__weekdays" aria-hidden="true">
+                            <span>L</span><span>M</span><span>X</span><span>J</span><span>V</span><span>S</span><span>D</span>
+                          </div>
+                          <div class="portal-month-cal__grid" id="portal-repaso-month-cal-grid" role="grid" aria-label="Calendario de objetivos de repaso"></div>
+                        </div>
+                        <div class="portal-month-cal__legend" role="note">
+                          <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--today" aria-hidden="true"></i> Hoy</span>
+                          <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--warn" aria-hidden="true"></i> Urgente</span>
+                          <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--danger" aria-hidden="true"></i> Vencido</span>
+                          <span class="portal-month-cal__legend-item"><i class="portal-month-cal__swatch portal-month-cal__swatch--draft" aria-hidden="true"></i> En curso</span>
+                        </div>
+                      </div>
+                    </article>
+
+                    <article class="panel panel--dg-sheet cal-repaso-list-panel">
+                      <div class="panel__head panel__head--dash-soft portal-cal-list-head">
+                        <h2 id="portal-repaso-cal-list-title">Objetivos de repaso</h2>
+                        <button type="button" class="btn-sm btn-outline" id="portal-repaso-cal-show-all" hidden>Ver todos</button>
+                      </div>
+                      <div class="data-table-wrap dg-dash-actividades-scroll">
+                        <table class="sheet sheet--dash-soft" id="portal-repaso-cal-events-table">
+                          <thead>
+                            <tr>
+                              <th scope="col">Objetivo</th>
+                              <th scope="col">Curso / apuntes</th>
+                              <th scope="col">Fecha límite</th>
+                              <th scope="col">Estado</th>
+                              <th scope="col"></th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% for row in repaso_cal_rows %}
+                            <tr data-date="{{ row.end_date_iso }}" data-search="{{ row.search }}">
+                              <td><strong>{{ row.name }}</strong></td>
+                              <td><span class="tb-course">{{ row.course_label }}</span></td>
+                              <td class="{% if row.state == 'overdue' %}text-danger-strong{% elif row.badge == 'warn' %}text-warn-strong{% endif %}">{{ row.days_label }}</td>
+                              <td><span class="badge-txt badge-txt--{{ row.badge }}">{{ row.status_label }}</span></td>
+                              <td class="portal-cal-actions">
+                                <a class="btn-sm btn-outline" href="{{ row.url }}">Abrir ›</a>
+                              </td>
+                            </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </div>
+                    </article>
+                  </div>
+                  {% else %}
+                  <article class="panel panel--dg-sheet cal-repaso-empty margin-b">
+                    <div class="portal-empty-state">
+                      <p class="portal-empty-state__title">Sin objetivos de repaso</p>
+                      <p class="portal-empty-state__text">Cree metas con fecha límite para planificar su estudio fuera del calendario institucional. Aparecerán aquí y en el calendario mensual.</p>
+                      <div class="cal-repaso-empty__actions">
+                        <a class="btn-sm btn-portal-primary" href="{% url 'revision:create_objective' %}">+ Crear objetivo ›</a>
+                        <button type="button" class="btn-sm btn-outline" data-goto="repaso">Ver materiales de repaso ›</button>
+                      </div>
+                    </div>
+                  </article>
+                  {% endif %}
+
+                  <article class="panel panel--dg-sheet cal-repaso-footer">
+                    <p class="cal-repaso-footer__text muted">Los objetivos de repaso son independientes de las entregas del aula. Use la vista <strong>Repaso</strong> para consultar materiales publicados por sus docentes.</p>
+                    <div class="cal-repaso-footer__actions">
+                      <a class="btn-sm btn-portal-success" href="{% url 'revision:create_objective' %}">+ Nuevo objetivo</a>
+                      <button type="button" class="btn-sm btn-outline" data-goto="repaso">Materiales de repaso ›</button>
+                    </div>
                   </article>
                 </div>
               </section>
