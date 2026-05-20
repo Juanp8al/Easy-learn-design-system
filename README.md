@@ -1,79 +1,86 @@
-# Knowledge Management System (KMS) for Students
+# EasyLearn Design System
 
-This is a Django-based web application designed to help students organize their notes, store important terms, and set revision goals. It is a knowledge management system aimed at improving the learning experience of students by streamlining the management of academic study materials through an easy to use interface.
+EasyLearn es un prototipo funcional desarrollado en Django para una plataforma academica tipo LMS. El proyecto combina un sistema visual propio con flujos reales de autenticacion, portales por rol y gestion academica basica para estudiantes, docentes y administradores.
 
-Check out the Django application [here](https://www.pkms.live/)
+El repositorio sirve como evidencia tecnica para el proyecto final de Interaccion Hombre Computador: muestra decisiones de diseno, componentes reutilizables, principios UX, accesibilidad y una base funcional que permite sustentar la propuesta frente a criterios academicos y profesionales.
 
-## Features
+## Alcance del sistema
 
-- **Multi-user support**: Each user can create and customize their own profile, and all notes and associated data are unique to each user, ensuring that each user's data is kept private and secure.
-- **Robust authentication system**: Users can securely create and access their accounts, reset their passwords, and recover their accounts in case of any mishaps.
-- **Customizability**: Users can personalize their profiles with a variety of settings, such as changing their profile picture or choosing a preferred color scheme.
-- **Dashboard**: Users can view their courses, the latest note entries and both active and overdue revision objectives on a centralized dashboard.
-- **Note taking and organization**: Users can take and store notes hierarchically, starting with the course, followed by the topic, then subtopic, and finally, individual entries. This hierarchical structure allows for easy navigation and quick access to notes.
-- **Glossary**: Users can store important terms and definitions for different courses, making it easier to study and review key concepts.
-- **Revision planning**: Users can set revision goals and deadlines and track their progress, helping them stay on top of their studies and achieve their academic goals.
-- **Note sharing**: Users can share their notes with others via email, making it easy to share notes with friends and family.
-- **Responsive UI**: The application is designed to work on different devices and screen sizes, ensuring a consistent and user-friendly experience across all platforms.
+- **Autenticacion y recuperacion de cuenta**: inicio de sesion, cierre de sesion, cambio y recuperacion de contrasena mediante vistas de Django.
+- **Roles de usuario**: estudiante, docente y administrador, con redireccion a dashboard segun el rol.
+- **Portal estudiante**: resumen de cursos matriculados, actividades prioritarias, calendario visual, rendimiento y material de estudio personal.
+- **Portal docente**: cursos asignados, estudiantes activos, entregas pendientes y resumen del periodo.
+- **Portal administrador**: gestion de usuarios, programas, periodos, cursos ofertados y matriculas.
+- **Gestion academica**: modelo de carrera/programa, periodo academico, curso ofertado e inscripcion.
+- **Material de estudio**: cursos personales, temas, subtemas, entradas de apuntes, glosario y objetivos de repaso.
+- **Design system**: paleta, tipografia, sidebar, header, botones, tarjetas, tablas, badges, estados, formularios y patrones responsive.
 
+## Tecnologias principales
 
-## Requirements
+- Python
+- Django
+- HTML con plantillas Django
+- CSS modular en `static/easylearn/css/`
+- JavaScript progresivo en `static/easylearn/js/easylearn-app.js`
+- SQLite para desarrollo local por defecto
 
-To run this application, you need:
+## Estructura relevante
 
-- Python 3.10.8 or later
-- PostgreSQL database (version 11 or later)
-- Django 4.0 or later
-- A modern web browser
-
-## Installation
-
-1. Clone this repository to your local machine:
-
-```bash
-git clone https://github.com/nafdev01/django_pkms.git
+```text
+accounts/                 Usuarios, roles, autenticacion y perfiles
+academia/                 Programas, periodos, cursos ofertados e inscripciones
+notes/                    Cursos personales, temas, subtemas y apuntes
+glossary/                 Terminos academicos por curso
+revision/                 Objetivos de repaso y seguimiento de fechas
+templates/easylearn/      Portales estudiante, docente y administrador
+static/easylearn/css/     Sistema visual de dashboard y login
+static/easylearn/js/      Navegacion por vistas, busqueda y filtros
+docs/entrega-final/       Material base para la entrega final integral
 ```
 
-2. Install the required dependencies:
+## Paleta base
+
+| Uso | Token | Color |
+| --- | --- | --- |
+| Navegacion principal | `--sidebar-deep` | `#171f4d` |
+| Sidebar activo | `--sidebar-active-bg` | `#3b4cb8` |
+| Accion/informacion | `--info-500` | `#3b82f6` |
+| Exito/confirmacion | `--success-700` | `#059669` |
+| Advertencia/pendiente | `--warning-500` | `#f59e0b` |
+| Error/peligro | `--error-500` | `#ef4444` |
+| Fondo neutral | `--neutral-bg` | `#f9fafb` |
+| Texto principal | `--text-primary` | `#111827` |
+
+## Instalacion local
+
+1. Crear y activar un entorno virtual.
+2. Instalar dependencias:
+
 ```bash
 pip install -r requirements.txt
 ```
-3. Create the database and apply the migrations:
+
+3. Aplicar migraciones:
+
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
-4. Start the development server:
+
+4. Ejecutar el servidor:
+
 ```bash
 python manage.py runserver
 ```
 
-5. Open your web browser and go to http://localhost:8000/ to access the application.
+5. Abrir el navegador en `http://localhost:8000/`.
 
-#### _Note_
-_It helps to create aliases for common shell commands to ease update and troubleshooting processes and reduce repetition of commands e.g_
-```bash
-alias serve="python manage.py runserver"
-alias migrate="python manage.py makemigrations && python manage.py migrate"
-alias pkms="sudo service postgresql start && cd ~/Code/django_pkms/ && source ~/Code/django_pkms/.venv/bin/activate && serve"
-alias dshell="python manage.py shell"
-```
+## Entrega final integral
 
-## Usage
+El proyecto incluye borradores en `docs/entrega-final/` para preparar:
 
-1. Register a new account or login to an existing one.
-2. Customize your profile (e.g., upload a profile picture, add your full name and email, and update course details).
-3. Add new notes and organize them by course, topic, and subtopic.
-4. Store important terms and definitions in the glossary section.
-5. Set revision objectives and deadlines for each of them.
-6. Share your notes with others via email.
-7. Log out when you are done.
+- Documento escrito final.
+- Brief ejecutivo.
+- Presentacion profesional.
+- Guia de sustentacion oral.
 
-## Contributions
-
-Contributions to this project are welcome! If you find a bug, want to request a new feature, or have an idea for improvement, please create an issue on this project's GitHub page. If you want to contribute code, please fork the repository and submit a pull request.
-
-## License
-_Pending_
-<!-- 
-This application is licensed under the MIT License. See the LICENSE file for more details. -->
+Estos archivos estan pensados como fuente editable antes de exportar a PDF con los nombres solicitados por la guia de la asignatura.
