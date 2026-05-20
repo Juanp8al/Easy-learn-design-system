@@ -1,0 +1,113 @@
+{% extends "easylearn/sitio/base.html" %}
+{% load static %}
+
+{% block sitio_title %}Blog{% endblock %}
+
+{% block sitio_content %}
+<div class="el-sitio-page el-sitio-page--blog">
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="Blog" banner_lead="Innovaci&oacute;n educativa, Lean Startup y evoluci&oacute;n del MVP institucional." %}
+
+  <section class="el-sitio-blog-wrap" aria-label="Entrada destacada">
+    <div class="el-sitio-blog-panel">
+      <section class="el-sitio-blog">
+        <div class="el-sitio-blog__main">
+      <article class="el-sitio-blog__post">
+        <img src="{% static 'easylearn/img/sitio/b1.jpg' %}" alt="" width="800" height="450" loading="lazy" decoding="async" />
+        <h2>Lean Startup y el MVP de EasyLearn</h2>
+        <p>
+          Enfoque incremental para validar la plataforma B2B con universidades: propuesta de valor,
+          p&uacute;blico objetivo y ciclo de mejora continua del producto educativo.
+        </p>
+        <a class="sitio-btn el-sitio-btn-outline el-sitio-btn-outline--blue" href="#innovacion-contenido">Leer m&aacute;s</a>
+      </article>
+    </div>
+    <aside class="el-sitio-blog__sidebar" aria-label="Categor&iacute;as">
+      <h2>Categor&iacute;as</h2>
+      <nav class="el-sitio-blog__cats">
+        <a href="#innovacion-contenido">Innovaci&oacute;n educativa</a>
+        <a href="#innovacion-contenido">Lean Startup</a>
+        <a href="#innovacion-contenido">MVP institucional</a>
+        <a href="#innovacion-contenido">Gesti&oacute;n universitaria</a>
+        <a href="#innovacion-contenido">Plataformas B2B</a>
+      </nav>
+    </aside>
+  </section>
+    </div>
+  </section>
+
+  <section class="el-sitio-section el-sitio-section--alt" id="innovacion-contenido">
+    <div class="el-sitio-section__inner">
+      <div class="el-home-fea-base">
+        <article class="el-home-fea-box">
+          <i class="fa-solid fa-rocket" aria-hidden="true"></i>
+          <h3>Tipo de innovaci&oacute;n</h3>
+          <p>
+            <strong>Innovaci&oacute;n incremental en procesos educativos:</strong> mejoramos la experiencia
+            digital del cursado universitario sin sustituir el modelo acad&eacute;mico, integrando
+            administraci&oacute;n, docencia y aprendizaje en una sola plataforma.
+          </p>
+        </article>
+        <article class="el-home-fea-box">
+          <i class="fa-solid fa-gem" aria-hidden="true"></i>
+          <h3>Propuesta de valor</h3>
+          <ul class="el-sitio-list">
+            <li><strong>Instituciones:</strong> menos fricci&oacute;n en matr&iacute;culas y oferta acad&eacute;mica.</li>
+            <li><strong>Docentes:</strong> seguimiento claro de entregas y comunicaci&oacute;n con estudiantes.</li>
+            <li><strong>Estudiantes:</strong> un solo lugar para cursos, fechas y calificaciones.</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="el-sitio-section">
+    <h2 class="el-home-section-title">P&uacute;blico objetivo</h2>
+    <p class="el-home-section-lead">Segmentos prioritarios del MVP.</p>
+    <div class="el-home-fea-base">
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-building-columns" aria-hidden="true"></i>
+        <h3>Universidades</h3>
+        <p>Instituciones de educaci&oacute;n superior con 500 a 15&nbsp;000 estudiantes que buscan modernizar su aula.</p>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-sitemap" aria-hidden="true"></i>
+        <h3>Coordinaciones acad&eacute;micas</h3>
+        <p>&Aacute;reas que gestionan per&iacute;odos, programas y matr&iacute;culas de forma centralizada.</p>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-user-graduate" aria-hidden="true"></i>
+        <h3>Estudiantes de pregrado</h3>
+        <p>Usuarios finales que necesitan claridad en tareas, fechas l&iacute;mite y retroalimentaci&oacute;n.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="el-sitio-section el-sitio-section--alt">
+    <div class="el-sitio-section__inner">
+      <h2 class="el-home-section-title">Dise&ntilde;o del MVP</h2>
+      <p class="el-home-section-lead">Flujo m&iacute;nimo viable ya operativo en Django.</p>
+      <div class="el-sitio-mvp">
+        <div class="el-sitio-mvp__diagram">
+          <p class="el-sitio-mvp__label">Flujo m&iacute;nimo viable</p>
+          <div class="el-sitio-mvp__step"><span>1</span> Admin configura per&iacute;odo y cursos</div>
+          <div class="el-sitio-mvp__step"><span>2</span> Estudiante se matricula y entra al aula</div>
+          <div class="el-sitio-mvp__step"><span>3</span> Docente publica actividad y aviso</div>
+          <div class="el-sitio-mvp__step"><span>4</span> Estudiante entrega archivo o texto</div>
+          <div class="el-sitio-mvp__step"><span>5</span> Docente califica y el estudiante recibe notificaci&oacute;n</div>
+        </div>
+        <article class="el-home-fea-box el-sitio-mvp__card">
+          <i class="fa-solid fa-laptop-code" aria-hidden="true"></i>
+          <h3>Estado del MVP</h3>
+          <p>
+            Prototipo funcional en Django con roles estudiante, docente y administrador.
+            Incluye design system, aula virtual y paneles de gesti&oacute;n.
+          </p>
+          <p class="el-sitio-mvp__cta">
+            <a class="sitio-btn el-sitio-btn-green" href="{% url 'login' %}">Probar MVP en vivo</a>
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -194,10 +194,51 @@ body {
 .el-login__logo {
   display: block;
   width: auto;
-  height: clamp(96px, 28vw, 132px);
-  max-width: min(340px, 96%);
+  height: clamp(5.5rem, 22vw, 7.5rem);
+  max-width: min(300px, 92%);
   object-fit: contain;
+  object-position: center;
   filter: drop-shadow(0 8px 22px rgb(0 0 0 / 0.35));
+}
+
+.el-login__slogan {
+  margin: 0.35rem 0 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6ee7b7;
+  letter-spacing: 0.02em;
+  text-align: center;
+}
+
+.el-login__corp {
+  margin: 1.35rem 0 0;
+  padding-top: 1.15rem;
+  border-top: 1px solid rgb(255 255 255 / 0.12);
+  text-align: center;
+}
+
+.el-login__corp-link {
+  display: inline-block;
+  padding: 0.55rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.el-login__corp-link:hover {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.55);
+}
+
+.el-login__corp-hint {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.72rem;
+  color: rgb(255 255 255 / 0.55);
 }
 
 .el-login__sr-only {
@@ -404,9 +445,94 @@ body {
   font-size: 0.75rem;
 }
 
+/* Auth pages (password reset / change) */
+.el-login__card--auth {
+  max-width: min(420px, 100%);
+}
+
+.el-login__auth-title {
+  margin: 0.5rem 0 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+}
+
+.el-login__auth-lead {
+  margin: 0 0 1.25rem;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--login-text-soft);
+  text-align: center;
+}
+
+.el-login__auth-note {
+  margin: 0;
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--login-text-soft);
+  text-align: center;
+}
+
+.el-login__auth-form {
+  width: 100%;
+}
+
+.el-login__auth-form input[type="email"],
+.el-login__auth-form input[type="password"],
+.el-login__auth-form input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.85rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgb(255 255 255 / 0.12);
+  background: rgb(15 23 42 / 0.55);
+  color: #fff;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.el-login__auth-form input:focus {
+  outline: 2px solid rgb(96 165 250 / 0.65);
+  outline-offset: 1px;
+}
+
+.el-login__submit--link {
+  display: flex;
+  width: 100%;
+  text-decoration: none;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.el-login__corp {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem 0.65rem;
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
 @media (max-width: 520px) {
   .el-login__card {
     padding: 2.25rem 1.5rem 2rem;
+  }
+
+  .el-login__card--auth {
+    padding: 2rem 1.25rem 1.75rem;
+  }
+
+  .el-login__row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.65rem;
+  }
+
+  .el-login__link {
+    align-self: flex-end;
+    text-align: right;
+    max-width: 100%;
   }
 
   .el-login__orb--b {
@@ -415,6 +541,17 @@ body {
 
   .el-login__orb--a {
     top: 4%;
+  }
+}
+
+@media (max-width: 380px) {
+  .el-login__logo {
+    max-width: min(240px, 78vw);
+  }
+
+  .el-login__submit {
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
   }
 }
 

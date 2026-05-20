@@ -24,6 +24,10 @@ class GradeSubmissionForm(forms.ModelForm):
         model = Grade
         fields = ("score", "feedback")
         widgets = {
-            "feedback": forms.Textarea(attrs={"rows": 3}),
-            "score": forms.NumberInput(attrs={"step": "0.1", "min": "0", "max": "5"}),
+            "feedback": forms.Textarea(
+                attrs={"rows": 4, "class": "catalog-toolbar__input", "placeholder": "Retroalimentación para el estudiante…"}
+            ),
+            "score": forms.NumberInput(
+                attrs={"step": "0.1", "min": "0", "max": "5", "class": "catalog-toolbar__input", "style": "max-width:8rem;"}
+            ),
         }

@@ -1,0 +1,74 @@
+<dialog id="portal-accessibility-dialog" class="portal-a11y-dialog" aria-labelledby="portal-a11y-title">
+  <div class="portal-a11y-dialog__inner">
+    <header class="portal-a11y-dialog__head">
+      <h2 id="portal-a11y-title" class="portal-a11y-dialog__title">Accesibilidad</h2>
+      <div class="portal-a11y-dialog__head-actions">
+        <button type="button" class="portal-a11y-dialog__icon-btn" id="portal-a11y-reset" title="Restablecer preferencias" aria-label="Restablecer preferencias">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        </button>
+        <button type="button" class="portal-a11y-dialog__close" data-portal-a11y-close aria-label="Cerrar">&times;</button>
+      </div>
+    </header>
+
+    <p class="portal-a11y-dialog__section-label">Apariencia</p>
+    <div class="portal-a11y-dialog__theme-row">
+      {% include "easylearn/includes/theme_toggle.html" %}
+      <span class="portal-a11y-dialog__theme-hint">Mismo control que en la p&aacute;gina de inicio.</span>
+    </div>
+
+    <p class="portal-a11y-dialog__section-label">Herramientas visuales</p>
+    <div class="portal-a11y-dialog__grid" role="group" aria-label="Filtros de visualización">
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="invert" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">◐</span>
+        <span>Colores invertidos</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="mono" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">◑</span>
+        <span>Monocromo</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="contrast-dark" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">☾</span>
+        <span>Contraste oscuro</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="contrast-light" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">☀</span>
+        <span>Contraste claro</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="sat-low" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">▽</span>
+        <span>Baja saturación</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="sat-high" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">△</span>
+        <span>Alta saturación</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="links" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">🔗</span>
+        <span>Enlaces destacados</span>
+      </button>
+      <button type="button" class="portal-a11y-tile" data-a11y-toggle="headings" aria-pressed="false">
+        <span class="portal-a11y-tile__ico" aria-hidden="true">H</span>
+        <span>Títulos destacados</span>
+      </button>
+    </div>
+
+    <p class="portal-a11y-dialog__section-label">Texto en el tablero</p>
+    <div class="portal-a11y-sliders">
+      <label class="portal-a11y-slider">
+        <span class="portal-a11y-slider__label">Tamaño de fuente</span>
+        <input type="range" id="portal-a11y-font" min="90" max="130" value="100" step="5" />
+        <span class="portal-a11y-slider__val" data-a11y-font-val>100%</span>
+      </label>
+      <label class="portal-a11y-slider">
+        <span class="portal-a11y-slider__label">Altura de la línea</span>
+        <input type="range" id="portal-a11y-lh" min="100" max="160" value="100" step="5" />
+        <span class="portal-a11y-slider__val" data-a11y-lh-val>100%</span>
+      </label>
+      <label class="portal-a11y-slider">
+        <span class="portal-a11y-slider__label">Espaciado de letras</span>
+        <input type="range" id="portal-a11y-track" min="0" max="12" value="0" step="1" />
+        <span class="portal-a11y-slider__val" data-a11y-track-val>0px</span>
+      </label>
+    </div>
+  </div>
+</dialog>

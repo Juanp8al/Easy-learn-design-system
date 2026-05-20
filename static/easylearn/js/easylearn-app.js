@@ -9,6 +9,7 @@
     calificaciones: "view-calificaciones",
     calendario: "view-calendario",
     mensajes: "view-mensajes",
+    repaso: "view-repaso",
   };
 
   var titles = {
@@ -17,6 +18,7 @@
     calificaciones: "EasyLearn · Calificaciones",
     calendario: "EasyLearn · Calendario",
     mensajes: "EasyLearn · Mensajes",
+    repaso: "EasyLearn · Repaso",
   };
 
   function renderBreadcrumbs(route) {
@@ -43,14 +45,39 @@
       case "mensajes":
         el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Mensajes", null);
         break;
+      case "repaso":
+        el.innerHTML = crumb("Inicio", "dashboard") + ' <span class="sep">›</span> ' + crumb("Repaso", null);
+        break;
       default:
         el.innerHTML = "";
     }
   }
 
+  function portalDashboardUrl() {
+    var brand = document.querySelector(".sidebar__brand-link[href]");
+    if (brand && brand.getAttribute("href")) {
+      return brand.getAttribute("href").split("#")[0];
+    }
+    return "/dashboard";
+  }
+
+  /** Si el enlace del menú apunta a otra página del portal, dejar navegación nativa. */
+  function sidebarLinkUsesFullNavigation(link, viewId) {
+    if (!link || link.tagName !== "A") return false;
+    var href = link.getAttribute("href") || "";
+    if (!href || href.indexOf("#") < 0) return false;
+    if (href.indexOf("/aula") >= 0) return true;
+    if (viewId && !document.getElementById(viewId)) return true;
+    return false;
+  }
+
   function go(route) {
     if (!routes[route]) return;
     var targetId = routes[route];
+    if (!document.getElementById(targetId)) {
+      window.location.assign(portalDashboardUrl() + "#" + route);
+      return;
+    }
     document.querySelectorAll(".view").forEach(function (v) {
       v.classList.toggle("is-visible", v.id === targetId);
     });
@@ -133,6 +160,10 @@
       });
     }
     syncGradesActivities(needle);
+    document.querySelectorAll(".repaso-course-card").forEach(function (card) {
+      var t = card.getAttribute("data-search") || card.textContent;
+      card.style.display = needle === "" || t.toLowerCase().indexOf(needle) !== -1 ? "" : "none";
+    });
     var catInput = document.getElementById("cat-search-course");
     if (catInput && document.getElementById("view-cursos") && document.getElementById("view-cursos").classList.contains("is-visible")) {
       filterCourseCatalog(needle);
@@ -195,45 +226,101 @@
     }
   }
 
+  function initPortalShellExtras() {
+    var shell = document.querySelector(".app-shell");
+    var collapseBtn = document.querySelector(".sidebar__collapse");
+    if (shell && collapseBtn) {
+      collapseBtn.addEventListener("click", function () {
+        var collapsed = shell.classList.toggle("is-sidebar-collapsed");
+        collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
+        collapseBtn.setAttribute("aria-label", collapsed ? "Expandir menú lateral" : "Contraer menú lateral");
+        collapseBtn.setAttribute("title", collapsed ? "Expandir" : "Contraer");
+      });
+    }
+
+    var profileRoot = document.querySelector(".header-profile");
+    var profileTrigger = document.querySelector(".header-profile__trigger");
+    var profileMenu = document.getElementById("header-profile-menu");
+    if (profileRoot && profileTrigger && profileMenu) {
+      function setProfileMenuOpen(open) {
+        profileRoot.classList.toggle("header-profile--open", open);
+        profileTrigger.setAttribute("aria-expanded", open ? "true" : "false");
+        profileMenu.hidden = !open;
+      }
+
+      profileTrigger.addEventListener("click", function (e) {
+        e.stopPropagation();
+        setProfileMenuOpen(!profileRoot.classList.contains("header-profile--open"));
+      });
+
+      profileMenu.querySelectorAll("a.header-profile__menu-link[href]").forEach(function (link) {
+        link.addEventListener("click", function () {
+          setProfileMenuOpen(false);
+        });
+      });
+
+      document.addEventListener("click", function (e) {
+        if (!profileRoot.contains(e.target)) setProfileMenuOpen(false);
+      });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key !== "Escape") return;
+        if (!profileRoot.classList.contains("header-profile--open")) return;
+        setProfileMenuOpen(false);
+        profileTrigger.focus();
+      });
+    }
+  }
+
+  function initPortalMobileNav() {
+    var toggle = document.getElementById("portal-nav-toggle");
+    var backdrop = document.getElementById("portal-nav-backdrop");
+    var sidebar = document.getElementById("portal-sidebar") || document.querySelector(".sidebar");
+    if (!toggle || !sidebar) return;
+
+    function setOpen(open) {
+      document.body.classList.toggle("is-portal-nav-open", open);
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "Cerrar menú de navegación" : "Abrir menú de navegación");
+      if (backdrop) backdrop.setAttribute("aria-hidden", open ? "false" : "true");
+    }
+
+    toggle.addEventListener("click", function () {
+      setOpen(!document.body.classList.contains("is-portal-nav-open"));
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener("click", function () {
+        setOpen(false);
+      });
+    }
+
+    sidebar.querySelectorAll("a, button.sidebar__link").forEach(function (el) {
+      el.addEventListener("click", function () {
+        if (window.matchMedia("(max-width: 768px)").matches) setOpen(false);
+      });
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.matchMedia("(min-width: 769px)").matches) setOpen(false);
+    });
+  }
+
   function initApp() {
     var isSearchPage = document.body.getAttribute("data-easylearn-page") === "search";
     var rolePage = document.body.getAttribute("data-easylearn-page");
 
+    initPortalMobileNav();
     initPortalHeaderChrome();
 
     if (rolePage === "admin" || rolePage === "teacher") {
-      var shell = document.querySelector(".app-shell");
-      var collapseBtn = document.querySelector(".sidebar__collapse");
-      if (shell && collapseBtn) {
-        collapseBtn.addEventListener("click", function () {
-          var collapsed = shell.classList.toggle("is-sidebar-collapsed");
-          collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
-          collapseBtn.setAttribute("aria-label", collapsed ? "Expandir menú lateral" : "Contraer menú lateral");
-          collapseBtn.setAttribute("title", collapsed ? "Expandir" : "Contraer");
-        });
+      initPortalShellExtras();
+
+      if (rolePage === "teacher" && !document.getElementById("view-teacher-dashboard")) {
+        return;
       }
-      var profileRoot = document.querySelector(".header-profile");
-      var profileTrigger = document.querySelector(".header-profile__trigger");
-      var profileMenu = document.getElementById("header-profile-menu");
-      if (profileRoot && profileTrigger && profileMenu) {
-        function setProfileMenuOpen(open) {
-          profileRoot.classList.toggle("header-profile--open", open);
-          profileTrigger.setAttribute("aria-expanded", open ? "true" : "false");
-          profileMenu.hidden = !open;
-        }
-        profileTrigger.addEventListener("click", function (e) {
-          e.stopPropagation();
-          setProfileMenuOpen(!profileRoot.classList.contains("header-profile--open"));
-        });
-        document.addEventListener("click", function (e) {
-          if (!profileRoot.contains(e.target)) setProfileMenuOpen(false);
-        });
-        document.addEventListener("keydown", function (e) {
-          if (e.key !== "Escape") return;
-          if (!profileRoot.classList.contains("header-profile--open")) return;
-          setProfileMenuOpen(false);
-          profileTrigger.focus();
-        });
+      if (rolePage === "admin" && !document.getElementById("view-admin-dashboard")) {
+        return;
       }
 
       function filterRoleDashboardRows(needleRaw) {
@@ -321,6 +408,10 @@
           if (!teacherRoutes[route]) route = "dashboard";
           var targetId = teacherRoutes[route];
           var canonical = teacherCanonicalRoute(route);
+          if (!document.getElementById(targetId)) {
+            window.location.assign(portalDashboardUrl() + "#" + canonical);
+            return;
+          }
           document.querySelectorAll(".canvas-body .view").forEach(function (v) {
             v.classList.toggle("is-visible", v.id === targetId);
           });
@@ -353,8 +444,12 @@
         }
 
         document.querySelectorAll(".sidebar__link[data-route]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            goTeacher(btn.getAttribute("data-route"));
+          btn.addEventListener("click", function (e) {
+            var route = btn.getAttribute("data-route");
+            var viewId = teacherRoutes[route];
+            if (sidebarLinkUsesFullNavigation(btn, viewId)) return;
+            e.preventDefault();
+            goTeacher(route);
           });
         });
 
@@ -513,6 +608,10 @@
         function goAdmin(route) {
           if (!adminRoutes[route]) route = "dashboard";
           var targetId = adminRoutes[route];
+          if (!document.getElementById(targetId)) {
+            window.location.assign(portalDashboardUrl() + "#" + route);
+            return;
+          }
           document.querySelectorAll(".canvas-body .view").forEach(function (v) {
             v.classList.toggle("is-visible", v.id === targetId);
           });
@@ -553,8 +652,12 @@
         }
 
         document.querySelectorAll(".sidebar__link[data-route]").forEach(function (btn) {
-          btn.addEventListener("click", function () {
-            goAdmin(btn.getAttribute("data-route"));
+          btn.addEventListener("click", function (e) {
+            var route = btn.getAttribute("data-route");
+            var viewId = adminRoutes[route];
+            if (sidebarLinkUsesFullNavigation(btn, viewId)) return;
+            e.preventDefault();
+            goAdmin(route);
           });
         });
 
@@ -578,6 +681,26 @@
       return;
     }
 
+    if (isSearchPage) {
+      initPortalShellExtras();
+      document.querySelectorAll(".sidebar__link").forEach(function (link) {
+        link.classList.remove("is-active");
+        link.removeAttribute("aria-current");
+      });
+      var sl = document.getElementById("sidebar-link-search");
+      if (sl) {
+        sl.classList.add("is-active");
+        sl.setAttribute("aria-current", "page");
+      }
+      document.title = "Resultados de búsqueda — EasyLearn";
+      return;
+    }
+
+    if (rolePage === "profile" || rolePage === "classroom" || !document.getElementById("view-dashboard")) {
+      initPortalShellExtras();
+      return;
+    }
+
     renderDashboardMiniCal();
 
     var canvas = document.querySelector(".canvas-body");
@@ -595,15 +718,11 @@
 
     document.querySelectorAll(".sidebar__link[data-route]").forEach(function (btn) {
       btn.addEventListener("click", function (e) {
-        var href = btn.getAttribute("href");
-        if (btn.tagName === "A" && href && href.indexOf("#") !== 0 && href.indexOf("/aula") === 0) {
-          return;
-        }
-        if (btn.tagName === "A" && href && href.indexOf("revision") !== -1) {
-          return;
-        }
+        var route = btn.getAttribute("data-route");
+        var viewId = routes[route];
+        if (sidebarLinkUsesFullNavigation(btn, viewId)) return;
         e.preventDefault();
-        go(btn.getAttribute("data-route"));
+        go(route);
       });
     });
 
@@ -613,43 +732,7 @@
       if (routes[h]) go(h);
     });
 
-    var shell = document.querySelector(".app-shell");
-    var collapseBtn = document.querySelector(".sidebar__collapse");
-    if (shell && collapseBtn) {
-      collapseBtn.addEventListener("click", function () {
-        var collapsed = shell.classList.toggle("is-sidebar-collapsed");
-        collapseBtn.setAttribute("aria-expanded", collapsed ? "false" : "true");
-        collapseBtn.setAttribute("aria-label", collapsed ? "Expandir menú lateral" : "Contraer menú lateral");
-        collapseBtn.setAttribute("title", collapsed ? "Expandir" : "Contraer");
-      });
-    }
-
-    var profileRoot = document.querySelector(".header-profile");
-    var profileTrigger = document.querySelector(".header-profile__trigger");
-    var profileMenu = document.getElementById("header-profile-menu");
-    if (profileRoot && profileTrigger && profileMenu) {
-      function setProfileMenuOpen(open) {
-        profileRoot.classList.toggle("header-profile--open", open);
-        profileTrigger.setAttribute("aria-expanded", open ? "true" : "false");
-        profileMenu.hidden = !open;
-      }
-
-      profileTrigger.addEventListener("click", function (e) {
-        e.stopPropagation();
-        setProfileMenuOpen(!profileRoot.classList.contains("header-profile--open"));
-      });
-
-      document.addEventListener("click", function (e) {
-        if (!profileRoot.contains(e.target)) setProfileMenuOpen(false);
-      });
-
-      document.addEventListener("keydown", function (e) {
-        if (e.key !== "Escape") return;
-        if (!profileRoot.classList.contains("header-profile--open")) return;
-        setProfileMenuOpen(false);
-        profileTrigger.focus();
-      });
-    }
+    initPortalShellExtras();
 
     document.querySelectorAll(".course-tab").forEach(function (tab) {
       tab.addEventListener("click", function (ev) {
@@ -860,20 +943,7 @@
       window.location.replace("/aula/");
       return;
     }
-    if (isSearchPage) {
-      document.querySelectorAll(".sidebar__link").forEach(function (link) {
-        link.classList.remove("is-active");
-        link.removeAttribute("aria-current");
-      });
-      var sl = document.getElementById("sidebar-link-search");
-      if (sl) {
-        sl.classList.add("is-active");
-        sl.setAttribute("aria-current", "page");
-      }
-      document.title = "Resultados de búsqueda — EasyLearn";
-    } else {
-      go(routes[hash] ? hash : "dashboard");
-    }
+    go(routes[hash] ? hash : "dashboard");
   }
 
   if (document.readyState === "loading") {

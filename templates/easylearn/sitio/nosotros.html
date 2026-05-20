@@ -1,0 +1,100 @@
+{% extends "easylearn/sitio/base.html" %}
+
+{% block sitio_title %}About Us{% endblock %}
+
+{% block sitio_content %}
+<div class="el-sitio-page">
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="About Us" banner_lead="Proveedor B2B de campus digital para universidades en Latinoamérica." %}
+
+  <section class="el-sitio-section">
+    <div class="el-home-fea-base">
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+        <h3>Misi&oacute;n</h3>
+        <p>
+          Facilitar la gesti&oacute;n y el aprendizaje universitario mediante una plataforma digital accesible,
+          segura y alineada con las necesidades reales de instituciones, docentes y estudiantes.
+        </p>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-eye" aria-hidden="true"></i>
+        <h3>Visi&oacute;n</h3>
+        <p>
+          Ser la referencia en Latinoam&eacute;rica en soluciones LMS &aacute;giles para educaci&oacute;n superior,
+          reconocidos por la calidad de experiencia de usuario y la innovaci&oacute;n continua.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="el-sitio-section el-sitio-section--alt">
+    <div class="el-sitio-section__inner">
+      <h2 class="el-home-section-title">Valores corporativos</h2>
+      <p class="el-home-section-lead">Principios que gu&iacute;an cada decisi&oacute;n de producto y de servicio.</p>
+      <div class="el-sitio-values">
+        <div class="el-sitio-value">
+          <span class="el-sitio-value__icon" aria-hidden="true"><i class="fa-solid fa-user-check"></i></span>
+          <strong>Enfoque en el usuario</strong>
+        </div>
+        <div class="el-sitio-value">
+          <span class="el-sitio-value__icon" aria-hidden="true"><i class="fa-solid fa-shield-halved"></i></span>
+          <strong>Integridad</strong>
+        </div>
+        <div class="el-sitio-value">
+          <span class="el-sitio-value__icon" aria-hidden="true"><i class="fa-solid fa-lightbulb"></i></span>
+          <strong>Innovaci&oacute;n</strong>
+        </div>
+        <div class="el-sitio-value">
+          <span class="el-sitio-value__icon" aria-hidden="true"><i class="fa-solid fa-handshake"></i></span>
+          <strong>Colaboraci&oacute;n</strong>
+        </div>
+        <div class="el-sitio-value">
+          <span class="el-sitio-value__icon" aria-hidden="true"><i class="fa-solid fa-universal-access"></i></span>
+          <strong>Accesibilidad</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="el-sitio-section">
+    <h2 class="el-home-section-title">Estructura organizacional</h2>
+    <p class="el-home-section-lead">Equipo multidisciplinario del proyecto EasyLearn.</p>
+    <div class="el-sitio-org" aria-label="Organigrama">
+      <div class="el-sitio-org__top">
+        <div class="el-sitio-org__box">Direcci&oacute;n general</div>
+      </div>
+      <div class="el-sitio-org__line" aria-hidden="true"></div>
+      <div class="el-sitio-org__row">
+        <div class="el-sitio-org__box el-sitio-org__box--muted">Producto &amp; UX</div>
+        <div class="el-sitio-org__box el-sitio-org__box--muted">Ingenier&iacute;a de software</div>
+        <div class="el-sitio-org__box el-sitio-org__box--muted">Acad&eacute;mico / dominio</div>
+        <div class="el-sitio-org__box el-sitio-org__box--muted">Soporte &amp; &eacute;xito</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="el-sitio-section el-sitio-section--alt">
+    <div class="el-sitio-section__inner">
+      <h2 class="el-home-section-title">Roles principales en la plataforma</h2>
+      <p class="el-home-section-lead">Tres portales privados habilitados por el Administrador Supremo.</p>
+      <div class="el-home-fea-base">
+        <article class="el-home-fea-box">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+          <h3>Administrador</h3>
+          <p>Configura carreras, per&iacute;odos, ofertas de curso y matr&iacute;culas. Supervisa alertas institucionales.</p>
+        </article>
+        <article class="el-home-fea-box">
+          <i class="fa-solid fa-chalkboard-user" aria-hidden="true"></i>
+          <h3>Docente</h3>
+          <p>Gestiona el aula: avisos, entregas pendientes, calificaciones y estado de foros.</p>
+        </article>
+        <article class="el-home-fea-box">
+          <i class="fa-solid fa-graduation-cap" aria-hidden="true"></i>
+          <h3>Estudiante</h3>
+          <p>Consulta tablero, calendario, mensajes, aula virtual y perfil acad&eacute;mico.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

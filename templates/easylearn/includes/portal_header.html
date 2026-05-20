@@ -1,6 +1,18 @@
 {% load static %}
 <header class="app-header">
   <div class="app-header__track">
+    <button
+      type="button"
+      class="portal-nav-toggle"
+      id="portal-nav-toggle"
+      aria-label="Abrir menú de navegación"
+      aria-expanded="false"
+      aria-controls="portal-sidebar"
+    >
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+      </svg>
+    </button>
     <form class="header-search" role="search" action="{% if header_search_action %}{{ header_search_action }}{% else %}{% url 'notes:search' %}{% endif %}" method="get" data-header-filter-form>
       <label class="visually-hidden" for="header-search-q">{{ header_search_label|default:"Buscar cursos, tareas o recursos" }}</label>
       <input id="header-search-q" name="q" type="search" placeholder="{{ header_search_placeholder|default:'Buscar cursos, tareas, recursos…' }}" autocomplete="off" value="{{ request.GET.q|default:'' }}" data-header-filter-input />
@@ -20,7 +32,7 @@
           <div class="header-bell__head">
             <span>Notificaciones</span>
             {% if portal_notifications_unread %}
-            <form method="post" action="{% url 'notifications_mark_read' %}" class="header-bell__mark-all" data-mark-all-read>
+            <form method="post" action="{% url 'notifications_mark_read' %}" class="header-bell__mark-all" data-mark-all-read data-el-loader-ignore="true">
               {% csrf_token %}
               <button type="submit" class="btn-tertiary">Marcar todas leídas</button>
             </form>
@@ -84,7 +96,7 @@
         </button>
         <div id="header-profile-menu" class="header-profile__dropdown" role="menu" hidden>
           <a role="menuitem" class="header-profile__menu-link" href="{% url 'profile' %}">Ir a mi perfil</a>
-          <form class="header-profile__logout-form" method="post" action="{% url 'logout' %}">
+          <form class="header-profile__logout-form" method="post" action="{% url 'logout' %}" data-el-loader-ignore="true">
             {% csrf_token %}
             <button type="submit" role="menuitem" class="header-profile__menu-link header-profile__menu-link--logout">Cerrar sesión</button>
           </form>

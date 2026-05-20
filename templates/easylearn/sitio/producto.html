@@ -1,0 +1,82 @@
+{% extends "easylearn/sitio/base.html" %}
+
+{% block sitio_title %}Courses{% endblock %}
+
+{% block sitio_content %}
+<div class="el-sitio-page">
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="Courses" banner_lead="EasyLearn LMS: la plataforma que centraliza la vida acad&eacute;mica universitaria." %}
+
+  <section class="el-sitio-section">
+    <h2 class="el-home-section-title">Our Popular Courses</h2>
+    <p class="el-home-section-lead">
+      Sistema de gesti&oacute;n del aprendizaje (LMS) para instituciones de educaci&oacute;n superior.
+      Conecta configuraci&oacute;n institucional, aula docente y experiencia del estudiante.
+    </p>
+    <div class="el-home-fea-base">
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-list-check" aria-hidden="true"></i>
+        <h3>Funcionalidades principales</h3>
+        <ul class="el-sitio-list">
+          <li>Panel estudiante: tablero, calificaciones, calendario y avisos.</li>
+          <li>Aula virtual: cursos, semanas, materiales y entregas.</li>
+          <li>Panel docente: entregas pendientes, calificaci&oacute;n y foros.</li>
+          <li>Panel administrador: carreras, per&iacute;odos, ofertas y matr&iacute;culas.</li>
+          <li>Notificaciones en tiempo real y perfil acad&eacute;mico.</li>
+          <li>M&oacute;dulo Repaso para apuntes personales del estudiante.</li>
+        </ul>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-code" aria-hidden="true"></i>
+        <h3>Tecnolog&iacute;a utilizada</h3>
+        <p>Stack moderno, mantenible y escalable para entornos educativos.</p>
+        <div class="el-sitio-tech">
+          <span>Python 3</span>
+          <span>Django</span>
+          <span>PostgreSQL / SQLite</span>
+          <span>HTML5 + CSS3</span>
+          <span>JavaScript</span>
+          <span>WhiteNoise</span>
+          <span>Pillow</span>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="el-sitio-section el-sitio-section--alt">
+    <div class="el-sitio-section__inner">
+      <h2 class="el-home-section-title">Capturas del sistema (MVP)</h2>
+      <p class="el-home-section-lead">Vistas reales de la plataforma. Acceda con la demo desde Iniciar sesi&oacute;n.</p>
+      <div class="el-sitio-shots">
+        <figure class="el-sitio-shot">
+          <figcaption class="el-sitio-shot__cap">Dashboard estudiante</figcaption>
+          <div class="el-sitio-shot__frame">
+            <div class="el-sitio-mock-bar"></div>
+            <div class="el-sitio-mock-row"><span class="el-sitio-mock-pill"></span><span class="el-sitio-mock-pill el-sitio-mock-pill--green"></span></div>
+            <div class="el-sitio-mock-row"><span class="el-sitio-mock-pill"></span><span class="el-sitio-mock-pill"></span><span class="el-sitio-mock-pill"></span></div>
+            <p class="el-sitio-shot__note">Actividades, calendario y rendimiento.</p>
+          </div>
+        </figure>
+        <figure class="el-sitio-shot">
+          <figcaption class="el-sitio-shot__cap">Aula virtual y entregas</figcaption>
+          <div class="el-sitio-shot__frame">
+            <div class="el-sitio-mock-bar el-sitio-mock-bar--accent"></div>
+            <div class="el-sitio-mock-row"><span class="el-sitio-mock-pill"></span></div>
+            <p class="el-sitio-shot__note">Semanas, materiales y env&iacute;o de tareas.</p>
+          </div>
+        </figure>
+        <figure class="el-sitio-shot">
+          <figcaption class="el-sitio-shot__cap">Panel docente</figcaption>
+          <div class="el-sitio-shot__frame">
+            <div class="el-sitio-mock-row"><span class="el-sitio-mock-pill el-sitio-mock-pill--green"></span><span class="el-sitio-mock-pill"></span></div>
+            <div class="el-sitio-mock-bar el-sitio-mock-bar--wide"></div>
+            <p class="el-sitio-shot__note">Calificar entregas y publicar avisos.</p>
+          </div>
+        </figure>
+      </div>
+      <p class="el-sitio-shots__cta">
+        <a class="sitio-btn el-sitio-btn-green" href="{% url 'login' %}">Ingresar a la demo</a>
+      </p>
+    </div>
+  </section>
+</div>
+{% endblock %}

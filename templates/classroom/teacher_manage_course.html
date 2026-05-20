@@ -37,7 +37,7 @@
 <div class="bottom-pair bottom-pair-dash margin-b">
   <article class="panel">
     <div class="panel__head panel__head--dash-soft"><h2>Publicar aviso</h2></div>
-    <form method="post" style="padding:0 1rem 1rem;">
+    <form method="post" style="padding:0 1rem 1rem;" data-el-loader="typewriter">
       {% csrf_token %}
       <input type="hidden" name="form_type" value="announcement" />
       {{ announcement_form.as_p }}
@@ -68,7 +68,7 @@
           <td>Semana {{ forum.week.week_number }}</td>
           <td><span class="badge-txt badge-txt--{% if forum.status == 'open' %}ok{% else %}muted{% endif %}">{{ forum.get_status_display }}</span></td>
           <td>
-            <form method="post" action="{% url 'classroom:teacher_toggle_forum' forum.id %}" style="display:inline;">{% csrf_token %}<button type="submit" class="btn-sm btn-outline">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button></form>
+            <form method="post" action="{% url 'classroom:teacher_toggle_forum' forum.id %}" style="display:inline;" data-el-loader-ignore="true">{% csrf_token %}<button type="submit" class="btn-sm btn-outline">{% if forum.status == 'open' %}Cerrar{% else %}Abrir{% endif %}</button></form>
           </td>
         </tr>
         {% empty %}

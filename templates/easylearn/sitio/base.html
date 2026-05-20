@@ -1,0 +1,134 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("easylearn-theme");
+        if (t === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.style.colorScheme = "dark";
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block sitio_title %}EasyLearn{% endblock %} · Plataforma educativa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/easylearn.css' %}?v=20260625" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/sitio-publico.css' %}?v=20260625" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/easylearn-theme.css' %}?v=20260625" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  {% block sitio_extra_head %}{% endblock %}
+</head>
+<body class="sitio-body">
+  <header class="sitio-topbar">
+    <a class="sitio-topbar__brand" href="{% url 'site_home' %}">
+      <img
+        class="sitio-topbar__logo"
+        src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
+        alt="EasyLearn"
+        width="200"
+        height="64"
+        decoding="async"
+      />
+    </a>
+    <div class="sitio-topbar__nav-wrap">
+      <nav class="sitio-topbar__nav" aria-label="Sitio corporativo">
+        <ul class="sitio-topbar__list" id="sitio-nav-list">
+          <li class="sitio-topbar__close-wrap">
+            <button type="button" class="sitio-topbar__close" id="sitio-menu-close" aria-label="Cerrar men&uacute;">
+              <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+          </li>
+          <li>
+            <a href="{% url 'site_home' %}"{% if sitio_nav == 'home' %} class="is-active"{% endif %}>Home</a>
+          </li>
+          <li>
+            <a href="{% url 'site_nosotros' %}"{% if sitio_nav == 'nosotros' %} class="is-active"{% endif %}>About Us</a>
+          </li>
+          <li>
+            <a href="{% url 'site_innovacion' %}"{% if sitio_nav == 'blog' %} class="is-active"{% endif %}>Blog</a>
+          </li>
+          <li>
+            <a href="{% url 'site_producto' %}"{% if sitio_nav == 'courses' %} class="is-active"{% endif %}>Courses</a>
+          </li>
+          <li>
+            <a href="{% url 'site_contacto' %}"{% if sitio_nav == 'contacto' %} class="is-active"{% endif %}>Contact</a>
+          </li>
+          <li class="sitio-topbar__theme-mobile">
+            {% include "easylearn/includes/theme_toggle.html" %}
+          </li>
+        </ul>
+      </nav>
+      <div class="sitio-topbar__theme" aria-label="Apariencia del sitio">
+        {% include "easylearn/includes/theme_toggle.html" %}
+      </div>
+      <button type="button" class="sitio-topbar__menu-btn" id="sitio-menu-btn" aria-label="Abrir men&uacute;" aria-expanded="false" aria-controls="sitio-nav-list">
+        <i class="fas fa-bars" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="sitio-main">
+    {% block sitio_content %}{% endblock %}
+  </main>
+
+  <footer class="sitio-footer">
+    <div class="sitio-footer__main">
+      <div class="sitio-footer__col sitio-footer__col--brand">
+        <div class="sitio-footer__intro">
+          <span class="sitio-footer__mark" aria-hidden="true">
+            <i class="fa-solid fa-graduation-cap"></i>
+          </span>
+          <p class="sitio-footer__brand-name">EasyLearn</p>
+          <p class="sitio-footer__brand-tag">LMS B2B &middot; portales por rol</p>
+        </div>
+      </div>
+      <div class="sitio-footer__col">
+        <h3>Enlaces</h3>
+        <ul class="sitio-footer__links">
+          <li><a href="{% url 'site_home' %}">Inicio</a></li>
+          <li><a href="{% url 'site_nosotros' %}">Nosotros</a></li>
+          <li><a href="{% url 'site_innovacion' %}">Blog</a></li>
+          <li><a href="{% url 'site_contacto' %}">Contacto</a></li>
+        </ul>
+      </div>
+      <div class="sitio-footer__col sitio-footer__col--contact">
+        <h3>Cont&aacute;ctanos</h3>
+        <ul class="sitio-footer__contact">
+          <li>
+            <i class="fa-solid fa-phone" aria-hidden="true"></i>
+            <span>+57 (601) 555-0142</span>
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+            <a href="mailto:contacto@easylearn.edu">contacto@easylearn.edu</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+            <span>Bogot&aacute;, Colombia</span>
+          </li>
+        </ul>
+        <h3 class="sitio-footer__subhead">Redes sociales</h3>
+        <div class="sitio-footer__social" aria-label="Redes sociales">
+          <a href="#" rel="noopener noreferrer" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+          <a href="#" rel="noopener noreferrer" aria-label="Twitter"><i class="fab fa-x-twitter" aria-hidden="true"></i></a>
+          <a href="#" rel="noopener noreferrer" aria-label="WhatsApp"><i class="fab fa-whatsapp" aria-hidden="true"></i></a>
+          <a href="#" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="sitio-footer__bar">
+      <p>&copy; Todos los derechos reservados 2026 &middot; EasyLearn</p>
+    </div>
+  </footer>
+  {% include "easylearn/includes/loader_assets.html" %}
+  <script src="{% static 'easylearn/js/easylearn-theme.js' %}?v=20260539"></script>
+  <script src="{% static 'easylearn/js/sitio-nav.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block auth_title %}EasyLearn{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/login-page.css' %}?v=20260616" />
+</head>
+<body>
+  <div class="el-login">
+    <div class="el-login__scene">
+      <div class="el-login__orbs" aria-hidden="true">
+        <span class="el-login__orb el-login__orb--a"></span>
+        <span class="el-login__orb el-login__orb--b"></span>
+        <span class="el-login__orb el-login__orb--c"></span>
+        <span class="el-login__orb el-login__orb--d"></span>
+      </div>
+
+      <div class="el-login__card el-login__card--auth">
+        <header class="el-login__head">
+          <img
+            class="el-login__logo"
+            src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
+            alt="EasyLearn"
+            width="280"
+            height="120"
+            decoding="async"
+          />
+          <h1 class="el-login__auth-title">{% block auth_heading %}{% endblock %}</h1>
+        </header>
+
+        {% block auth_content %}{% endblock %}
+
+        <p class="el-login__corp">
+          <a class="el-login__corp-link" href="{% url 'login' %}">Volver al inicio de sesi&oacute;n</a>
+          &middot;
+          <a class="el-login__corp-link" href="{% url 'site_home' %}">Sitio corporativo</a>
+        </p>
+      </div>
+    </div>
+  </div>
+  {% include "easylearn/includes/loader_assets.html" %}
+</body>
+</html>

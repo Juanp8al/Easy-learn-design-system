@@ -76,6 +76,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "accounts.context_processors.portal_notifications",
+                "accounts.context_processors.portal_shell",
             ],
         },
     },
@@ -122,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "Africa/Nairobi"
+TIME_ZONE = "America/Bogota"
 
 USE_I18N = True
 
@@ -164,7 +165,7 @@ PASSWORD_HASHERS = [
 
 
 LOGIN_REDIRECT_URL = "profile"
-LOGOUT_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "login"
 LOGIN_URL = "login"
 
 # Referer / Origin checks for HTTPS and cross-site POST (e.g. ngrok). Extend with

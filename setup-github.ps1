@@ -6,7 +6,7 @@ $ErrorActionPreference = "Stop"
 $ProjectRoot = $PSScriptRoot
 Set-Location $ProjectRoot
 
-$RepoName = "easy-learn-design-system"
+$RepoName = "Easy-learn-design-system"
 $GhExe = "$env:TEMP\gh-cli\bin\gh.exe"
 
 if (-not (Test-Path $GhExe)) {

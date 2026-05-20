@@ -1,0 +1,266 @@
+/* Modal Accesibilidad · portal (estudiante, docente, admin) */
+.portal-a11y-dialog {
+  z-index: 10050;
+  max-width: min(420px, 94vw);
+  width: 100%;
+  padding: 0;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgb(0 0 0 / 0.35);
+  background: #fff;
+  color: #1e293b;
+}
+
+.portal-a11y-dialog::backdrop {
+  background: rgb(15 23 42 / 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.portal-a11y-dialog__inner {
+  padding: 1.15rem 1.25rem 1.35rem;
+  max-height: min(86vh, 640px);
+  overflow-y: auto;
+}
+
+.portal-a11y-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.portal-a11y-dialog__title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #0f172a;
+}
+
+.portal-a11y-dialog__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.portal-a11y-dialog__icon-btn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+}
+
+.portal-a11y-dialog__icon-btn:hover {
+  background: #f1f5f9;
+}
+
+.portal-a11y-dialog__close {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 1.35rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.portal-a11y-dialog__close:hover {
+  background: #2563eb;
+}
+
+.portal-a11y-dialog__section-label {
+  margin: 0 0 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #64748b;
+}
+
+.portal-a11y-dialog__theme-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.85rem;
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.portal-a11y-dialog__theme-row .el-theme-btn {
+  border-color: #cbd5e1;
+  background: #fff;
+}
+
+.portal-a11y-dialog__theme-hint {
+  font-size: 0.78rem;
+  color: #64748b;
+  flex: 1;
+  min-width: 140px;
+}
+
+.portal-a11y-dialog__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.portal-a11y-tile {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.6rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fafafa;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #334155;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.portal-a11y-tile:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+}
+
+.portal-a11y-tile[aria-pressed="true"] {
+  border-color: #3b82f6;
+  background: rgb(59 130 246 / 0.1);
+  color: #1e40af;
+}
+
+.portal-a11y-tile__ico {
+  flex-shrink: 0;
+  width: 1.5rem;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.portal-a11y-sliders {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.portal-a11y-slider {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto auto;
+  gap: 0.35rem 0.65rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: #334155;
+}
+
+.portal-a11y-slider__label {
+  grid-column: 1 / -1;
+  font-weight: 600;
+}
+
+.portal-a11y-slider input[type="range"] {
+  grid-column: 1 / 2;
+  width: 100%;
+  accent-color: #3b82f6;
+}
+
+.portal-a11y-slider__val {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog {
+  background: #1e293b;
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__title {
+  color: #f1f5f9;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__icon-btn {
+  background: #334155;
+  border-color: #475569;
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__theme-row {
+  background: #0f172a;
+  border-color: #334155;
+}
+
+html[data-theme="dark"] .portal-a11y-dialog__theme-row .el-theme-btn {
+  background: #334155;
+  border-color: #64748b;
+}
+
+html[data-theme="dark"] .portal-a11y-tile {
+  background: #0f172a;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+html[data-theme="dark"] .portal-a11y-tile[aria-pressed="true"] {
+  border-color: #60a5fa;
+  background: rgb(96 165 250 / 0.15);
+  color: #bfdbfe;
+}
+
+/* Filtros aplicados al tablero (.canvas-body) */
+.canvas-body.el-a11y-board--invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+.canvas-body.el-a11y-board--mono {
+  filter: grayscale(1);
+}
+
+.canvas-body.el-a11y-board--invert.el-a11y-board--mono {
+  filter: invert(1) hue-rotate(180deg) grayscale(1);
+}
+
+.canvas-body.el-a11y-board--sat-low {
+  filter: saturate(0.55);
+}
+
+.canvas-body.el-a11y-board--sat-high {
+  filter: saturate(1.35);
+}
+
+.canvas-body.el-a11y-board--contrast-dark {
+  filter: contrast(1.12);
+}
+
+.canvas-body.el-a11y-board--contrast-light {
+  filter: contrast(0.95) brightness(1.03);
+}
+
+.canvas-body.el-a11y-board--links a:not(.btn-main):not(.btn-secondary):not(.btn-sm) {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+.canvas-body.el-a11y-board--headings .hero h1,
+.canvas-body.el-a11y-board--headings .panel__head h2,
+.canvas-body.el-a11y-board--headings .panel h2 {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}

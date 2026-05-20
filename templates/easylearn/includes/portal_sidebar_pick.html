@@ -1,0 +1,11 @@
+{% if user.is_authenticated %}
+  {% if user.is_superuser or user.role == 'admin' %}
+    {% include "easylearn/includes/portal_sidebar_admin.html" %}
+  {% elif user.role == 'teacher' %}
+    {% include "easylearn/includes/portal_sidebar_teacher.html" %}
+  {% else %}
+    {% include "easylearn/includes/portal_sidebar.html" %}
+  {% endif %}
+{% else %}
+  {% include "easylearn/includes/portal_sidebar.html" %}
+{% endif %}

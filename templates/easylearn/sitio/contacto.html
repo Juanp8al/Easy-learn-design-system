@@ -1,0 +1,88 @@
+{% extends "easylearn/sitio/base.html" %}
+
+{% block sitio_title %}Contact{% endblock %}
+
+{% block sitio_content %}
+<div class="el-sitio-page el-sitio-page--contact">
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="Contact" banner_lead="Agenda una demo o consulta comercial. Respuesta en 24&ndash;48 horas h&aacute;biles." %}
+
+  <section class="el-sitio-contact-section" aria-labelledby="contact-heading">
+    <div class="el-sitio-contact-panel">
+      <div class="el-sitio-contact-layout">
+        <div class="el-sitio-contact-aside">
+          <h2 id="contact-heading" class="el-sitio-contact-aside__title">Hablemos de EasyLearn</h2>
+          <p class="el-sitio-contact-aside__lead">
+            Equipo comercial y soporte B2B para universidades. Elige el canal que prefieras o env&iacute;anos el formulario.
+          </p>
+          <article class="el-sitio-contact-card">
+            <span class="el-sitio-contact-card__icon" aria-hidden="true"><i class="fa-solid fa-envelope"></i></span>
+            <div class="el-sitio-contact-card__body">
+              <h3>Correo</h3>
+              <p><a href="mailto:contacto@easylearn.edu">contacto@easylearn.edu</a></p>
+            </div>
+          </article>
+          <article class="el-sitio-contact-card">
+            <span class="el-sitio-contact-card__icon" aria-hidden="true"><i class="fa-solid fa-phone"></i></span>
+            <div class="el-sitio-contact-card__body">
+              <h3>Tel&eacute;fono</h3>
+              <p><a href="tel:+576015550142">+57 (601) 555-0142</a></p>
+            </div>
+          </article>
+          <article class="el-sitio-contact-card">
+            <span class="el-sitio-contact-card__icon" aria-hidden="true"><i class="fa-solid fa-location-dot"></i></span>
+            <div class="el-sitio-contact-card__body">
+              <h3>Oficina</h3>
+              <p>Bogot&aacute;, Colombia</p>
+            </div>
+          </article>
+          <div class="el-sitio-contact-social-block">
+            <p class="el-sitio-contact-social-block__label">S&iacute;guenos</p>
+            <div class="el-sitio-contact__social" aria-label="Redes sociales">
+              <a href="#" rel="noopener noreferrer" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+              <a href="#" rel="noopener noreferrer" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+              <a href="#" rel="noopener noreferrer" aria-label="YouTube"><i class="fab fa-youtube" aria-hidden="true"></i></a>
+            </div>
+          </div>
+        </div>
+
+        <div class="el-contact-form" aria-labelledby="contact-form-title">
+          <h3 id="contact-form-title">Env&iacute;anos un mensaje</h3>
+
+          {% if messages %}
+            {% for message in messages %}
+            <div class="el-contact-form__alert" role="status">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <form class="el-contact-form__form" method="post" action="{% url 'site_contacto' %}" data-el-loader="server">
+            {% csrf_token %}
+            <div class="el-contact-form__row">
+              <div class="el-contact-form__field">
+                <label for="{{ form.nombre.id_for_label }}">{{ form.nombre.label }}</label>
+                {{ form.nombre }}
+                {% if form.nombre.errors %}<p class="el-contact-form__error">{{ form.nombre.errors.0 }}</p>{% endif %}
+              </div>
+              <div class="el-contact-form__field">
+                <label for="{{ form.correo.id_for_label }}">{{ form.correo.label }}</label>
+                {{ form.correo }}
+                {% if form.correo.errors %}<p class="el-contact-form__error">{{ form.correo.errors.0 }}</p>{% endif %}
+              </div>
+            </div>
+            <div class="el-contact-form__field">
+              <label for="{{ form.asunto.id_for_label }}">{{ form.asunto.label }}</label>
+              {{ form.asunto }}
+              {% if form.asunto.errors %}<p class="el-contact-form__error">{{ form.asunto.errors.0 }}</p>{% endif %}
+            </div>
+            <div class="el-contact-form__field el-contact-form__field--message">
+              <label for="{{ form.mensaje.id_for_label }}">{{ form.mensaje.label }}</label>
+              {{ form.mensaje }}
+              {% if form.mensaje.errors %}<p class="el-contact-form__error">{{ form.mensaje.errors.0 }}</p>{% endif %}
+            </div>
+            <button type="submit" class="el-sitio-btn-green">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+{% endblock %}

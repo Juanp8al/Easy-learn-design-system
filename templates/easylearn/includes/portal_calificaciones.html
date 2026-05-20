@@ -116,7 +116,7 @@
                           <td><a class="btn-sm btn-sm--link week-action-link" href="{{ entry.get_absolute_url }}">Abrir ›</a></td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="5" class="muted">No hay apuntes recientes. Créalos desde <a href="{% url 'revision:calendar' %}">Repaso</a> o tus espacios de notas.</td></tr>
+                        <tr><td colspan="5" class="muted">No hay apuntes recientes. Créalos desde <a href="{% url 'notes:dashboard' %}#repaso">Repaso</a> o tus espacios de notas.</td></tr>
                         {% endfor %}
                       </tbody>
                     </table>

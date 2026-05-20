@@ -1,0 +1,142 @@
+{% extends "easylearn/sitio/base.html" %}
+{% load static %}
+
+{% block sitio_title %}Con&oacute;cenos{% endblock %}
+
+{% block sitio_content %}
+<div class="el-home">
+  <section class="el-home-hero" id="home" aria-labelledby="home-hero-title">
+    <div class="el-home-hero__inner">
+      <img
+        class="el-home-hero__logo"
+        src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
+        alt="Logo EasyLearn"
+        width="280"
+        height="90"
+        decoding="async"
+      />
+      <h1 id="home-hero-title" class="el-home-hero__tagline">
+        Campus digital para tu universidad. Acceso privado por rol.
+      </h1>
+      <div class="el-home-hero__actions">
+        <a class="sitio-btn el-home-hero__btn el-home-hero__btn--white" href="#flujo">Ver c&oacute;mo funciona</a>
+        <a class="sitio-btn el-home-hero__btn el-home-hero__btn--green" href="{% url 'login' %}">Iniciar sesi&oacute;n</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="el-home-features" id="flujo">
+    <h2 class="el-home-section-title">Nuestro ecosistema institucional</h2>
+    <p class="el-home-section-lead">
+      De la configuraci&oacute;n inicial al aula virtual: el flujo que ya opera en Django.
+    </p>
+    <div class="el-home-fea-base">
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-server" aria-hidden="true"></i>
+        <h3>Soporte EasyLearn</h3>
+        <p>
+          Configuramos la plataforma y generamos las credenciales del
+          <strong>Administrador Supremo</strong> de la universidad.
+        </p>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-user-gear" aria-hidden="true"></i>
+        <h3>Gesti&oacute;n del Administrador</h3>
+        <p>
+          El Admin crea profesores, asignaturas y semestres acad&eacute;micos con control total institucional.
+        </p>
+      </article>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-user-graduate" aria-hidden="true"></i>
+        <h3>Control de estudiantes</h3>
+        <p>
+          Matr&iacute;cula y vincula alumnos con docentes. Acceso 100&nbsp;% privado, sin registros abiertos.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="el-home-about" id="tipo-empresa">
+    <div class="el-home-about__inner">
+      <h2 class="el-home-section-title el-home-section-title--left">Proveedor de software educativo B2B</h2>
+      <p>
+        EasyLearn es una empresa de tecnolog&iacute;a que vende licencias a instituciones universitarias.
+        La universidad opera sus portales; nosotros garantizamos la infraestructura segura y escalable.
+      </p>
+    </div>
+  </section>
+
+  <section class="el-home-portals" id="portales">
+    <h2 class="el-home-section-title">Portales privados por rol</h2>
+    <p class="el-home-section-lead">
+      Tres entornos habilitados por el Administrador Supremo. Cada usuario ingresa solo con credenciales asignadas.
+    </p>
+    <div class="el-home-portals-grid">
+      <article class="el-home-portal-card">
+        <div class="el-home-portal-card__media">
+          <img src="{% static 'easylearn/img/sitio/c1.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
+          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span>
+        </div>
+        <div class="el-home-portal-card__body">
+          <span class="el-home-portal-card__tag">Administraci&oacute;n</span>
+          <h3>Portal Admin</h3>
+          <p>Panel para usuarios, cargas acad&eacute;micas y semestres.</p>
+        </div>
+      </article>
+      <article class="el-home-portal-card">
+        <div class="el-home-portal-card__media">
+          <img src="{% static 'easylearn/img/sitio/c2.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
+          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-chalkboard-user"></i></span>
+        </div>
+        <div class="el-home-portal-card__body">
+          <span class="el-home-portal-card__tag">Docencia</span>
+          <h3>Portal Profesor</h3>
+          <p>Notas, tabl&oacute;n de avisos y revisi&oacute;n de entregas.</p>
+        </div>
+      </article>
+      <article class="el-home-portal-card">
+        <div class="el-home-portal-card__media">
+          <img src="{% static 'easylearn/img/sitio/c3.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
+          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span>
+        </div>
+        <div class="el-home-portal-card__body">
+          <span class="el-home-portal-card__tag">Estudiante</span>
+          <h3>Portal Estudiante</h3>
+          <p>Calendario, materias del semestre y aula virtual.</p>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="el-home-cta" id="contacto-home">
+    <div class="el-home-cta__copy">
+      <p class="el-home-cta__eyebrow">&iquest;Interesado en EasyLearn?</p>
+      <h2>Solicita m&aacute;s informaci&oacute;n</h2>
+      <p>
+        Plataforma B2B para universidades. Cu&eacute;ntanos si tu instituci&oacute;n quiere conocer
+        la demo, licencias o el modelo de portales por rol.
+      </p>
+    </div>
+    <div class="el-home-cta__panel">
+      <h3>D&eacute;janos tu correo</h3>
+      <p>Te escribimos para coordinar una llamada o enviarte m&aacute;s detalles.</p>
+      {% if messages %}
+        {% for message in messages %}
+        <div class="el-home-cta__alert" role="status">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+      <form class="el-home-cta__form" method="post" action="{% url 'site_home' %}#contacto-home" data-el-loader="server">
+        {% csrf_token %}
+        <label class="visually-hidden" for="{{ lead_form.correo.id_for_label }}">{{ lead_form.correo.label }}</label>
+        {{ lead_form.correo }}
+        {% if lead_form.correo.errors %}
+        <p class="el-home-cta__error">{{ lead_form.correo.errors.0 }}</p>
+        {% endif %}
+        <button type="submit" class="sitio-btn sitio-btn--lg el-home-cta__btn">
+          Contactarnos
+        </button>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

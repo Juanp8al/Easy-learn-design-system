@@ -27,7 +27,7 @@
   </div>
 </article>
 
-<form method="post" enctype="multipart/form-data" class="panel margin-b" id="activity-submit-form">
+<form method="post" enctype="multipart/form-data" class="panel margin-b" id="activity-submit-form" data-el-loader="book" data-el-loader-draft="skip">
   {% csrf_token %}
   <div class="panel__head panel__head--dash-soft">
     <h2>Tu entrega</h2>
@@ -79,12 +79,6 @@
     var ok = document.getElementById("check-confirm-ready");
     var hidden = document.getElementById("confirm-ready-field");
     if (hidden && ok) hidden.value = ok.checked ? "1" : "0";
-    var btn = document.getElementById("btn-submit-activity");
-    if (btn && !btn.disabled) {
-      btn.classList.add("is-loading");
-      btn.disabled = true;
-      btn.setAttribute("aria-busy", "true");
-    }
   });
 })();
 </script>

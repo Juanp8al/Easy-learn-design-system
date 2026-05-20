@@ -9,11 +9,11 @@ from classroom.models import (
     AcademicWeek,
     Activity,
     Announcement,
+    Forum,
     Grade,
     StudyMaterial,
     Submission,
 )
-
 
 WEEK_TOPICS = [
     "Introducción y fundamentos",
@@ -22,6 +22,9 @@ WEEK_TOPICS = [
     "Aplicación en contexto",
     "Evaluación y cierre",
 ]
+
+PRIMARY_STUDENT_USERNAME = "estudiante_demo"
+UNGRADED_DEMO_STUDENT = PRIMARY_STUDENT_USERNAME
 
 
 class Command(BaseCommand):
@@ -67,7 +70,7 @@ class Command(BaseCommand):
             weeks = []
             for i, topic in enumerate(week_topics, start=1):
                 last_n = len(week_topics)
-                status = AcademicWeek.Status.COMPLETED if i < last_n else AcademicWeek.Status.IN_PROGRESS
+                status = AcademicWeek.Status.COMPLETED if i < last_n - 1 else AcademicWeek.Status.IN_PROGRESS
                 if i == last_n:
                     status = AcademicWeek.Status.IN_PROGRESS
                 week = AcademicWeek.objects.create(
@@ -84,12 +87,60 @@ class Command(BaseCommand):
                     week=week,
                     title=f"Lectura semana {i}",
                     defaults={
-                        "description": "Material base de la semana.",
+                        "description": "Documento base de la semana (demo).",
                         "material_type": StudyMaterial.MaterialType.DOCUMENT,
                         "external_url": "https://example.com/material",
                         "created_by": offering.teacher,
                     },
                 )
+                StudyMaterial.objects.get_or_create(
+                    week=week,
+                    title=f"Video complementario · semana {i}",
+                    defaults={
+                        "description": "Clase grabada y enlaces de apoyo.",
+                        "material_type": StudyMaterial.MaterialType.VIDEO,
+                        "external_url": "https://example.com/video",
+                        "is_required": i <= 2,
+                        "created_by": offering.teacher,
+                    },
+                )
+
+                Forum.objects.get_or_create(
+                    week=week,
+                    title=f"Foro de discusión · semana {i}",
+                    defaults={
+                        "description": "Espacio para preguntas y debate sobre los contenidos de la semana.",
+                        "status": Forum.Status.OPEN if i >= last_n - 1 else Forum.Status.CLOSED,
+                        "created_by": offering.teacher,
+                    },
+                )
+
+                due_offset = 8 - i
+                Activity.objects.get_or_create(
+                    week=week,
+                    title=f"Tarea semana {i} · {offering.code}",
+                    defaults={
+                        "description": f"Entrega formativa de la semana {i}.",
+                        "instructions": "Adjunte PDF o enlace según indique el docente.",
+                        "activity_type": Activity.ActivityType.TASK,
+                        "due_at": now + timedelta(days=due_offset),
+                        "status": Activity.Status.PUBLISHED,
+                        "allows_draft": True,
+                        "created_by": offering.teacher,
+                    },
+                )
+                if i % 2 == 0:
+                    Activity.objects.get_or_create(
+                        week=week,
+                        title=f"Quiz semana {i}",
+                        defaults={
+                            "activity_type": Activity.ActivityType.QUIZ,
+                            "due_at": now + timedelta(days=due_offset - 1),
+                            "status": Activity.Status.PUBLISHED,
+                            "allows_draft": False,
+                            "created_by": offering.teacher,
+                        },
+                    )
 
             week_last = weeks[-1]
             task, _ = Activity.objects.get_or_create(
@@ -105,18 +156,17 @@ class Command(BaseCommand):
                     "created_by": offering.teacher,
                 },
             )
-            if len(weeks) >= 2:
-                Activity.objects.get_or_create(
-                    week=week_last,
-                    title="Quiz · evaluación heurística",
-                    defaults={
-                        "activity_type": Activity.ActivityType.QUIZ,
-                        "due_at": now - timedelta(days=1),
-                        "status": Activity.Status.PUBLISHED,
-                        "allows_draft": False,
-                        "created_by": offering.teacher,
-                    },
-                )
+            Activity.objects.get_or_create(
+                week=week_last,
+                title="Quiz · evaluación heurística",
+                defaults={
+                    "activity_type": Activity.ActivityType.QUIZ,
+                    "due_at": now - timedelta(days=1),
+                    "status": Activity.Status.PUBLISHED,
+                    "allows_draft": False,
+                    "created_by": offering.teacher,
+                },
+            )
 
             Announcement.objects.get_or_create(
                 offering=offering,
@@ -129,15 +179,12 @@ class Command(BaseCommand):
                 },
             )
 
-            enrollment = (
-                Enrollment.objects.filter(
-                    offering=offering,
-                    status=Enrollment.Status.ACTIVE,
-                )
-                .select_related("student")
-                .first()
-            )
-            if enrollment:
+            enrollments = Enrollment.objects.filter(
+                offering=offering,
+                status=Enrollment.Status.ACTIVE,
+            ).select_related("student")
+
+            for enrollment in enrollments:
                 sub, created = Submission.objects.get_or_create(
                     activity=task,
                     student=enrollment.student,
@@ -154,17 +201,49 @@ class Command(BaseCommand):
                     sub.status = Submission.Status.SUBMITTED
                     sub.save()
 
+                if enrollment.student.username != UNGRADED_DEMO_STUDENT:
+                    Grade.objects.get_or_create(
+                        submission=sub,
+                        defaults={
+                            "score": Decimal("4.2"),
+                            "feedback": "Entrega revisada en datos de demostración.",
+                            "graded_by": offering.teacher,
+                        },
+                    )
+                    if sub.grade:
+                        sub.status = Submission.Status.GRADED
+                        sub.save(update_fields=["status"])
+
+            first_week_task = (
+                Activity.objects.filter(week=weeks[0], activity_type=Activity.ActivityType.TASK)
+                .order_by("id")
+                .first()
+            )
+            demo_enrollment = enrollments.filter(
+                student__username=PRIMARY_STUDENT_USERNAME
+            ).first()
+            if first_week_task and demo_enrollment:
+                sub_old, created_old = Submission.objects.get_or_create(
+                    activity=first_week_task,
+                    student=demo_enrollment.student,
+                    defaults={
+                        "comment": "Entrega calificada — semana 1.",
+                        "is_draft": False,
+                        "submitted_at": now - timedelta(days=12),
+                        "status": Submission.Status.GRADED,
+                    },
+                )
                 Grade.objects.get_or_create(
-                    submission=sub,
+                    submission=sub_old,
                     defaults={
                         "score": Decimal("4.5"),
-                        "feedback": "Buen análisis. Profundice en heurísticas de Nielsen.",
+                        "feedback": "Excelente análisis introductorio.",
                         "graded_by": offering.teacher,
                     },
                 )
-                if sub.grade:
-                    sub.status = Submission.Status.GRADED
-                    sub.save(update_fields=["status"])
+                if created_old or not sub_old.grade_id:
+                    sub_old.status = Submission.Status.GRADED
+                    sub_old.save(update_fields=["status"])
 
             self.stdout.write(self.style.SUCCESS(f"  Aula lista: {offering.code} ({len(weeks)} semanas)"))
 

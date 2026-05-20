@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'easylearn/css/login-page.css' %}" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/login-page.css' %}?v=20260616" />
 </head>
 <body>
   <div class="el-login">
@@ -25,15 +25,15 @@
           <img
             class="el-login__logo"
             src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}"
-            alt=""
-            width="340"
+            alt="EasyLearn"
+            width="280"
             height="120"
             decoding="async"
           />
           <h1 class="el-login__sr-only">Iniciar sesión</h1>
         </header>
 
-        <form method="post" action="{% url 'login' %}" novalidate>
+        <form method="post" action="{% url 'login' %}" novalidate data-el-loader="book">
           {% csrf_token %}
 
           {% if form.non_field_errors %}
@@ -72,7 +72,13 @@
 
           <div class="el-login__row">
             <label class="el-login__remember">
-              <input type="checkbox" name="remember_me" value="1" />
+              <input
+                type="checkbox"
+                name="remember_me"
+                value="1"
+                id="remember_me"
+                {% if remember_me_checked %}checked{% endif %}
+              />
               Recordarme
             </label>
             <a class="el-login__link" href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
@@ -80,18 +86,87 @@
 
           <button class="el-login__submit" type="submit" id="login-button">Iniciar sesión</button>
         </form>
+
+        <p class="el-login__corp">
+          <a class="el-login__corp-link" href="{% url 'site_home' %}">Conoce sobre EasyLearn</a>
+        </p>
       </div>
     </div>
   </div>
 
+  {% include "easylearn/includes/loader_assets.html" %}
   <script>
     (function () {
+      var STORAGE_KEY = "easylearn-login-remember";
       var btn = document.getElementById("toggle-password");
-      var input = document.getElementById("id_password");
-      if (!btn || !input) return;
+      var passwordInput = document.getElementById("id_password");
+      var usernameInput = document.getElementById("id_username");
+      var rememberInput = document.getElementById("remember_me");
+      var form = document.querySelector(".el-login__card form");
+
+      function loadRemembered() {
+        if (!rememberInput || !passwordInput || !usernameInput) return;
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return;
+          var data = JSON.parse(raw);
+          if (!data || !data.remember) return;
+          rememberInput.checked = true;
+          if (data.username && !usernameInput.value) {
+            usernameInput.value = data.username;
+          }
+          if (data.password) {
+            passwordInput.value = data.password;
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      function saveRemembered() {
+        if (!rememberInput || !passwordInput || !usernameInput) return;
+        try {
+          if (rememberInput.checked) {
+            localStorage.setItem(
+              STORAGE_KEY,
+              JSON.stringify({
+                remember: true,
+                username: usernameInput.value.trim(),
+                password: passwordInput.value,
+              })
+            );
+          } else {
+            localStorage.removeItem(STORAGE_KEY);
+          }
+        } catch (e) {
+          /* ignore */
+        }
+      }
+
+      loadRemembered();
+
+      if (form) {
+        form.addEventListener("submit", function () {
+          saveRemembered();
+        });
+      }
+
+      if (rememberInput) {
+        rememberInput.addEventListener("change", function () {
+          if (!rememberInput.checked) {
+            try {
+              localStorage.removeItem(STORAGE_KEY);
+            } catch (e) {
+              /* ignore */
+            }
+          }
+        });
+      }
+
+      if (!btn || !passwordInput) return;
       btn.addEventListener("click", function () {
-        var show = input.type === "password";
-        input.type = show ? "text" : "password";
+        var show = passwordInput.type === "password";
+        passwordInput.type = show ? "text" : "password";
         btn.setAttribute("aria-pressed", show ? "true" : "false");
         btn.setAttribute("aria-label", show ? "Ocultar contraseña" : "Mostrar contraseña");
       });

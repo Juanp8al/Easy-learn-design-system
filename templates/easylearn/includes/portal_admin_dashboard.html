@@ -111,28 +111,52 @@
                         <h2>Usuarios recientes</h2>
                         <button type="button" class="btn-sm btn-outline" data-goto="usuarios">Ver todos ›</button>
                       </div>
-                      <div class="data-table-wrap dg-dash-actividades-scroll">
-                        <table class="sheet">
+                      <div class="data-table-wrap dg-dash-actividades-scroll admin-users-table-wrap">
+                        <table class="sheet sheet--dash-soft admin-users-table" id="admin-recent-users-table">
+                          <colgroup>
+                            <col class="admin-users-table__col-name" />
+                            <col class="admin-users-table__col-role" />
+                            <col class="admin-users-table__col-program" />
+                            <col class="admin-users-table__col-status" />
+                            <col class="admin-users-table__col-action" />
+                          </colgroup>
                           <thead>
                             <tr>
-                              <th>Nombre</th>
-                              <th>Rol</th>
-                              <th>Programa / área</th>
-                              <th>Estado</th>
-                              <th>Acción</th>
+                              <th scope="col">Nombre</th>
+                              <th scope="col">Rol</th>
+                              <th scope="col">Programa / área</th>
+                              <th scope="col">Estado</th>
+                              <th scope="col">Acción</th>
                             </tr>
                           </thead>
                           <tbody>
                             {% for u in recent_users %}
-                            <tr data-search="{{ u.username|lower }} {{ u.get_full_name|default:''|lower }} {{ u.get_role_display|lower }}">
-                              <td>{{ u.get_full_name|default:u.username }}</td>
-                              <td><span class="badge-txt {% if u.role == 'admin' %}badge-txt--warn{% elif u.role == 'teacher' %}badge-txt--draft{% else %}badge-txt--ok{% endif %}">{{ u.get_role_display }}</span></td>
-                              <td>{% if u.academic_program %}{{ u.academic_program.name|truncatechars:28 }}{% else %}—{% endif %}</td>
-                              <td>{% if u.is_active %}Activa{% else %}Inactiva{% endif %}</td>
-                              <td><button type="button" class="btn-sm btn-outline" data-goto="usuarios">Ver ›</button></td>
+                            <tr
+                              data-search="{{ u.username|lower }} {{ u.get_full_name|default:''|lower }} {{ u.get_role_display|lower }}"
+                              data-admin-row="usuarios"
+                              data-role="{{ u.role }}"
+                              data-active="{% if u.is_active %}1{% else %}0{% endif %}"
+                            >
+                              <td>
+                                <strong class="admin-users-table__name">{{ u.get_full_name|default:u.username }}</strong>
+                              </td>
+                              <td>
+                                <span class="badge-txt badge-txt--role {% if u.role == 'admin' %}badge-txt--role-admin{% elif u.role == 'teacher' %}badge-txt--role-teacher{% else %}badge-txt--role-student{% endif %}">{{ u.get_role_display }}</span>
+                              </td>
+                              <td class="admin-users-table__program">{% if u.academic_program %}{{ u.academic_program.name }}{% else %}<span class="muted">—</span>{% endif %}</td>
+                              <td>
+                                {% if u.is_active %}
+                                <span class="badge-txt badge-txt--ok">Activa</span>
+                                {% else %}
+                                <span class="badge-txt badge-txt--muted">Inactiva</span>
+                                {% endif %}
+                              </td>
+                              <td class="admin-users-table__action">
+                                <a class="btn-sm btn-outline" href="{% url 'admin:accounts_student_change' u.id %}">Ver ›</a>
+                              </td>
                             </tr>
                             {% empty %}
-                            <tr data-search-skip><td colspan="5" class="muted">No hay usuarios registrados.</td></tr>
+                            <tr data-search-skip><td colspan="5" class="portal-empty-state__cell muted">No hay usuarios registrados.</td></tr>
                             {% endfor %}
                           </tbody>
                         </table>

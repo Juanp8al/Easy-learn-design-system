@@ -9,13 +9,13 @@ from django.utils import timezone
 
 from academia.models import Enrollment
 from classroom.context import _submission_stats_for_offering
-from classroom.models import AcademicWeek, Activity, Announcement, Grade, Submission
+from classroom.models import AcademicWeek, Activity, Announcement, Grade, StudyMaterial, Submission
 
 
 def describe_activity_status(activity, submission=None):
     """Estado visual de una actividad para el estudiante."""
     now = timezone.now()
-    if submission and submission.grade_id:
+    if submission and getattr(submission, "grade", None):
         return {
             "status_label": "Calificada",
             "badge": "ok",
@@ -187,7 +187,7 @@ def build_upcoming_evaluations(student, limit=5):
     items = []
     for act in acts:
         sub = Submission.objects.filter(activity=act, student=student).first()
-        if sub and sub.grade_id:
+        if sub and getattr(sub, "grade", None):
             continue
         items.append(
             {
@@ -386,6 +386,42 @@ def build_week_navigation(offering, week_number):
     return prev_n, next_n
 
 
+def build_repaso_materials(student):
+    """Materiales de estudio publicados, agrupados por curso matriculado."""
+    enrollments = (
+        Enrollment.objects.filter(student=student, status=Enrollment.Status.ACTIVE)
+        .select_related("offering", "offering__teacher", "offering__period", "offering__program")
+        .order_by("-offering__period__name", "offering__code")
+    )
+    courses = []
+    total_materials = 0
+    for enr in enrollments:
+        off = enr.offering
+        weeks_data = []
+        for week in AcademicWeek.objects.filter(offering=off).order_by("week_number"):
+            materials = list(StudyMaterial.objects.filter(week=week).order_by("title"))
+            if not materials:
+                continue
+            weeks_data.append({"week": week, "materials": materials})
+            total_materials += len(materials)
+        if not weeks_data:
+            continue
+        courses.append(
+            {
+                "offering": off,
+                "weeks": weeks_data,
+                "material_count": sum(len(w["materials"]) for w in weeks_data),
+                "aula_url": reverse("classroom:course_detail", args=[off.id]),
+                "week_count": len(weeks_data),
+            }
+        )
+    return {
+        "repaso_courses": courses,
+        "repaso_material_total": total_materials,
+        "repaso_course_count": len(courses),
+    }
+
+
 def build_student_portal_context(student):
     """Contexto ampliado para notes.views.dashboard."""
     pending_inst = _pending_activity_count(student)
@@ -407,4 +443,5 @@ def build_student_portal_context(student):
         "academic_calendar_events": build_academic_calendar_events(student),
         "portal_messages": build_portal_messages(student),
         **build_mini_calendar(student),
+        **build_repaso_materials(student),
     }

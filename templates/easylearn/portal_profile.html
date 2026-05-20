@@ -4,70 +4,243 @@
 {% block title %}Mi perfil · EasyLearn{% endblock %}
 {% block body_attrs %} data-easylearn-page="profile"{% endblock %}
 
-{% block sidebar %}
-  {% if student.role == 'admin' %}
-    {% include "easylearn/includes/portal_sidebar_admin.html" %}
-  {% elif student.role == 'teacher' %}
-    {% include "easylearn/includes/portal_sidebar_teacher.html" %}
-  {% else %}
-    {% include "easylearn/includes/portal_sidebar.html" %}
-  {% endif %}
-{% endblock %}
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_pick.html" %}{% endblock %}
 
 {% block portal_canvas %}
-  <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta"><span>Mi perfil</span></nav>
-  <section class="view is-visible view-dash-dg" aria-labelledby="profile-title">
-    <header class="hero hero-dash-dg">
+  <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta">
+    <a href="{{ portal_dashboard_url }}">Inicio</a>
+    <span class="sep">›</span>
+    <span>Mi perfil</span>
+  </nav>
+
+  <section class="view is-visible view-dash-dg portal-profile" aria-labelledby="profile-title">
+    <header class="hero hero-dash-dg hero--dense">
       <p class="hero-kicker hero-dash-dg__line1">Cuenta</p>
       <h1 id="profile-title">Mi perfil</h1>
-      <p style="margin:0.4rem 0 0;font-size:0.94rem;color:var(--text-muted);">Datos personales y académicos visibles en el portal.</p>
     </header>
 
-    <article class="panel panel--dg-sheet" style="max-width:40rem;">
-      <div class="panel__head panel__head--dg panel__head--dash-soft">
-        <h2>Información</h2>
-        <a class="btn-sm btn-accent" href="{% url 'edit_profile' %}">Editar perfil</a>
-      </div>
-      <div style="padding:1rem 1.2rem 1.25rem;display:flex;gap:1.25rem;flex-wrap:wrap;align-items:flex-start;">
-        {% if profile.photo %}
-        <img src="{{ profile.photo.url }}" alt="" width="96" height="96" style="border-radius:12px;object-fit:cover;" />
-        {% else %}
-        <span class="header-profile__photo" style="width:96px;height:96px;font-size:1.5rem;" aria-hidden="true">
-          {% if student.first_name or student.last_name %}
-            {{ student.first_name|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
-          {% else %}
-            {{ student.username|slice:":2"|upper }}
-          {% endif %}
-        </span>
-        {% endif %}
-        <dl style="margin:0;flex:1;min-width:14rem;font-size:0.9rem;line-height:1.6;">
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Nombre</dt>
-          <dd style="margin:0 0 0.75rem;font-weight:600;">{{ student.get_full_name|default:student.username }}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Usuario</dt>
-          <dd style="margin:0 0 0.75rem;">@{{ student.username }}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Correo</dt>
-          <dd style="margin:0 0 0.75rem;">{{ student.email|default:"—" }}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Rol</dt>
-          <dd style="margin:0 0 0.75rem;">{{ portal_role_label }}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Carrera / programa</dt>
-          <dd style="margin:0 0 0.75rem;">{% if student.academic_program %}{{ student.academic_program.name }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Semestre</dt>
-          <dd style="margin:0 0 0.75rem;">{% if student.academic_semester %}{{ student.academic_semester }}º{% else %}<span class="muted">—</span>{% endif %}</dd>
-          <dt class="muted" style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;">Miembro desde</dt>
-          <dd style="margin:0;">{{ student.date_joined|date:"j M Y" }}</dd>
-        </dl>
-      </div>
-    </article>
+    <div class="portal-profile__grid">
+      <aside class="portal-profile__col portal-profile__col--identity" aria-label="Resumen de cuenta">
+        <article class="portal-profile-card portal-profile-card--identity">
+          <div class="portal-profile-avatar" aria-hidden="true">
+            {% if profile.photo %}
+            <img class="portal-profile-avatar__img" src="{{ profile.photo.url }}" alt="" width="120" height="120" />
+            {% else %}
+            <span class="portal-profile-avatar__initials">
+              {% if student.first_name or student.last_name %}
+                {{ student.first_name|slice:":1"|upper }}{{ student.last_name|slice:":1"|upper }}
+              {% else %}
+                {{ student.username|slice:":2"|upper }}
+              {% endif %}
+            </span>
+            {% endif %}
+          </div>
+          <h2 class="portal-profile-card__name">{{ student.get_full_name|default:student.username }}</h2>
+          <p class="portal-profile-card__role">{{ portal_role_label }}</p>
+          <a class="btn-cta-outline portal-profile-card__cta" href="{% url 'edit_profile' %}">Editar perfil ›</a>
+        </article>
+      </aside>
 
-    {% if student.role == 'student' and courses %}
-    <article class="panel panel--dg-sheet margin-b" style="max-width:40rem;">
-      <div class="panel__head panel__head--dg panel__head--dash-soft"><h2>Apuntes personales</h2></div>
-      <ul class="dg-mer-rail-list" style="padding:0 1rem 1rem;">
-        {% for course in courses %}
-        <li><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
-        {% endfor %}
-      </ul>
-    </article>
-    {% endif %}
+      <div class="portal-profile__col portal-profile__col--main">
+        <article class="portal-profile-card">
+          <header class="portal-profile-card__head">
+            <h2 class="portal-profile-card__title">Detalles de usuario</h2>
+            <a class="portal-profile-card__head-link" href="{% url 'edit_profile' %}">Editar perfil</a>
+          </header>
+          <dl class="portal-profile-dl">
+            <div class="portal-profile-dl__row">
+              <dt>Dirección de correo</dt>
+              <dd>
+                {% if student.email %}
+                <a href="mailto:{{ student.email }}">{{ student.email }}</a>
+                <span class="muted" style="display:block;font-size:0.8rem;margin-top:0.15rem;">Visible según la configuración del sitio.</span>
+                {% else %}
+                <span class="muted">—</span>
+                {% endif %}
+              </dd>
+            </div>
+            <div class="portal-profile-dl__row">
+              <dt>Usuario</dt>
+              <dd>@{{ student.username }}</dd>
+            </div>
+            <div class="portal-profile-dl__row">
+              <dt>Rol en el portal</dt>
+              <dd>{{ portal_role_label }}</dd>
+            </div>
+            {% if student.role == 'student' %}
+            <div class="portal-profile-dl__row">
+              <dt>Carrera / programa</dt>
+              <dd>{% if student.academic_program %}{{ student.academic_program.name }}{% else %}<span class="muted">Sin asignar</span>{% endif %}</dd>
+            </div>
+            <div class="portal-profile-dl__row">
+              <dt>Semestre académico</dt>
+              <dd>{% if student.academic_semester %}{{ student.academic_semester }}º{% else %}<span class="muted">—</span>{% endif %}</dd>
+            </div>
+            {% endif %}
+            {% if profile.degree and profile.degree != "Not applicable" %}
+            <div class="portal-profile-dl__row">
+              <dt>Título / grado</dt>
+              <dd>{{ profile.degree }}</dd>
+            </div>
+            {% endif %}
+            {% if profile.date_of_birth %}
+            <div class="portal-profile-dl__row">
+              <dt>Fecha de nacimiento</dt>
+              <dd>{{ profile.date_of_birth|date:"j M Y" }}</dd>
+            </div>
+            {% endif %}
+            <div class="portal-profile-dl__row">
+              <dt>Zona horaria del sitio</dt>
+              <dd>{{ timezone_label }}</dd>
+            </div>
+            <div class="portal-profile-dl__row">
+              <dt>Miembro desde</dt>
+              <dd>{{ student.date_joined|date:"j M Y" }}</dd>
+            </div>
+          </dl>
+        </article>
+
+        {% if student.role == 'student' and enrollments %}
+        <article class="portal-profile-card">
+          <header class="portal-profile-card__head">
+            <h2 class="portal-profile-card__title">Detalles del curso</h2>
+          </header>
+          <div class="portal-profile-block">
+            <h3 class="portal-profile-block__label">Perfiles de curso</h3>
+            <ul class="portal-profile-link-list">
+              {% for enr in enrollments %}
+              <li>
+                <a href="{% url 'classroom:course_detail' enr.offering.id %}">
+                  {{ enr.offering.code }}{% if enr.offering.name %} — {{ enr.offering.name }}{% endif %}
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="portal-profile-block">
+            <h3 class="portal-profile-block__label">Roles</h3>
+            <p class="portal-profile-block__text">{{ portal_role_label }}</p>
+          </div>
+        </article>
+        {% elif student.role == 'teacher' and teaching_offerings %}
+        <article class="portal-profile-card">
+          <header class="portal-profile-card__head">
+            <h2 class="portal-profile-card__title">Detalles del curso</h2>
+          </header>
+          <div class="portal-profile-block">
+            <h3 class="portal-profile-block__label">Cursos que imparte</h3>
+            <ul class="portal-profile-link-list">
+              {% for off in teaching_offerings %}
+              <li>
+                <a href="{% url 'classroom:teacher_manage_course' off.id %}">
+                  {{ off.code }}{% if off.name %} — {{ off.name }}{% endif %}
+                </a>
+              </li>
+              {% endfor %}
+            </ul>
+          </div>
+          <div class="portal-profile-block">
+            <h3 class="portal-profile-block__label">Roles</h3>
+            <p class="portal-profile-block__text">{{ portal_role_label }}</p>
+          </div>
+        </article>
+        {% elif student.role == 'admin' %}
+        <article class="portal-profile-card">
+          <header class="portal-profile-card__head">
+            <h2 class="portal-profile-card__title">Área administración</h2>
+          </header>
+          <p class="portal-profile-block__text" style="padding:0 var(--dash-pad-inline) 1rem;margin:0;">
+            Gestiona usuarios, carreras, ofertas y matrículas desde el <a href="{% url 'dashboard_admin' %}">panel administrador</a>.
+          </p>
+        </article>
+        {% endif %}
+
+        {% if student.role == 'student' and courses %}
+        <article class="portal-profile-card">
+          <header class="portal-profile-card__head">
+            <h2 class="portal-profile-card__title">Apuntes personales</h2>
+          </header>
+          <ul class="portal-profile-link-list">
+            {% for course in courses %}
+            <li><a href="{{ course.get_absolute_url }}">{{ course.name }}</a></li>
+            {% endfor %}
+          </ul>
+        </article>
+        {% endif %}
+      </div>
+
+      <aside class="portal-profile__col portal-profile__col--rail" aria-label="Opciones de cuenta">
+        <article class="portal-profile-card portal-profile-card--compact">
+          <h2 class="portal-profile-card__title">Miscelánea</h2>
+          <ul class="portal-profile-rail">
+            <li><a href="{% url 'edit_profile' %}">Editar perfil completo</a></li>
+            <li><a href="#cambiar-contraseña">Cambiar contraseña</a></li>
+            {% if student.role == 'student' %}
+            <li><a href="{{ portal_dashboard_url }}#mensajes">Mensajes en el portal</a></li>
+            <li><a href="{% url 'classroom:course_list' %}">Aula virtual</a></li>
+            <li><a href="{{ portal_dashboard_url }}#repaso">Materiales de repaso</a></li>
+            {% elif student.role == 'teacher' %}
+            <li><a href="{% url 'dashboard_teacher' %}#foros">Foros y avisos</a></li>
+            <li><a href="{% url 'dashboard_teacher' %}#entregas">Entregas pendientes</a></li>
+            {% elif student.role == 'admin' %}
+            <li><a href="{% url 'dashboard_admin' %}#usuarios">Gestión de usuarios</a></li>
+            <li><a href="{% url 'dashboard_admin' %}#matriculas">Matrículas</a></li>
+            {% endif %}
+          </ul>
+        </article>
+
+        <article class="portal-profile-card portal-profile-card--compact">
+          <h2 class="portal-profile-card__title">Informes</h2>
+          <ul class="portal-profile-rail">
+            {% if student.role == 'student' %}
+            <li><a href="{{ portal_dashboard_url }}">Resumen del tablero</a></li>
+            <li><a href="{{ portal_dashboard_url }}#calificaciones">Calificaciones</a></li>
+            <li><a href="{{ portal_dashboard_url }}#calendario">Calendario académico</a></li>
+            {% elif student.role == 'teacher' %}
+            <li><a href="{% url 'dashboard_teacher' %}#historial-calificaciones">Historial de calificaciones</a></li>
+            <li><a href="{% url 'dashboard_teacher' %}#entregas">Entregas por calificar</a></li>
+            <li><a href="{% url 'dashboard_teacher' %}#cursos">Mis cursos</a></li>
+            {% elif student.role == 'admin' %}
+            <li><a href="{% url 'dashboard_admin' %}">Panel administrador</a></li>
+            <li><a href="{% url 'dashboard_admin' %}#usuarios">Listado de usuarios</a></li>
+            <li><a href="{% url 'dashboard_admin' %}#ofertas">Cursos ofertados</a></li>
+            {% endif %}
+          </ul>
+        </article>
+
+        <article class="portal-profile-card portal-profile-card--compact">
+          <h2 class="portal-profile-card__title">Actividad de acceso</h2>
+          <dl class="portal-profile-dl portal-profile-dl--compact">
+            <div class="portal-profile-dl__row">
+              <dt>Último acceso</dt>
+              <dd>
+                {% if last_login_display %}
+                  {{ last_login_display|date:"j M Y, H:i" }}
+                {% else %}
+                  <span class="muted">Primera sesión en el portal</span>
+                {% endif %}
+              </dd>
+            </div>
+          </dl>
+        </article>
+
+        <article id="cambiar-contraseña" class="portal-profile-card portal-profile-card--compact portal-profile-card--password">
+          <h2 class="portal-profile-card__title">Cambiar contraseña</h2>
+          <p class="portal-profile-hint portal-password-form__intro">
+            Ingrese su contraseña actual y la nueva dos veces para confirmar el cambio.
+          </p>
+          <form method="post" class="portal-password-form" novalidate data-el-loader="server">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="password" />
+            <div class="portal-password-form__body">
+              {% include "easylearn/includes/portal_password_fields.html" %}
+            </div>
+            <div class="portal-password-form__actions">
+              <button type="submit" class="btn-main">Guardar nueva contraseña</button>
+            </div>
+          </form>
+        </article>
+      </aside>
+    </div>
   </section>
 {% endblock %}

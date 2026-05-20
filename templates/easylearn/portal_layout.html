@@ -3,16 +3,34 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("easylearn-theme");
+        if (t === "dark") {
+          document.documentElement.setAttribute("data-theme", "dark");
+          document.documentElement.style.colorScheme = "dark";
+        } else {
+          document.documentElement.setAttribute("data-theme", "light");
+          document.documentElement.style.colorScheme = "light";
+        }
+      } catch (e) { /* ignore */ }
+    })();
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>{% block title %}EasyLearn{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}Portal universitario EasyLearn — cursos, calificaciones y gestión académica.{% endblock %}" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="{% static 'easylearn/css/easylearn.css' %}?v=20260517" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/easylearn.css' %}?v=20260625" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/easylearn-theme.css' %}?v=20260625" />
+  <link rel="stylesheet" href="{% static 'easylearn/css/portal-a11y-modal.css' %}?v=20260520" />
   {% block extra_head %}{% endblock %}
 </head>
 <body{% block body_attrs %}{% endblock %}>
+  <div class="portal-nav-backdrop" id="portal-nav-backdrop" aria-hidden="true"></div>
   <div class="app">
     <div class="app-shell">
       {% block sidebar %}{% include "easylearn/includes/portal_sidebar.html" %}{% endblock %}
@@ -41,6 +59,10 @@
     </div>
   </div>
 
-  <script src="{% static 'easylearn/js/easylearn-app.js' %}?v=20260517" defer></script>
+  {% include "easylearn/includes/portal_accessibility_modal.html" %}
+  {% include "easylearn/includes/loader_assets.html" %}
+  <script src="{% static 'easylearn/js/easylearn-theme.js' %}?v=20260521"></script>
+  <script src="{% static 'easylearn/js/easylearn-app.js' %}?v=20260619" defer></script>
+  <script src="{% static 'easylearn/js/portal-a11y-modal.js' %}?v=20260520" defer></script>
 </body>
 </html>

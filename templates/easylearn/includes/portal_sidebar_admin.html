@@ -1,32 +1,25 @@
 {% load static %}
-<aside class="sidebar" aria-label="Navegación administrador">
-  <div class="sidebar__head">
-    <div class="sidebar__brand">
-      <div class="sidebar__brand-frame">
-        <a href="{% url 'dashboard_admin' %}" class="sidebar__brand-link" title="EasyLearn — Inicio administración">
-          <img class="sidebar__brand-logo" src="{% static 'easylearn/img/LOGOOOOOOOO (1).png' %}" alt="EasyLearn" width="238" height="80" decoding="async" loading="eager" />
-        </a>
-      </div>
-    </div>
-  </div>
+<aside class="sidebar" id="portal-sidebar" aria-label="Navegación administrador">
+  {% url 'dashboard_admin' as admin_home %}
+  {% include "easylearn/includes/portal_sidebar_brand.html" with sidebar_home_url=admin_home sidebar_home_title="EasyLearn — Inicio administración" %}
   <div class="sidebar__middle">
     <nav class="sidebar__nav" id="sidebar-nav">
-      <button type="button" class="sidebar__link is-active" data-route="dashboard" aria-current="page">
+      <a class="sidebar__link is-active" href="{{ admin_home }}" data-route="dashboard" aria-current="page">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
           <polyline points="9 22 9 12 15 12 15 22" />
         </svg>
         <span class="sidebar__label">Inicio</span>
-      </button>
-      <button type="button" class="sidebar__link" data-route="usuarios" title="Cuentas, roles y estado">
+      </a>
+      <a class="sidebar__link" href="{{ admin_home }}#usuarios" data-route="usuarios" title="Cuentas, roles y estado">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         <span class="sidebar__label">Usuarios</span>
-      </button>
-      <button type="button" class="sidebar__link" data-route="carreras" title="Carreras y programas académicos">
+      </a>
+      <a class="sidebar__link" href="{{ admin_home }}#carreras" data-route="carreras" title="Carreras y programas académicos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 8h10M7 12h6"/></svg>
         <span class="sidebar__label">Carreras</span>
-      </button>
-      <button type="button" class="sidebar__link" data-route="ofertas" title="Oferta por período: asignatura, grupo y docente">
+      </a>
+      <a class="sidebar__link" href="{{ admin_home }}#ofertas" data-route="ofertas" title="Oferta por período: asignatura, grupo y docente">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <rect x="1" y="5" width="22" height="12" rx="2" />
           <path d="M8 21h8" />
@@ -35,44 +28,16 @@
           <line x1="6" y1="13" x2="15" y2="13" />
         </svg>
         <span class="sidebar__label">Cursos ofertados</span>
-      </button>
-      <button type="button" class="sidebar__link" data-route="matriculas" title="Matrículas e inscripciones a cursos">
+      </a>
+      <a class="sidebar__link" href="{{ admin_home }}#matriculas" data-route="matriculas" title="Matrículas e inscripciones a cursos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/></svg>
         <span class="sidebar__label">Matrículas</span>
-      </button>
-      <button type="button" class="sidebar__link" data-route="periodos" title="Períodos lectivos">
+      </a>
+      <a class="sidebar__link" href="{{ admin_home }}#periodos" data-route="periodos" title="Períodos lectivos">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 22h16"/><path d="M6 18V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v14"/><path d="M10 6h4"/><path d="M10 10h4"/><path d="M10 14h4"/></svg>
         <span class="sidebar__label">Períodos</span>
-      </button>
+      </a>
     </nav>
-    <div class="sidebar__collapse-row" role="group" aria-label="Ancho del menú lateral">
-      <hr class="sidebar__rule" aria-hidden="true" />
-      <button type="button" class="sidebar__collapse" aria-label="Contraer menú lateral" aria-expanded="true" title="Contraer">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="m15 18-6-6 6-6" />
-        </svg>
-      </button>
-    </div>
-    <div class="sidebar__anchors" aria-label="Accesibilidad y administración">
-      <a class="sidebar__link sidebar__link--quiet" href="https://www.w3.org/WAI/fundamentals/accessibility-intro/es" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="4" y1="21" x2="4" y2="14" />
-          <line x1="4" y1="10" x2="4" y2="3" />
-          <line x1="12" y1="21" x2="12" y2="12" />
-          <line x1="12" y1="8" x2="12" y2="3" />
-          <line x1="20" y1="21" x2="20" y2="16" />
-          <line x1="20" y1="12" x2="20" y2="3" />
-          <line x1="1" y1="14" x2="7" y2="14" />
-          <line x1="9" y1="8" x2="15" y2="8" />
-          <line x1="17" y1="16" x2="23" y2="16" />
-        </svg>
-        <span class="sidebar__label">Accesibilidad</span>
-      </a>
-      <a class="sidebar__link sidebar__link--quiet" href="/admin/" title="Configuración avanzada del sistema">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
-        <span class="sidebar__label">Configuración</span>
-      </a>
-    </div>
-    <div class="sidebar__middle-fill" aria-hidden="true"></div>
+    {% include "easylearn/includes/portal_sidebar_footer_admin.html" %}
   </div>
 </aside>

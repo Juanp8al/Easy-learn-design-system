@@ -3,36 +3,34 @@
 {% block title %}Editar perfil · EasyLearn{% endblock %}
 {% block body_attrs %} data-easylearn-page="profile"{% endblock %}
 
-{% block sidebar %}
-  {% if student.role == 'admin' %}
-    {% include "easylearn/includes/portal_sidebar_admin.html" %}
-  {% elif student.role == 'teacher' %}
-    {% include "easylearn/includes/portal_sidebar_teacher.html" %}
-  {% else %}
-    {% include "easylearn/includes/portal_sidebar.html" %}
-  {% endif %}
-{% endblock %}
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_pick.html" %}{% endblock %}
 
 {% block portal_canvas %}
   <nav id="bread-nav" class="breadcrumbs" aria-label="Ruta">
-    <a href="{% url 'profile' %}">Mi perfil</a> <span class="sep">›</span> <span>Editar</span>
+    <a href="{% url 'profile' %}">Mi perfil</a>
+    <span class="sep">›</span>
+    <span>Editar</span>
   </nav>
-  <section class="view is-visible view-dash-dg" style="max-width:36rem;">
+  <section class="view is-visible view-dash-dg portal-profile portal-profile--edit" style="max-width:42rem;">
     <header class="hero hero-dash-dg hero--dense">
       <h1>Editar perfil</h1>
+      <p style="margin:0.35rem 0 0;font-size:0.9rem;color:var(--text-muted);">Actualice sus datos de cuenta y foto de perfil.</p>
     </header>
-    <form method="post" enctype="multipart/form-data" class="panel panel--dg-sheet">
+    <form method="post" enctype="multipart/form-data" class="portal-profile-card"{% if student.role == 'admin' %} data-el-loader="server"{% endif %}>
       {% csrf_token %}
-      <div style="padding:1rem 1.2rem;">
-        <h2 class="panel__sub" style="margin:0 0 0.75rem;">Datos de cuenta</h2>
+      <header class="portal-profile-card__head">
+        <h2 class="portal-profile-card__title">Datos de la cuenta</h2>
+      </header>
+      <div class="portal-profile--edit" style="padding:1rem var(--dash-pad-inline) 0.5rem;">
+        <h3 class="portal-profile-block__label">Información básica</h3>
         {{ student_update_form.as_p }}
-        <h2 class="panel__sub" style="margin:1.25rem 0 0.75rem;">Foto y datos adicionales</h2>
+        <h3 class="portal-profile-block__label" style="margin-top:1.1rem;">Foto y datos adicionales</h3>
         {{ profile_edit_form.as_p }}
         {% if profile.photo %}
-        <p class="muted" style="font-size:0.85rem;">Foto actual: <a href="{{ profile.photo.url }}" target="_blank" rel="noopener">ver archivo</a></p>
+        <p class="muted" style="font-size:0.85rem;margin-top:0.5rem;">Foto actual: <a href="{{ profile.photo.url }}" target="_blank" rel="noopener">ver archivo</a></p>
         {% endif %}
       </div>
-      <div class="cta-row" style="padding:0 1.2rem 1.2rem;">
+      <div class="cta-row" style="padding:0.75rem var(--dash-pad-inline) 1.15rem;border-top:1px solid var(--border);">
         <button type="submit" class="btn-main">Guardar cambios</button>
         <a class="btn-outline" href="{% url 'profile' %}">Cancelar</a>
       </div>

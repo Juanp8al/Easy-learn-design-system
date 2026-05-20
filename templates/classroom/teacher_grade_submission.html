@@ -3,24 +3,74 @@
 {% block title %}Calificar entrega · EasyLearn{% endblock %}
 {% block body_attrs %} data-easylearn-page="teacher"{% endblock %}
 
+{% block sidebar %}{% include "easylearn/includes/portal_sidebar_pick.html" %}{% endblock %}
+
 {% block portal_canvas %}
-<article class="panel margin-b" style="max-width:40rem;margin:1rem auto;">
-  <div class="panel__head panel__head--dash-soft">
+<nav class="breadcrumbs" aria-label="Ruta">
+  <a href="{% url 'dashboard_teacher' %}">Inicio docente</a>
+  <span class="sep">›</span>
+  <a href="{% url 'dashboard_teacher' %}#entregas">Entregas</a>
+  <span class="sep">›</span>
+  <span>Calificar</span>
+</nav>
+
+<section class="view is-visible view-dash-dg portal-grade-page" style="max-width:42rem;">
+  <header class="hero hero-dash-dg hero--dense">
+    <p class="hero-kicker hero-dash-dg__line1">Evaluación</p>
     <h1>Calificar entrega</h1>
-  </div>
-  <div style="padding:0 1rem 1rem;">
-    <p><strong>{{ submission.student.get_full_name|default:submission.student.username }}</strong></p>
-    <p class="muted">{{ submission.activity.title }} · {{ offering.code }} · Semana {{ submission.activity.week.week_number }}</p>
-    {% if submission.file %}<p><a href="{{ submission.file.url }}">Descargar archivo entregado</a></p>{% endif %}
-    {% if submission.comment %}<p>{{ submission.comment }}</p>{% endif %}
-    <form method="post" class="margin-t">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <div class="task-actions">
-        <button type="submit" class="btn-main">Guardar calificación</button>
-        <a class="btn-secondary" href="{% url 'dashboard_teacher' %}#entregas">Cancelar</a>
+    <p style="margin:0.35rem 0 0;font-size:0.9rem;color:var(--text-muted);">
+      {{ submission.student.get_full_name|default:submission.student.username }} ·
+      {{ submission.activity.title }} · {{ offering.code }} · Semana {{ submission.activity.week.week_number }}
+    </p>
+  </header>
+
+  <article class="portal-profile-card margin-b">
+    <div class="panel__head panel__head--dash-soft">
+      <h2 class="portal-profile-card__title" style="margin:0;">Entrega del estudiante</h2>
+    </div>
+    <div style="padding:1rem var(--dash-pad-inline) 1.15rem;">
+      {% if submission.file %}
+      <p><a class="btn-outline btn-sm" href="{{ submission.file.url }}" target="_blank" rel="noopener">Descargar archivo entregado</a></p>
+      {% endif %}
+      {% if submission.comment %}
+      <p style="margin:0.75rem 0 0;white-space:pre-wrap;">{{ submission.comment }}</p>
+      {% else %}
+      <p class="muted" style="margin:0.75rem 0 0;">Sin comentario del estudiante.</p>
+      {% endif %}
+      {% if submission.submitted_at %}
+      <p class="muted" style="margin-top:0.5rem;font-size:0.85rem;">Enviada el {{ submission.submitted_at|date:"j M Y, H:i" }}</p>
+      {% endif %}
+    </div>
+  </article>
+
+  <form method="post" class="portal-profile-card" novalidate data-el-loader="server">
+    {% csrf_token %}
+    <div class="panel__head panel__head--dash-soft">
+      <h2 class="portal-profile-card__title" style="margin:0;">Calificación</h2>
+    </div>
+    <div style="padding:1rem var(--dash-pad-inline) 1.15rem;">
+      {% if form.non_field_errors %}
+      <ul class="el-form-errors" style="margin:0 0 1rem;padding:0;list-style:none;color:#b91c1c;font-size:0.88rem;">
+        {% for err in form.non_field_errors %}<li>{{ err }}</li>{% endfor %}
+      </ul>
+      {% endif %}
+      {% for field in form %}
+      <div class="portal-form-field" style="margin-bottom:0.85rem;">
+        <label class="portal-profile-block__label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<p class="muted" style="margin:0.25rem 0 0;font-size:0.82rem;">{{ field.help_text }}</p>{% endif %}
+        {% if field.errors %}
+        <ul class="el-form-errors" style="margin:0.25rem 0 0;padding:0;list-style:none;color:#b91c1c;font-size:0.82rem;">
+          {% for err in field.errors %}<li>{{ err }}</li>{% endfor %}
+        </ul>
+        {% endif %}
       </div>
-    </form>
-  </div>
-</article>
+      {% endfor %}
+    </div>
+    <div class="cta-row" style="padding:0.75rem var(--dash-pad-inline) 1.15rem;border-top:1px solid var(--border);">
+      <button type="submit" class="btn-main">Guardar calificación</button>
+      <a class="btn-outline" href="{% url 'dashboard_teacher' %}#entregas">Volver a entregas</a>
+    </div>
+  </form>
+</section>
 {% endblock %}
