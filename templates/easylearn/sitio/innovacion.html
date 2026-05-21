@@ -5,9 +5,9 @@
 
 {% block sitio_content %}
 <div class="el-sitio-page el-sitio-page--blog">
-  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="Blog" banner_lead="Innovaci&oacute;n educativa, Lean Startup y evoluci&oacute;n del MVP institucional." %}
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="Blog" banner_lead="Innovaci&oacute;n educativa, Lean Startup, an&aacute;lisis estrat&eacute;gico y evoluci&oacute;n del MVP institucional." %}
 
-  <section class="el-sitio-blog-wrap" aria-label="Entrada destacada">
+  <section class="el-sitio-blog-wrap" aria-label="Entradas destacadas">
     <div class="el-sitio-blog-panel">
       <section class="el-sitio-blog">
         <div class="el-sitio-blog__main">
@@ -20,6 +20,15 @@
         </p>
         <a class="sitio-btn el-sitio-btn-outline el-sitio-btn-outline--blue" href="#innovacion-contenido">Leer m&aacute;s</a>
       </article>
+      <article class="el-sitio-blog__post">
+        <img src="{% static 'easylearn/img/sitio/c2.jpg' %}" alt="" width="800" height="450" loading="lazy" decoding="async" />
+        <h2>An&aacute;lisis estrat&eacute;gico: DOFA, PESTEL y objetivos</h2>
+        <p>
+          Diagn&oacute;stico del entorno y la empresa: fortalezas del MVP en Django, factores macro del sector EdTech
+          y objetivos SMART para adopci&oacute;n, producto y sostenibilidad.
+        </p>
+        <a class="sitio-btn el-sitio-btn-outline el-sitio-btn-outline--blue" href="#estrategia-dofa">Ver an&aacute;lisis</a>
+      </article>
     </div>
     <aside class="el-sitio-blog__sidebar" aria-label="Categor&iacute;as">
       <h2>Categor&iacute;as</h2>
@@ -27,7 +36,9 @@
         <a href="#innovacion-contenido">Innovaci&oacute;n educativa</a>
         <a href="#innovacion-contenido">Lean Startup</a>
         <a href="#innovacion-contenido">MVP institucional</a>
-        <a href="#innovacion-contenido">Gesti&oacute;n universitaria</a>
+        <a href="#estrategia-dofa">An&aacute;lisis DOFA</a>
+        <a href="#estrategia-pestel">PESTEL</a>
+        <a href="#estrategia-objetivos">Objetivos estrat&eacute;gicos</a>
         <a href="#innovacion-contenido">Plataformas B2B</a>
       </nav>
     </aside>
@@ -109,5 +120,7 @@
       </div>
     </div>
   </section>
+
+  {% include "easylearn/sitio/includes/estrategia_analisis.html" %}
 </div>
 {% endblock %}

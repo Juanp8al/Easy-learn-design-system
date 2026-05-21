@@ -3,73 +3,8 @@
 {% block sitio_title %}Estrategia{% endblock %}
 
 {% block sitio_content %}
-<section class="sitio-hero sitio-hero--compact">
-  <div class="sitio-hero__inner">
-    <h1>An&aacute;lisis estrat&eacute;gico</h1>
-    <p>DOFA, PESTEL y objetivos que orientan el crecimiento de EasyLearn.</p>
-  </div>
-</section>
-
-<section class="sitio-section">
-  <h2>Matriz DOFA</h2>
-  <p class="sitio-section__lead">Diagn&oacute;stico interno y externo de la empresa.</p>
-  <div class="sitio-dofa">
-    <article class="sitio-dofa__q sitio-dofa__q--f">
-      <h3>Fortalezas</h3>
-      <ul>
-        <li>MVP funcional con flujo acad&eacute;mico completo (matr&iacute;cula &rarr; entrega &rarr; nota).</li>
-        <li>Design system coherente y accesible.</li>
-        <li>Arquitectura modular en Django (academia, aula, cuentas).</li>
-      </ul>
-    </article>
-    <article class="sitio-dofa__q sitio-dofa__q--o">
-      <h3>Oportunidades</h3>
-      <ul>
-        <li>Demanda de digitalizaci&oacute;n en universidades.</li>
-        <li>Integraci&oacute;n futura con videoconferencia y anal&iacute;tica.</li>
-        <li>Alianzas con instituciones regionales.</li>
-      </ul>
-    </article>
-    <article class="sitio-dofa__q sitio-dofa__q--d">
-      <h3>Debilidades</h3>
-      <ul>
-        <li>Marca en fase inicial; poca penetraci&oacute;n de mercado.</li>
-        <li>Algunas funciones a&uacute;n dependen del panel t&eacute;cnico (Admin).</li>
-        <li>Equipo reducido para soporte 24/7.</li>
-      </ul>
-    </article>
-    <article class="sitio-dofa__q sitio-dofa__q--a">
-      <h3>Amenazas</h3>
-      <ul>
-        <li>Competidores LMS consolidados (Moodle, Canvas).</li>
-        <li>Cambios regulatorios en protecci&oacute;n de datos estudiantiles.</li>
-        <li>Resistencia al cambio en procesos acad&eacute;micos tradicionales.</li>
-      </ul>
-    </article>
-  </div>
-</section>
-
-<section class="sitio-section" style="padding-top:0;">
-  <h2>An&aacute;lisis PESTEL</h2>
-  <p class="sitio-section__lead">Factores del entorno que impactan nuestra operaci&oacute;n.</p>
-  <div class="sitio-pestel">
-    <div class="sitio-pestel__item"><strong>Pol&iacute;tico</strong> Pol&iacute;ticas de educaci&oacute;n digital y financiamiento p&uacute;blico.</div>
-    <div class="sitio-pestel__item"><strong>Econ&oacute;mico</strong> Presupuestos para tecnolog&iacute;a; modelos SaaS por licencia.</div>
-    <div class="sitio-pestel__item"><strong>Social</strong> Estudiantes nativos digitales; docentes que requieren capacitaci&oacute;n.</div>
-    <div class="sitio-pestel__item"><strong>Tecnol&oacute;gico</strong> Cloud, IA educativa, est&aacute;ndares de accesibilidad web.</div>
-    <div class="sitio-pestel__item"><strong>Ecol&oacute;gico</strong> Reducci&oacute;n de papel y desplazamientos con aulas h&iacute;bridas.</div>
-    <div class="sitio-pestel__item"><strong>Legal</strong> Leyes de datos personales y propiedad intelectual.</div>
-  </div>
-</section>
-
-<section class="sitio-section" style="padding-top:0;">
-  <h2>Objetivos estrat&eacute;gicos</h2>
-  <ol class="sitio-objectives">
-    <li><div><strong>OE1 &mdash; Adopci&oacute;n:</strong> Lograr 3 instituciones piloto usando EasyLearn en 12 meses.</div></li>
-    <li><div><strong>OE2 &mdash; Experiencia:</strong> Mantener satisfacci&oacute;n de usuario &ge; 4,2/5 en encuestas semestrales.</div></li>
-    <li><div><strong>OE3 &mdash; Operaci&oacute;n:</strong> Reducir en 30 % el tiempo administrativo de matr&iacute;culas vs. procesos manuales.</div></li>
-    <li><div><strong>OE4 &mdash; Producto:</strong> Publicar dos releases mayores al a&ntilde;o con mejoras docentes y estudiantiles.</div></li>
-    <li><div><strong>OE5 &mdash; Sostenibilidad:</strong> Alcanzar punto de equilibrio financiero al tercer a&ntilde;o.</div></li>
-  </ol>
-</section>
+<div class="el-sitio-page">
+  {% include "easylearn/sitio/includes/page_banner.html" with banner_title="An&aacute;lisis estrat&eacute;gico" banner_lead="DOFA, PESTEL y objetivos que orientan el crecimiento de EasyLearn." %}
+  {% include "easylearn/sitio/includes/estrategia_analisis.html" %}
+</div>
 {% endblock %}

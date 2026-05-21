@@ -66,46 +66,45 @@
     </div>
   </section>
 
-  <section class="el-home-portals" id="portales">
-    <h2 class="el-home-section-title">Portales privados por rol</h2>
+  <section class="el-home-features el-home-features--estrategia" id="estrategia">
+    <h2 class="el-home-section-title">Plan estrat&eacute;gico</h2>
     <p class="el-home-section-lead">
-      Tres entornos habilitados por el Administrador Supremo. Cada usuario ingresa solo con credenciales asignadas.
+      DOFA, PESTEL y objetivos alineados al MVP B2B de EasyLearn. Detalle completo en el Blog.
     </p>
-    <div class="el-home-portals-grid">
-      <article class="el-home-portal-card">
-        <div class="el-home-portal-card__media">
-          <img src="{% static 'easylearn/img/sitio/c1.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
-          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-gear"></i></span>
-        </div>
-        <div class="el-home-portal-card__body">
-          <span class="el-home-portal-card__tag">Administraci&oacute;n</span>
-          <h3>Portal Admin</h3>
-          <p>Panel para usuarios, cargas acad&eacute;micas y semestres.</p>
-        </div>
+    <div class="el-home-fea-base">
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>
+        <h3>Matriz DOFA</h3>
+        <p>
+          Fortalezas del flujo acad&eacute;mico y del design system; oportunidades en universidades medianas;
+          debilidades del MVP en fase piloto; amenazas de LMS consolidados y regulaci&oacute;n de datos.
+        </p>
       </article>
-      <article class="el-home-portal-card">
-        <div class="el-home-portal-card__media">
-          <img src="{% static 'easylearn/img/sitio/c2.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
-          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-chalkboard-user"></i></span>
-        </div>
-        <div class="el-home-portal-card__body">
-          <span class="el-home-portal-card__tag">Docencia</span>
-          <h3>Portal Profesor</h3>
-          <p>Notas, tabl&oacute;n de avisos y revisi&oacute;n de entregas.</p>
-        </div>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-globe" aria-hidden="true"></i>
+        <h3>PESTEL</h3>
+        <p>
+          Factores pol&iacute;ticos, econ&oacute;micos, sociales, tecnol&oacute;gicos, ecol&oacute;gicos y legales
+          del sector EdTech en Latinoam&eacute;rica, con respuesta estrat&eacute;gica por factor.
+        </p>
       </article>
-      <article class="el-home-portal-card">
-        <div class="el-home-portal-card__media">
-          <img src="{% static 'easylearn/img/sitio/c3.jpg' %}" alt="" width="400" height="260" loading="lazy" decoding="async" />
-          <span class="el-home-portal-card__icon" aria-hidden="true"><i class="fa-solid fa-graduation-cap"></i></span>
-        </div>
-        <div class="el-home-portal-card__body">
-          <span class="el-home-portal-card__tag">Estudiante</span>
-          <h3>Portal Estudiante</h3>
-          <p>Calendario, materias del semestre y aula virtual.</p>
-        </div>
+      <article class="el-home-fea-box">
+        <i class="fa-solid fa-bullseye" aria-hidden="true"></i>
+        <h3>Objetivos SMART</h3>
+        <p>
+          Siete objetivos espec&iacute;ficos: adopci&oacute;n piloto, experiencia de usuario, eficiencia operativa,
+          evoluci&oacute;n de producto, sostenibilidad, cumplimiento legal y diferenciaci&oacute;n por Repaso.
+        </p>
       </article>
     </div>
+    <p class="el-home-estrategia-cta">
+      <a class="sitio-btn el-sitio-btn-green" href="{% url 'site_innovacion' %}#estrategia-dofa">Ver an&aacute;lisis en el Blog</a>
+    </p>
+    <nav class="el-home-estrategia-links" aria-label="Secciones del an&aacute;lisis estrat&eacute;gico">
+      <a href="{% url 'site_innovacion' %}#estrategia-dofa">DOFA</a>
+      <a href="{% url 'site_innovacion' %}#estrategia-pestel">PESTEL</a>
+      <a href="{% url 'site_innovacion' %}#estrategia-objetivos">Objetivos</a>
+    </nav>
   </section>
 
   <section class="el-home-cta" id="contacto-home">

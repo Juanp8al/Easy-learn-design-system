@@ -168,24 +168,6 @@
     });
   }
 
-  /* Tarjetas portales · escala + entrada */
-  var portalCards = home.querySelectorAll(".el-home-portal-card");
-  if (portalCards.length) {
-    gsap.from(portalCards, {
-      scrollTrigger: {
-        trigger: ".el-home-portals-grid",
-        start: "top 78%",
-        toggleActions: "play none none none",
-      },
-      y: 100,
-      opacity: 0,
-      scale: 0.92,
-      duration: 0.9,
-      stagger: 0.2,
-      ease: "power3.out",
-    });
-  }
-
   /* —— «Ver cómo funciona» —— */
   function playFlujoSequence() {
     var flujo = document.getElementById("flujo");

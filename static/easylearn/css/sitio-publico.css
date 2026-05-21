@@ -452,6 +452,52 @@ body.sitio-nav-open {
   margin-bottom: 0.25rem;
 }
 
+.sitio-pestel__note {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: 0.82rem;
+  color: var(--neutral-muted, #64748b);
+  font-style: italic;
+}
+
+.sitio-objectives__meta {
+  display: block;
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  color: var(--neutral-muted, #64748b);
+  font-weight: 500;
+}
+
+/* Home · resumen estratégico */
+.el-home-estrategia-cta {
+  text-align: center;
+  margin: 0.5rem 0 0;
+}
+
+.el-home-estrategia-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.el-home-estrategia-links a {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ds-blue-900, #171f4d);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--neutral-border, #e2e8f0);
+  background: #fff;
+}
+
+.el-home-estrategia-links a:hover {
+  border-color: var(--cta-primary, #10b981);
+  color: var(--cta-primary, #10b981);
+}
+
 .sitio-objectives {
   counter-reset: obj;
   list-style: none;
@@ -2242,6 +2288,17 @@ html:has(.el-sitio-page) {
     0 20px 48px rgb(23 31 77 / 0.08);
   box-sizing: border-box;
   overflow: hidden;
+}
+
+.el-sitio-blog__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.el-sitio-blog__post + .el-sitio-blog__post {
+  padding-top: 2rem;
+  border-top: 1px solid var(--neutral-border, #e2e8f0);
 }
 
 .el-sitio-blog__post {

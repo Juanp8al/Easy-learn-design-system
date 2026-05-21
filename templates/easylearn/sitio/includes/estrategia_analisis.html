@@ -1,0 +1,143 @@
+{# Análisis estratégico: DOFA, PESTEL y objetivos (reutilizable en Blog y /estrategia/) #}
+
+<section class="el-sitio-section" id="estrategia-dofa" aria-labelledby="estrategia-dofa-title">
+  <div class="el-sitio-section__inner">
+    <h2 id="estrategia-dofa-title" class="el-home-section-title">Matriz DOFA</h2>
+    <p class="el-home-section-lead">
+      Diagn&oacute;stico interno y externo de EasyLearn como proveedor B2B de campus digital para universidades en Latinoam&eacute;rica.
+    </p>
+    <div class="sitio-dofa">
+      <article class="sitio-dofa__q sitio-dofa__q--f">
+        <h3>Fortalezas</h3>
+        <ul class="el-sitio-list">
+          <li>Flujo acad&eacute;mico completo operativo: matr&iacute;cula &rarr; aula &rarr; entrega &rarr; calificaci&oacute;n &rarr; avisos.</li>
+          <li>Design system unificado en tres roles (claro/oscuro) y experiencia coherente.</li>
+          <li>Arquitectura modular en Django: academia, aula, cuentas, Repaso y glosario.</li>
+          <li>M&oacute;dulo <strong>Repaso</strong> para apuntes personales, separado del aula institucional.</li>
+          <li>Modelo B2B claro: licencias a la universidad; portales privados por rol.</li>
+          <li>MVP demostrable con datos de prueba (<code>seed_demo</code>) y guion de presentaci&oacute;n.</li>
+        </ul>
+      </article>
+      <article class="sitio-dofa__q sitio-dofa__q--o">
+        <h3>Oportunidades</h3>
+        <ul class="el-sitio-list">
+          <li>Demanda sostenida de digitalizaci&oacute;n en educaci&oacute;n superior.</li>
+          <li>Universidades medianas (500&ndash;15&nbsp;000 estudiantes) poco atendidas por LMS pesados.</li>
+          <li>Alianzas piloto regionales y validaci&oacute;n Lean Startup con instituciones.</li>
+          <li>Integraciones futuras: videoconferencia, anal&iacute;tica, SSO e IA educativa.</li>
+          <li>Educaci&oacute;n h&iacute;brida y pol&iacute;ticas p&uacute;blicas de campus digital.</li>
+        </ul>
+      </article>
+      <article class="sitio-dofa__q sitio-dofa__q--d">
+        <h3>Debilidades</h3>
+        <ul class="el-sitio-list">
+          <li>Marca en fase inicial; baja penetraci&oacute;n de mercado.</li>
+          <li>Entorno demo local (SQLite); despliegue productivo en nube pendiente.</li>
+          <li>Equipo reducido para soporte 24/7 e implementaci&oacute;n masiva.</li>
+        </ul>
+      </article>
+      <article class="sitio-dofa__q sitio-dofa__q--a">
+        <h3>Amenazas</h3>
+        <ul class="el-sitio-list">
+          <li>Competidores consolidados (Moodle, Canvas, Blackboard, Google Classroom).</li>
+          <li>Regulaci&oacute;n estricta de datos personales y expectativas de seguridad.</li>
+          <li>Resistencia al cambio en procesos acad&eacute;micos tradicionales.</li>
+          <li>Presupuestos TI ajustados y ciclos de compra largos en universidades p&uacute;blicas.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="el-sitio-section el-sitio-section--alt" id="estrategia-pestel" aria-labelledby="estrategia-pestel-title">
+  <div class="el-sitio-section__inner">
+    <h2 id="estrategia-pestel-title" class="el-home-section-title">An&aacute;lisis PESTEL</h2>
+    <p class="el-home-section-lead">Factores del entorno macro que impactan la operaci&oacute;n y la respuesta estrat&eacute;gica de EasyLearn.</p>
+    <div class="sitio-pestel">
+      <div class="sitio-pestel__item">
+        <strong>Pol&iacute;tico</strong>
+        Pol&iacute;ticas de educaci&oacute;n digital y financiamiento p&uacute;blico para modernizaci&oacute;n universitaria.
+        <span class="sitio-pestel__note">Respuesta: alinearse a convocatorias y casos de uso de universidades p&uacute;blicas.</span>
+      </div>
+      <div class="sitio-pestel__item">
+        <strong>Econ&oacute;mico</strong>
+        Presupuestos limitados; preferencia por licencias SaaS regionales frente a soluciones globales en USD.
+        <span class="sitio-pestel__note">Respuesta: modelo B2B por licencia y pilotos de bajo costo inicial.</span>
+      </div>
+      <div class="sitio-pestel__item">
+        <strong>Social</strong>
+        Estudiantes nativos digitales; docentes que requieren capacitaci&oacute;n y accesibilidad web.
+        <span class="sitio-pestel__note">Respuesta: UX accesible, onboarding y acompa&ntilde;amiento en implementaci&oacute;n.</span>
+      </div>
+      <div class="sitio-pestel__item">
+        <strong>Tecnol&oacute;gico</strong>
+        Cloud, IA educativa, integraciones API y est&aacute;ndares WCAG.
+        <span class="sitio-pestel__note">Respuesta: roadmap hacia PostgreSQL, despliegue cloud, SSO y anal&iacute;tica.</span>
+      </div>
+      <div class="sitio-pestel__item">
+        <strong>Ecol&oacute;gico</strong>
+        Menor uso de papel y desplazamientos con aulas h&iacute;bridas.
+        <span class="sitio-pestel__note">Respuesta: narrativa de sostenibilidad y eficiencia operativa institucional.</span>
+      </div>
+      <div class="sitio-pestel__item">
+        <strong>Legal</strong>
+        Leyes de protecci&oacute;n de datos y propiedad intelectual de materiales subidos.
+        <span class="sitio-pestel__note">Respuesta: pol&iacute;ticas de privacidad, roles y acuerdos de tratamiento de datos (DPA).</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="el-sitio-section" id="estrategia-objetivos" aria-labelledby="estrategia-objetivos-title">
+  <div class="el-sitio-section__inner">
+    <h2 id="estrategia-objetivos-title" class="el-home-section-title">Objetivos estrat&eacute;gicos</h2>
+    <p class="el-home-section-lead">
+      Objetivo general: consolidar EasyLearn como LMS B2B &aacute;gil para universidades latinoamericanas medianas,
+      validando adopci&oacute;n institucional y sostenibilidad en un horizonte de 3 a&ntilde;os.
+    </p>
+    <ol class="sitio-objectives">
+      <li>
+        <div>
+          <strong>OE1 &mdash; Adopci&oacute;n comercial:</strong> Obtener 3 instituciones piloto con flujo completo en producci&oacute;n.
+          <span class="sitio-objectives__meta">KPI: universidades activas &middot; Plazo: 12 meses</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE2 &mdash; Experiencia de usuario:</strong> Mantener satisfacci&oacute;n &ge; 4,2/5 en encuestas semestrales por rol.
+          <span class="sitio-objectives__meta">KPI: encuesta 1&ndash;5 &middot; Plazo: semestral</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE3 &mdash; Eficiencia operativa:</strong> Reducir en 30&nbsp;% el tiempo administrativo de matr&iacute;culas vs. procesos manuales.
+          <span class="sitio-objectives__meta">KPI: horas por proceso &middot; Plazo: 18 meses</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE4 &mdash; Evoluci&oacute;n de producto:</strong> Publicar 2 releases mayores al a&ntilde;o; cerrar brechas del MVP (foros, CRUD docente, cloud).
+          <span class="sitio-objectives__meta">KPI: releases y % gesti&oacute;n sin Admin &middot; Plazo: 24 meses</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE5 &mdash; Sostenibilidad financiera:</strong> Alcanzar punto de equilibrio entre licencias y costos operativos.
+          <span class="sitio-objectives__meta">KPI: break-even &middot; Plazo: a&ntilde;o 3</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE6 &mdash; Cumplimiento y confianza:</strong> Documentar 100&nbsp;% de requisitos cr&iacute;ticos de protecci&oacute;n de datos para contratos B2B.
+          <span class="sitio-objectives__meta">KPI: checklist legal &middot; Plazo: 24 meses</span>
+        </div>
+      </li>
+      <li>
+        <div>
+          <strong>OE7 &mdash; Diferenciaci&oacute;n:</strong> Posicionar Repaso y UX como ventaja frente a LMS gen&eacute;ricos.
+          <span class="sitio-objectives__meta">KPI: &ge; 40&nbsp;% estudiantes activos en Repaso semanal &middot; Plazo: 12 meses</span>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
