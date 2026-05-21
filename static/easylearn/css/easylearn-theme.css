@@ -1416,6 +1416,15 @@ html[data-theme="dark"] .portal-admin-form__card-head {
   border-bottom-color: rgb(255 255 255 / 0.1);
 }
 
+html[data-theme="dark"] .view-dash-dg .sheet--dash-priority tbody tr {
+  background: rgb(30 41 59 / 0.85);
+  border-color: rgb(71 85 105 / 0.65);
+}
+
+html[data-theme="dark"] .view-dash-dg .sheet--dash-priority tbody td:last-child:not([colspan]) {
+  border-top-color: rgb(71 85 105 / 0.5) !important;
+}
+
 html[data-theme="dark"] .portal-profile-card .panel__head--dash-soft {
   border-bottom-color: rgb(255 255 255 / 0.1);
 }

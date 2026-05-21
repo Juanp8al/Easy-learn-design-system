@@ -43,7 +43,7 @@
                     <button type="button" class="btn-sm btn-outline" data-goto="entregas">Ver todas ›</button>
                   </div>
                   <div class="data-table-wrap dg-dash-actividades-scroll">
-                    <table class="sheet sheet--dash-soft" id="teacher-dash-pending-table">
+                    <table class="sheet sheet--dash-priority sheet--dash-soft" id="teacher-dash-pending-table">
                       <colgroup>
                         <col /><col /><col /><col /><col />
                       </colgroup>
@@ -53,11 +53,11 @@
                       <tbody>
                         {% for sub in teacher_pending_submissions|slice:":8" %}
                         <tr>
-                          <td>{{ sub.student.get_full_name|default:sub.student.username }}</td>
-                          <td>{{ sub.activity.title|truncatechars:32 }}</td>
-                          <td><span class="tb-course">{{ sub.activity.week.offering.code }}</span></td>
-                          <td>{{ sub.submitted_at|date:"j M, H:i" }}</td>
-                          <td><a class="btn-sm btn-outline" href="{% url 'classroom:teacher_grade_submission' sub.id %}">Calificar</a></td>
+                          <td data-label="Estudiante">{{ sub.student.get_full_name|default:sub.student.username }}</td>
+                          <td data-label="Actividad">{{ sub.activity.title|truncatechars:32 }}</td>
+                          <td data-label="Curso"><span class="tb-course">{{ sub.activity.week.offering.code }}</span></td>
+                          <td data-label="Entregada">{{ sub.submitted_at|date:"j M, H:i" }}</td>
+                          <td data-label="Acción"><a class="btn-sm btn-outline" href="{% url 'classroom:teacher_grade_submission' sub.id %}">Calificar</a></td>
                         </tr>
                         {% empty %}
                         <tr><td colspan="5" class="muted">No hay entregas pendientes.</td></tr>
